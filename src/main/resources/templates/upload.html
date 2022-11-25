@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文件上传</title>
+
+</head>
+<style>
+    .input-style {
+        width: 100%;
+        padding: 0;
+        border: 0;
+        outline: none
+    }
+</style>
+<body>
+<h2 align="center">测试页，具体调用参照 API 文档</h2>
+
+<form th:action="@{/single-upload}" method="post" enctype="multipart/form-data">
+    <table align="center" border="1">
+
+        <tr>
+            <th colspan="2">
+                <span style="color: seagreen">填写协议信息</span>
+                <br/>
+                <span style="color: red"></span>
+            </th>
+        </tr>
+        <tr>
+            <td>X-JEFFREY-API-KEY</td>
+            <td>
+                <input type="text" class="input-style" name="agreement">
+            </td>
+        </tr>
+
+
+        <tr>
+            <th colspan="2">
+                <span style="color: seagreen">填写基本信息</span>
+                <br/>
+                <span style="color: red">优先级提示：矩阵变量 > 水印名称 > 排除关键字 > 默认</span>
+            </th>
+        </tr>
+
+        <tr>
+            <td>水印名称（非必需，不提供则默认去除所有图中文字）</td>
+            <td><input class="input-style" type="text" name="watermarkName"></td>
+        </tr>
+
+
+        <tr>
+            <td>矩阵坐标（非必需，如不提供默认为图中所有文字的矩阵）</td>
+            <td>
+                <input class="input-style" type="text" name="rectangles">
+            </td>
+        </tr>
+
+        <tr>
+            <td>排除水印关键字（非必需，如不提供则默认去除所有）</td>
+            <td>
+                <input class="input-style" type="text" name="excludeKeywords">
+            </td>
+        </tr>
+
+        <tr>
+            <td>是否异步（非必需，默认为 false 不进行异步响应）</td>
+            <td><input class="input-style" type="text" name="sync"></td>
+        </tr>
+
+        <tr>
+            <td>回调接口（同步为 true 时必须）</td>
+            <td><input class="input-style" type="text" name="callback"></td>
+        </tr>
+        <tr>
+            <td>偏移量（非必需，如不提供则按照图中文字的矩阵值为准）</td>
+            <td><input class="input-style" type="text" name="offset"></td>
+        </tr>
+        <tr>
+
+            <th colspan="2">
+                <span style="color: seagreen">选择文件上传方式</span>
+                <br>
+                <span style="color: red">优先级提示：File > URL > Base64</span>
+                <br>
+                <span style="color: red">使用 Base64 方式上传不建议原图片大小超过 512 k</span>
+
+            </th>
+        </tr>
+        <tr>
+        <tr>
+            <td>File</td>
+            <td><input class="input-style" type="file" name="uploadFile" id="uploadFile"></td>
+        </tr>
+        <tr>
+            <td>URL</td>
+            <td>
+                <input class="input-style" type="text" name="imageUrl" id="upload-url" value="https://img.alicdn.com/imgextra/i3/O1CN018YP7GT1oxKHp0y8gC_!!6000000005291-2-tps-496-496.png">
+            </td>
+        </tr>
+        <tr>
+            <td>Base64</td>
+            <td>
+                <textarea class="input-style" name="imageBase64" id="upload-base64"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>上传文件</td>
+            <td><input class="input-style" type="submit" value="上传"></td>
+        </tr>
+
+
+    </table>
+
+</form>
+<br><br>
+<div id="api" align="center">
+    <a href="#" th:href="@{/ApiDocument.html}"><span><b>点击查看 API Document</b></span></a>
+</div>
+
+
+</body>
+</html>
