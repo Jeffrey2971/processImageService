@@ -49,7 +49,7 @@
 | markNames       | Json    | 否                                                     | 无    | 去除图中水印的名称，可提供多个，例如：{<br/>  "markNames": [<br/>    "名称A",<br/>    "名称B"<br/>  ]<br/>} |      |
 | excludeKeywords | Json    | 否                                                     | 无    | 排除图片中的水印文字，用于在不指定去除水印名称时使用，可提供多个，例如：<br />{<br/>  "keywords": [<br/>    "路漫漫其修远兮",<br/>    "吾将上下而求索"<br/>  ]<br/>} |      |
 | offset          | Json    | 否                                                     | 无    | 矩阵偏移量，在识别到的文本矩阵框额外缩小或放大矩阵大小，仅能使用 `+x + y +w +h -x -y -w -h` 指定缩小还是放大偏移量，如明确设定了 rectangles 则该参数不生效，例如：{<br/>  "+x": 114,<br/>  "-y": 80,<br/>  "-w": 132,<br/>  "+h": 206<br/>} | 完成 |
-| sync            | Boolean | 否                                                     | false | 是否异步处理，如设定为 True 则表示启用，请先设置好 callback 回掉接口 |      |
+| sync            | Boolean | 否                                                     | false | 是否异步处理，如设定为 true 则表示启用，请先设置好 callback 回掉接口 |      |
 | callback        | String  | sync 参数为 true 时必须                                | 无    | 如 sync 显示的设定为了 true，将立即响应状态信息，处理包含数据的结果将发送给指定的 callback 回掉接口，如首次请求 callback 失败，服务器会重新尝试响应 1 次，请注意，即使没有成功发送消息至 callback 指定的服务器，也依然会扣除使用次数，处理失败情况除外，**所以在提交大量异步请求前，请先确认 callback 接口是否能正常接收响应** |      |
 
 ### 响应码列表
