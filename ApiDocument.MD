@@ -16,22 +16,18 @@
 #### ② 请求方式
 
 - GET / POST
-  - GET 请求将会跳转到上传页
+  - GET 请求将会跳转到上传测试页
   - POST 请求作为 API 调用方式
 
 ### 请求参数
 
-#### ① 注意
+#### ① 头部信息
 
-- **null**
+| 协议（参数名称）   | 是否必填 | 参数类型 | 备注                                                         |
+| ------------------ | -------- | -------- | ------------------------------------------------------------ |
+| X-JEFFREY-API-SIGN | 是       | String   | 1. 签名规则为 **md5(publicKey + md5(image) + salt + privateSecret)** <br />2. md5(image) 中的 image 是原始图片数据，不加任何编码，32位小写<br />3. salt 为随机数，由 8 位随机 int 类型的数字组合而成<br />3. publicKey 为你的公钥，可以理解为账号，由数字、大小写字母组合而成<br />4. privateSecret 为你的密钥，可以理解为密码，由 128 位数字、大小写字母、特殊字符组合而成，**确保不在请求参数中携带该参数，仅在服务端使用** |
 
-#### ② 头部信息（Header）
-
-| 协议（参数名称）  | 参数类型 | 备注 |
-| ----------------- | -------- | ---- |
-| X-JEFFREY-API-KEY | String   | 密钥 |
-
-#### ③ 请求参数
+#### ② 请求参数
 
 - 提示
   - 对于上传的文件优先级为： image_file > image_url > image_base64
@@ -48,7 +44,7 @@
 | rectangles      | Json    | 否                                                     | 无    | 矩阵坐标，可为空，为空默认将识别到图中的文字信息作为矩阵值，如提供该参数，请正确填写，如提供有误则请求不成功，可提供多个矩阵值，例如：<br />[<br/>      {<br/>        "x": 120,<br/>        "y": 76,<br/>        "w": 100,<br/>        "h": 173<br/>      },<br/>      {<br/>        "x": 114,<br/>        "y": 80,<br/>        "w": 132,<br/>        "h": 206<br/>      }<br/>    ] | 完成 |
 | markNames       | Json    | 否                                                     | 无    | 去除图中水印的名称，可提供多个，例如：{<br/>  "markNames": [<br/>    "名称A",<br/>    "名称B"<br/>  ]<br/>} |      |
 | excludeKeywords | Json    | 否                                                     | 无    | 排除图片中的水印文字，用于在不指定去除水印名称时使用，可提供多个，例如：<br />{<br/>  "keywords": [<br/>    "路漫漫其修远兮",<br/>    "吾将上下而求索"<br/>  ]<br/>} |      |
-| offset          | Json    | 否                                                     | 无    | 矩阵偏移量，在识别到的文本矩阵框额外缩小或放大矩阵大小，仅能使用 `+x + y +w +h -x -y -w -h` 指定缩小还是放大偏移量，如明确设定了 rectangles 则该参数不生效，例如：{<br/>  "+x": 114,<br/>  "-y": 80,<br/>  "-w": 132,<br/>  "+h": 206<br/>} | 完成 |
+| offset          | Json    | 否                                                     | 无    | 矩阵偏移量，在识别到的文本矩阵框**额外**缩小或放大矩阵大小，仅能使用 `+x + y +w +h -x -y -w -h` 指定缩小还是放大偏移量，如明确设定了 rectangles 则该参数不生效。例子：{<br/>  "+x": 114,<br/>  "-y": 80,<br/>  "-w": 132,<br/>  "+h": 206<br/>} | 完成 |
 | sync            | Boolean | 否                                                     | false | 是否异步处理，如设定为 true 则表示启用，请先设置好 callback 回掉接口 |      |
 | callback        | String  | sync 参数为 true 时必须                                | 无    | 如 sync 显示的设定为了 true，将立即响应状态信息，处理包含数据的结果将发送给指定的 callback 回掉接口，如首次请求 callback 失败，服务器会重新尝试响应 1 次，请注意，即使没有成功发送消息至 callback 指定的服务器，也依然会扣除使用次数，处理失败情况除外，**所以在提交大量异步请求前，请先确认 callback 接口是否能正常接收响应** |      |
 
@@ -62,7 +58,7 @@
 | ------ | ------------------------------------------------------------ | ------------------------------------------ |
 | 200    | 请求成功，但处理不一定成功，具体看 data 对象中的 processStatus | 处理成功                                   |
 | 400    | 请求参数错误                                                 | 检查是否少传了必要参数，或指定了错误的参数 |
-| 401    | 未授权，或授权失败                                           | 检查提供的账户标识                         |
+| 401    | 认证失败                                                     | 检查提供的签名参数，以及生成 sign 的方法   |
 | 405    | 请求方法不被允许                                             | 检查请求方法                               |
 | 413    | 上传文件大小超出限制                                         | 请检查文件大小，最大 4 MB                  |
 | 429    | 请求频率超出 QPS 限制（默认 QPS 为 2）                       | 请放缓请求速率                             |
@@ -90,10 +86,11 @@
 | msgInnerReferer | 内部消息来源，成功时为空，失败时可根据该信息进行定位         |      |
 | data            | 为一个对象，封装了本次请求的具体响应数据，包括去水印后的数据。在处理异步请求时返回的 data 对象不包含处理数据 |      |
 | processStatus   | 本次处理状态码，具体参照响应码列表                           |      |
+|                 |                                                              |      |
 | processMsg      | 本次处理状态信息                                             |      |
-| processLocation | 本次处理的矩阵坐标，为一个 json list，list 中的每一项依次代表着 left、top、width、height，而 word 为四个坐标轴框选的文字 |      |
-| processBase64   | 本次去水印后图片的 Base64 编码数据                           |      |
-| processUrl      | 本次去水印后图片的 URL 地址，URL 在服务端仅保存 5 分钟，超时将自动销毁，请及时下载获取 |      |
+| processLocation | 本次处理的矩阵坐标，为一个 json list，list 中的每一项依次代表着 left、top、width、height，lineCount 为自动合并了多少行，watermark 为四个坐标轴框选的文字 |      |
+| processCount    | 对本次请求上传图片的处理次数                                 |      |
+| url             | 本次去水印后图片的 URL 地址，URL 在服务端仅保存 5 分钟，超时将自动销毁，请及时下载获取 |      |
 
 
 
@@ -108,28 +105,40 @@
   "httpCode": 200,
   "httpMsg": "SUCCESS::请求成功",
   "returnType": "json",
-  "location": "0:0:0:0:0:0:0:1",
+  "remainingUsage": 99,
   "msgInnerReferer": "",
+  "location": "0:0:0:0:0:0:0:1",
   "data": {
     "processStatus": 0,
-    "processMsg": "SUCCESS::处理成功",
+    "processCount": 3,
+    "processMsg": "SUCCESS::调用成功",
     "processLocation": [
       {
-        "x": 120,
-        "y": 76,
-        "w": 100,
-        "h": 173,
-        "word": "logo"
+        "x": 350,
+        "y": 671,
+        "w": 376,
+        "h": 58,
+        "lineCount": 2,
+        "watermark": "深圳xxxx有限公司 公司编号: xxxxxxxxxxxxx "
       },
       {
         "x": 114,
         "y": 80,
         "w": 132,
         "h": 206,
-        "word": "水印"
+        "lineCount": 2,
+        "watermark": "商铺名称：xxxxx   商铺 id：xxxxx"
+      },
+      {
+        "x": 341,
+        "y": 265,
+        "w": 53,
+        "h": 21,
+        "lineCount": 1,
+        "watermark": "水印名称"
       }
     ],
-    "processBase64": "data:image/png;base64,... ..."
+    "url": "http://www.jeffrey2971.top/targetImages/1669620124079.jpeg"
   }
 }
 ```
@@ -143,32 +152,16 @@
     "httpCode": 200,
     "httpMsg": "SUCCESS::请求成功",
     "returnType": "json",
-    "location": "0:0:0:0:0:0:0:1",
+    "remainingUsage": 99,
     "msgInnerReferer": "",
+    "location": "0:0:0:0:0:0:0:1",
     "data": {
       "processStatus": 0,
-      "processMsg": "WAITING::异步请求",
-      "processLocation": [
-        {
-          "x": 120,
-          "y": 76,
-          "w": 100,
-          "h": 173,
-          "word": "logo"
-        },
-        {
-          "x": 114,
-          "y": 80,
-          "w": 132,
-          "h": 206,
-          "word": "水印"
-        }
-      ],
-      "base64": "data:image/png;base64,... ..."
+      "processMsg": "WAITING::异步请求"
     }
   }
   ```
-
+  
   
 
 #### ③ 失败
@@ -178,12 +171,17 @@
 ```json
 {
   "httpCode": 401,
-  "httpMsg": "FAILED::用户未授权",
+  "httpMsg": "FAILED::非法签名",
   "returnType": "json",
+  "remainingUsage": -1,
+  "msgInnerReferer": "ExceptionHandler[SignatureFailedException.class]",
   "location": "0:0:0:0:0:0:0:1",
-  "msgInnerReferer": "ExceptionHandler[AuthorizationException.class]",
   "data": {
-  	  
+    "processStatus": 52001,
+    "processCount": -1,
+    "processMsg": "UNHANDLED::因其他问题导致未处理",
+    "processLocation": null,
+    "url": null
   }
 }
 ```
