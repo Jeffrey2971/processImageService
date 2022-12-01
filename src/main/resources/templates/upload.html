@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" name="referrer" content="origin">
     <title>文件上传</title>
 
 </head>
@@ -22,14 +22,36 @@
         <tr>
             <th colspan="2">
                 <span style="color: seagreen">填写协议信息</span>
+                <br>
+                <span style="color: red">签名规则为 md5(publicKey + md5(image) + salt + privateSecret)</span>
+
                 <br/>
-                <span style="color: red"></span>
+                <span style="color: red">该参数在 API 调用时，请参照 API 文档计算出 sign 后在 Header 中指定</span>
             </th>
         </tr>
         <tr>
-            <td>X-JEFFREY-API-KEY</td>
+            <td>imageMd5(originImageData -> byte[] -> md5(byte[]))</td>
             <td>
-                <input type="text" class="input-style" name="agreement">
+                <input type="text" class="input-style" name="demo_image_md5" value="0179430cefb998be1659065dd0f7e1db">
+            </td>
+        </tr>
+        <tr>
+            <td>publicKey</td>
+            <td>
+                <input type="text" class="input-style" name="demo_public_key" value="3uSmaTAfGKC3fvkpBow9HwZcyTM8FUpP">
+            </td>
+        </tr>
+        <tr>
+            <td>salt</td>
+            <td>
+                <input type="text" class="input-style" name="demo_salt" value="12345678">
+            </td>
+        </tr>
+
+        <tr>
+            <td>sign</td>
+            <td>
+                <input type="text" class="input-style" name="demo_sign" value="670f501a6684dce634fba2cf5295cda1">
             </td>
         </tr>
 
@@ -94,13 +116,13 @@
         <tr>
             <td>URL</td>
             <td>
-                <input class="input-style" type="text" name="imageUrl" id="upload-url" value="https://img.alicdn.com/imgextra/i3/O1CN018YP7GT1oxKHp0y8gC_!!6000000005291-2-tps-496-496.png">
+                <input class="input-style" type="text" name="imageUrl" id="upload-url" readonly="readonly" disabled="disabled" placeholder="暂时禁用">
             </td>
         </tr>
         <tr>
             <td>Base64</td>
             <td>
-                <textarea class="input-style" name="imageBase64" id="upload-base64"></textarea>
+                <textarea class="input-style" name="imageBase64" id="upload-base64" readonly="readonly" disabled="disabled" placeholder="暂时禁用"></textarea>
             </td>
         </tr>
         <tr>
@@ -108,13 +130,19 @@
             <td><input class="input-style" type="submit" value="上传"></td>
         </tr>
 
+        <input type="hidden" value="demo" name="referrer">
+
 
     </table>
 
 </form>
 <br><br>
 <div id="api" align="center">
-    <a href="#" th:href="@{/ApiDocument.html}"><span><b>点击查看 API Document</b></span></a>
+    <a href="#" th:href="@{/ApiDocument.html}"><span><b>API Document</b></span></a>
+    <br><br>
+    <a href="#" th:href="@{/SDK/Python/PythonSDK.py}"><span><b>Python SDK</b></span></a>
+    <br><br>
+    <a href="#" th:href="@{/SDK/Java/JavaSDK.java}"><span><b>Java SDK</b></span></a>
 </div>
 
 
