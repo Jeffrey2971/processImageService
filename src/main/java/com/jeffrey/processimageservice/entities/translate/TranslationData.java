@@ -1,4 +1,4 @@
-package com.jeffrey.processimageservice.entities;
+package com.jeffrey.processimageservice.entities.translate;
 
 import lombok.Data;
 import org.springframework.stereotype.Component;

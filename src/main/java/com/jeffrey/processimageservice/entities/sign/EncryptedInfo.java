@@ -1,4 +1,4 @@
-package com.jeffrey.processimageservice.entities;
+package com.jeffrey.processimageservice.entities.sign;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

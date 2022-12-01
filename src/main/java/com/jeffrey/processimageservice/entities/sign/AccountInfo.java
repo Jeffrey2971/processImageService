@@ -1,4 +1,4 @@
-package com.jeffrey.processimageservice.entities;
+package com.jeffrey.processimageservice.entities.sign;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
