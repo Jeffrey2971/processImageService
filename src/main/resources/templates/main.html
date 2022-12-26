@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+
+    <style>
+
+
+
+    </style>
+
+    <script>
+        $(function () {
+            $('#logout').on('click', function () {
+                $.get('http://localhost/slg', function (response) {
+                    console.log(response);
+                    if (response.code === 200) {
+                        window.location.reload()
+                    } else {
+                        alert("退出登陆失败");
+                    }
+                }, "json");
+            });
+        });
+    </script>
+</head>
+<body>
+
+
+<div class="navbar-inner">
+    <div class="container-fluid">
+        <!--        <div class="logo-manage"><img src=""></div>-->
+        <a class="brand pull-left" href="http://www.processimage.cn">processImage.cn</a>
+        <ul class="nav navbar-nav user_menu pull-right">
+            <li><a th:href="@{/}">测试页</a></li>
+            <li><a th:href="@{/ApiDocument.html}">API 接入文档</a></li>
+            <li><a th:href="@{/img/me.jpg}">联系</a></li>
+
+            <li class="divider-vertical hidden-sm hidden-xs"></li>
+            <li class="hidden-phone hidden-tablet">
+                <div class="nb_boxes clearfix">
+                    <a href="#" class="label hint--bottom" data-hint="您有 x 条未读消息">x <i class="splashy-mail_light"></i></a>
+                </div>
+            </li>
+            <li><a href="#">充值</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img
+                        th:src="@{/img/user_avatar.png}" alt="" class="user_avatar">[[${username}]]
+                    <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">充值</a></li>
+
+                    <li class="divider"></li>
+                    <li><a th:href="@{/change}">修改密码</a></li>
+
+                    <li class="divider"></li>
+                    <li><a href="#" id="logout">退出</a></li>
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+</div>
+<br>
+<div>
+    <p>尊敬的 [[${username}]] 您好，以下是账号的相关信息</p>
+    <br>
+    <p>你的公钥： [[${publicKey}]]</p>
+    <br>
+    <p>你的私钥：[[${privateKey}]]</p>
+    <br>
+    <p>账号剩余可使用次数：[[${apiCanUseCount}]]</p>
+    <br>
+    <p>账号已使用次数：[[${apiUsedCount}]]</p>
+</div>
+
+</body>
+</html>
