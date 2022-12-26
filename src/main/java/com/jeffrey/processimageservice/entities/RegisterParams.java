@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RegisterParams {
     private String username;
-    private String originalPassword;
-    private String ensurePassword;
+    private String password;
+    private String ensure;
     private String email;
 }

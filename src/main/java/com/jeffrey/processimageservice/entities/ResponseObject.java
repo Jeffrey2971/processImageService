@@ -1,4 +1,4 @@
-package com.jeffrey.processimageservice.entities.enums;
+package com.jeffrey.processimageservice.entities;
 
 public class ResponseObject {
 

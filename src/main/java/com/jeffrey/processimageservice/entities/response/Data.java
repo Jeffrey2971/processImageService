@@ -2,6 +2,7 @@ package com.jeffrey.processimageservice.entities.response;
 
 import lombok.AllArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
 
 @lombok.Data
 @AllArgsConstructor
-public class Data {
+public class Data implements Serializable {
     private Integer processStatus;
     private Integer processCount;
     private String processMsg;

@@ -10,7 +10,7 @@ import lombok.Data;
  */
 
 @Data
-public class RequestParamsWrapper {
+public class RequestParamsWrapper{
 
     private RequestParams requestParams;
 
@@ -18,7 +18,15 @@ public class RequestParamsWrapper {
 
     private Enum<SupportUploadImageType> supportUploadImageTypeEnum;
 
-    // 使用 byte 数组，避免该流被提前消费
+    /**
+     * 使用 byte 数组，避免该流被提前消费
+     */
     private byte[] finalImageBytes;
+
+    /**
+     * 拷贝一份原始参数对象，这样做的目的是防止原始对象二次加工后计算的缓存标识不一致
+     *
+     */
+    private RequestParams requestParamsClone;
 
 }

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FailedItem {
+public class FailedItem{
     private String name;
     private String reason;
 }
