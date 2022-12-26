@@ -6,5 +6,4 @@ package com.jeffrey.processimageservice.exception.exception;
  */
 
 
-public class QPSException extends Exception{
-}
+public class QPSException extends Exception{}

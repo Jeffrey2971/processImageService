@@ -1,4 +1,4 @@
-package com.jeffrey.processimageservice.exception.exception;
+package com.jeffrey.processimageservice.exception.exception.clitent;
 
 /**
  * @author jeffrey

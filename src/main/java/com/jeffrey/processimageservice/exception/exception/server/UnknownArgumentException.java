@@ -1,4 +1,4 @@
-package com.jeffrey.processimageservice.exception.exception;
+package com.jeffrey.processimageservice.exception.exception.server;
 
 /**
  * @author jeffrey
@@ -13,5 +13,4 @@ public class UnknownArgumentException extends RuntimeException{
     public UnknownArgumentException(String message) {
         super(message);
     }
-
 }

@@ -9,9 +9,7 @@ package com.jeffrey.processimageservice.exception.exception;
 public class ProcessImageFailedException extends RuntimeException{
 
     private static final long serialVersionUID = -7034468108675722939L;
-
     public ProcessImageFailedException(String message) {
         super(message);
     }
-
 }
