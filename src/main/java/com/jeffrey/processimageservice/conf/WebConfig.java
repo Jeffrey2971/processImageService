@@ -3,18 +3,13 @@ package com.jeffrey.processimageservice.conf;
 import com.jeffrey.processimageservice.ProcessImageServiceApplication;
 import com.jeffrey.processimageservice.interceptor.CheckRequestParams;
 import com.jeffrey.processimageservice.interceptor.SignatureVerificationInterceptor;
-import com.jeffrey.processimageservice.interceptor.UseCounterInterceptor;
-import com.jeffrey.processimageservice.interceptor.UserRegisterInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.accept.HeaderContentNegotiationStrategy;
 import org.springframework.web.accept.ParameterContentNegotiationStrategy;
-import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,20 +24,20 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class WebConfig implements WebMvcConfigurer {
 
-    private final UseCounterInterceptor useCounterInterceptor;
     private final SignatureVerificationInterceptor signatureVerificationInterceptor;
-    private final UserRegisterInterceptor userRegisterInterceptor;
 
     private final CheckRequestParams checkRequestParams;
 
 
-
     @Autowired
-    public WebConfig(UseCounterInterceptor useCounterInterceptor, SignatureVerificationInterceptor signatureVerificationInterceptor, UserRegisterInterceptor userRegisterInterceptor, CheckRequestParams checkRequestParams) {
-        this.useCounterInterceptor = useCounterInterceptor;
+    public WebConfig(SignatureVerificationInterceptor signatureVerificationInterceptor, CheckRequestParams checkRequestParams) {
         this.signatureVerificationInterceptor = signatureVerificationInterceptor;
-        this.userRegisterInterceptor = userRegisterInterceptor;
         this.checkRequestParams = checkRequestParams;
+    }
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("redirect:/access");
     }
 
     @Override
@@ -56,11 +51,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        /// registry.addInterceptor(useCounterInterceptor);
-        registry.addInterceptor(checkRequestParams).addPathPatterns("/single-upload/**").order(1);
-        registry.addInterceptor(signatureVerificationInterceptor).addPathPatterns("/single-upload/**").order(2);
-        // registry.addInterceptor(userRegisterInterceptor);
-
+        registry.addInterceptor(checkRequestParams).addPathPatterns("/access/**").order(1);
+        registry.addInterceptor(signatureVerificationInterceptor).addPathPatterns("/access/**").order(2);
     }
 
     @Override
