@@ -1,17 +1,14 @@
 package com.jeffrey.processimageservice.controller;
 
-import com.jeffrey.processimageservice.aop.CheckAccountCallableCountAOP;
-import com.jeffrey.processimageservice.entities.RequestParams;
+import com.jeffrey.processimageservice.aop.annotation.Report;
 import com.jeffrey.processimageservice.entities.RequestParamsWrapper;
 import com.jeffrey.processimageservice.entities.response.GenericResponse;
 import com.jeffrey.processimageservice.service.ProcessService;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author jeffrey
@@ -20,10 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @Slf4j
+@RequestMapping("/access")
 public class ImageApiAccessController {
 
     private final ProcessService processService;
     private final ThreadLocal<RequestParamsWrapper> requestParamsWrapperThreadLocal;
+
 
     @Autowired
     public ImageApiAccessController(ProcessService processService, ThreadLocal<RequestParamsWrapper> requestParamsWrapperThreadLocal) {
@@ -31,21 +30,18 @@ public class ImageApiAccessController {
         this.requestParamsWrapperThreadLocal = requestParamsWrapperThreadLocal;
     }
 
-    @GetMapping("/")
+    @GetMapping()
     public String jumpDemoPage() {
-        return "/upload.html";
+        return "upload.html";
     }
 
-    @PostMapping(value = "/single-upload", produces = "application/json;charset=UTF-8")
+    @PostMapping(produces = "application/json;charset=UTF-8")
     @ResponseBody
-    @CheckAccountCallableCountAOP
-    public GenericResponse processSingleFile(RequestParams requestParams, HttpServletRequest request) throws InterruptedException {
-
-        log.info("API Access");
+    @Report
+    public GenericResponse processSingleFile() {
 
         RequestParamsWrapper requestParamsWrapper = requestParamsWrapperThreadLocal.get();
 
-        return processService.taskAllocation(requestParamsWrapper, false, null);
+        return processService.taskAllocation(requestParamsWrapper, false, null, null);
     }
-
 }
