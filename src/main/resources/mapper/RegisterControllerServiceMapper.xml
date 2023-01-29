@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jeffrey.processimageservice.mapper.RegisterControllerServiceMapper">
+
+    <insert id="creationKey">
+        INSERT INTO `authorized_accounts_list` (id, public_key, private_secret)
+        VALUES (#{arg0}, #{arg1}, #{arg2})
+    </insert>
+
+    <select id="usernameIsExists" resultType="java.lang.Integer">
+        SELECT COUNT(`username`)
+        FROM `account`
+        WHERE `username` = #{username}
+    </select>
+
+    <select id="emailIsExists" resultType="java.lang.Integer">
+        SELECT COUNT(`email`)
+        FROM `account`
+        WHERE `email` = #{email}
+    </select>
+
+    <insert id="register" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `account` (`username`, `password`, `email`, `api_can_use_count`, `api_used_count`, `last_modify`)
+        VALUES (#{registerParams.username},
+                #{registerParams.password},
+                #{registerParams.email},
+                #{initAccountParams.apiCanUseCount},
+                #{initAccountParams.apiUsedCount},
+                #{creationTime});
+    </insert>
+</mapper>
