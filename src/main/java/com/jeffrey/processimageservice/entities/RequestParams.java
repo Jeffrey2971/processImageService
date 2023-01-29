@@ -1,8 +1,6 @@
 package com.jeffrey.processimageservice.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -10,16 +8,18 @@ import org.springframework.web.multipart.MultipartFile;
  * @since JDK 1.8
  */
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestParams {
+@Getter
+@Setter
+public class RequestParams implements Cloneable {
 
     // 基本参数
     private Object watermarkName;
 
     // String -> List<Point>
     private Object rectangles;
+    private Object originRectangles;
 
     // String -> List<String>
     private Object excludeKeywords;
@@ -28,9 +28,56 @@ public class RequestParams {
     private Object sync;
     private Object offset;
     private String callback;
-
-    // 文件上传
     private String imageUrl;
     private MultipartFile uploadFile;
     private String imageBase64;
+
+    // String -> Boolean
+    private Object showOnly;
+
+    private Object ocrOnly;
+
+    @Override
+    public String toString() {
+        return "RequestParams{" +
+                "watermarkName=" + watermarkName +
+                ", rectangles=" + rectangles +
+                ", originRectangles=" + originRectangles +
+                ", excludeKeywords=" + excludeKeywords +
+                ", sync=" + sync +
+                ", offset=" + offset +
+                ", callback='" + callback + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", uploadFile=" + uploadFile +
+                ", imageBase64='" + imageBase64 + '\'' +
+                ", showOnly=" + showOnly +
+                ", ocrOnly=" + ocrOnly +
+                '}';
+    }
+
+    public String signatureParamsToString() {
+        return "RequestParams{" +
+                "watermarkName=" + watermarkName +
+                ", rectangles=" + rectangles +
+                ", originRectangles=" + originRectangles +
+                ", excludeKeywords=" + excludeKeywords +
+                ", sync=" + sync +
+                ", offset=" + offset +
+                ", callback='" + callback + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", imageBase64='" + imageBase64 + '\'' +
+                ", showOnly=" + showOnly +
+                ", ocrOnly=" + ocrOnly +
+                '}';
+    }
+
+    @Override
+    public RequestParams clone() {
+        try {
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return (RequestParams) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }
