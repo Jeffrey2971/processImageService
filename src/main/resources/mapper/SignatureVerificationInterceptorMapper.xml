@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jeffrey.processimageservice.mapper.SignatureVerificationInterceptorMapper">
+
+    <select id="getPrivateSecret" resultType="com.jeffrey.processimageservice.entities.sign.EncryptedInfo">
+        SELECT id, public_key as publicKey, private_secret as privateSecret FROM `authorized_accounts_list` WHERE `public_key` = #{publicKey}
+    </select>
+
+</mapper>
