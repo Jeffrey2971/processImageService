@@ -457,7 +457,7 @@
                     return;
                 }
 
-                axios.post('http://localhost/login', {
+                axios.post('https://www.processimage.cn/login', {
                     username: this.loginData.username,
                     password: this.loginData.password,
                 }, {
@@ -468,7 +468,7 @@
                 }).then(response => {
                     console.log(response)
                     if (response.data.code === 200) {
-                        window.location.href = `http://localhost/main`;
+                        window.location.href = `https://www.processimage.cn/main`;
                     }
 
                     if (response.data.code === 403) {
@@ -498,7 +498,7 @@
                     alert('请正确输入确定密码')
                     return;
                 }
-                axios.post('http://localhost/register', {
+                axios.post('https://www.processimage.cn/register', {
                     username: this.signData.username,
                     password: this.signData.password1,
                     ensure: this.signData.password2,
@@ -513,7 +513,7 @@
                         // 处理响应数据
                         if (response.data === 'SC_REGISTER_SUCCESS') {
                             alert("注册成功");
-                            window.location.replace("http://localhost/register");
+                            window.location.replace("https://www.processimage.cn/login");
                         } else {
                             alert("注册失败")
                         }
@@ -540,7 +540,7 @@
                         return false;
                     }
 
-                    axios.get('http://localhost/register/async-check', {
+                    axios.get('https://www.processimage.cn/register/async-check', {
                         params: {
                             action: 'username',
                             value: val
@@ -603,7 +603,7 @@
                         return false;
                     }
 
-                    axios.get('http://localhost/register/async-check', {
+                    axios.get('https://www.processimage.cn/register/async-check', {
                         params: {
                             action: 'email',
                             value: val

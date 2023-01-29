@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jeffrey.processimageservice.mapper.LoginControllerServiceImplMapper">
+
+
+
+    <select id="selectAccountInfoByUsername" resultType="com.jeffrey.processimageservice.entities.sign.AccountInfo">
+        SELECT `id`, `password`, `email`, `api_can_use_count` as apiCanUseCount, `api_used_count` as apiUsedCount
+        FROM `account`
+        WHERE `username` = #{username}
+    </select>
+
+    <select id="queryAuthorizationInformationDataByUserName" resultType="com.jeffrey.processimageservice.entities.sign.EncryptedInfo">
+        select `id`, `public_key` as publicKey, `private_secret` as privateSecret
+        from authorized_accounts_list as t1
+        WHERE t1.id = (SELECT t2.id FROM `account` as t2 WHERE t2.username = #{username})
+    </select>
+</mapper>
