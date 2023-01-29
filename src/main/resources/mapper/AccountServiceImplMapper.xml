@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jeffrey.processimageservice.mapper.AccountServiceImplMapper">
+
+    <select id="getAccountInfoById" resultType="com.jeffrey.processimageservice.entities.sign.AccountInfo">
+        SELECT id, username, password, email, api_can_use_count as apiCanUseCount, api_used_count as apiUsedCount, last_modify as lastModifyTime FROM account WHERE id = #{id}
+    </select>
+
+    <update id="updateAccountInfoById">
+        UPDATE account SET `api_can_use_count` = #{apiCanUseCount}, `api_used_count` = #{apiUsedCount}, last_modify = #{lastModifyTime} WHERE `id` = #{id}
+    </update>
+
+</mapper>
