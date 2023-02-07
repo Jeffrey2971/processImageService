@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">-->
+    <!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+    <title>图片上传</title>
+    <link rel="stylesheet" th:href="@{/css/rectangleControl.css}"></link>
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+</head>
+<body>
+<div class="wrap">
+    <div class="up-btn">
+        点击上传图片
+        <input type="file" id="fileInput">
+    </div>
+
+    <div class="pic-box">
+        <img id="image">
+        <div id="selector"></div>
+    </div>
+</div>
+<script>
+    const image = $("#image")[0];
+    const selector = $("#selector")[0];
+    const body = document.body;
+    const rect = {};
+    let drag = false;
+
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    $("#fileInput").on("change", function() {
+        const file = this.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            $("#image").attr("src", e.target.result);
+        };
+        reader.readAsDataURL(file);
+    });
+
+    if (isMobile) {
+        image.addEventListener('touchstart', mouseDown, false);
+        image.addEventListener('touchend', mouseUp, false);
+    } else {
+        image.addEventListener('mousedown', mouseDown, false);
+        image.addEventListener('mouseup', mouseUp, false);
+    }
+
+    $('body').on('mouseup', function () {
+        if (drag) {
+            mouseUp();
+            body.removeEventListener('mousemove', mouseMove, false)
+        }
+    });
+
+    function mouseDown(e) {
+        e.preventDefault();
+        let pageX = isMobile ? e.touches[0].pageX : e.pageX;
+        let pageY = isMobile ? e.touches[0].pageY : e.pageY;
+        rect.startX = pageX - $(this).offset().left - 4;
+        rect.startY = pageY - $(this).offset().top - 4;
+        drag = true;
+        // alert(JSON.stringify(e));
+        // console.log(e);
+        if (isMobile) {
+            body.addEventListener('touchmove', mouseMove, false);
+        } else {
+            body.addEventListener('mousemove', mouseMove, false);
+        }
+        // body.addEventListener('mousemove', mouseMove, false);
+    }
+
+    function mouseUp() {
+        drag = false;
+        selector.style.display = 'none';
+        const x = parseInt(rect.startX);
+        const y = parseInt(rect.startY);
+        const w = parseInt(rect.w);
+        const h = parseInt(rect.h);
+        const result = [x, y, w, h]
+
+        if (confirm("是否处理框选出的区域？\n\n移动端：" + isMobile + "\n\n选中矩形坐标：" + result)) {
+            // 发送图片并上传框选坐标
+            const formData = new FormData();
+
+            var file = $('input[type="file"]')[0].files[0];
+            const url = new URL(window.location.href);
+            const openid = url.searchParams.get("openid")
+
+            formData.append('file', file);
+            formData.append('rect', result);
+            formData.append("openid", openid)
+
+            $.ajax({
+                url: 'http://gjskzd.natappfree.cc/access/demo-preview',
+                data: formData,
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response && response.httpCode != 200) {
+                        alert(JSON.stringify(response));
+                        return
+                    }
+                    if (response && response.httpCode == 200) {
+                        // alert(response.data.url)
+                        $('#image').attr('src', response.data.url)
+                    }
+
+                },
+                error: function (details) {
+                    // console.log(details)
+                },
+            })
+
+        }
+
+    }
+
+    function mouseMove(e) {
+        if (drag) {
+            selector.style.display = 'block';
+            let x = rect.startX;
+            let y = rect.startY;
+            let pageX = isMobile ? e.touches[0].pageX : e.pageX;
+            let pageY = isMobile ? e.touches[0].pageY : e.pageY;
+            let w = pageX - $(image).offset().left - rect.startX;
+            let h = pageY - $(image).offset().top - rect.startY;
+            rect.w = w;
+            rect.h = h;
+            if (w < 0) {
+                x = x + w;
+                w = Math.abs(w);
+            }
+            if (h < 0) {
+                y = y + h;
+                h = Math.abs(h);
+            }
+
+            if (x >= 0 && y >= 0 && x + w <= image.width && y + h <= image.height) {
+                selector.style.left = x + 'px';
+                selector.style.top = y + 'px';
+                selector.style.width = w + 'px';
+                selector.style.height = h + 'px';
+            }
+        }
+    }
+</script>
+</body>
+</html>
