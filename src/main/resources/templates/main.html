@@ -9,7 +9,7 @@
     <script>
         $(function () {
             $('#logout').on('click', function () {
-                $.get('https://www.processimage.cn/sessionLogOut', function (response) {
+                $.get('https://www.processimage.cn:4433/sessionLogOut', function (response) {
                     console.log(response);
                     if (response.code === 200) {
                         alert("账户已退出，点击确定/关闭返回登陆页")
@@ -28,7 +28,7 @@
 <div class="navbar-inner" style="background: #dddddd;">
     <div class="container-fluid">
         <!--        <div class="logo-manage"><img src=""></div>-->
-        <a class="brand pull-left" href="https://www.processimage.cn/login">processImage.cn</a>
+        <a class="brand pull-left" href="https://www.processimage.cn:4433/login">processImage.cn</a>
         <ul class="nav navbar-nav user_menu pull-right">
 
             <li><a th:href="@{/img/me.jpg}">联系</a></li>
