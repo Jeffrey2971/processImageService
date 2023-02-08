@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8" name="referrer" content="origin">
     <title>文件上传</title>
@@ -14,9 +14,9 @@
     }
 </style>
 <body>
-<h2 align="center">测试页，具体调用参照 API 文档</h2>
+<h2 align="center">本页为 API 接口调用测试页面，在线演示或接入文档位于底部</h2>
 
-<form th:action="@{/single-upload}" method="post" enctype="multipart/form-data">
+<form th:action="@{/access}" method="post" enctype="multipart/form-data">
     <table align="center" border="1">
 
         <tr>
@@ -27,6 +27,9 @@
 
                 <br/>
                 <span style="color: red">该参数在 API 调用时，请参照 API 文档计算出 sign 后在 Header 中指定</span>
+
+                <br>
+                <span style="color: red">公钥（publicKey）以及私钥（privateKey）请 <a th:href="@{/main}">点击此处获取</a></span>
             </th>
         </tr>
         <tr>
@@ -47,58 +50,48 @@
                 <input type="text" class="input-style" name="demo_salt">
             </td>
         </tr>
-
         <tr>
             <td>sign</td>
             <td>
                 <input type="text" class="input-style" name="demo_sign">
             </td>
         </tr>
-
-
         <tr>
             <th colspan="2">
                 <span style="color: seagreen">填写基本信息</span>
                 <br/>
-                <span style="color: red">优先级提示：矩阵变量 > 水印名称 > 排除关键字 > 默认</span>
+                <span style="color: red">优先级提示：矩形变量 > 水印名称 > 排除关键字 > 默认</span>
             </th>
         </tr>
-
         <tr>
             <td>水印名称（非必需，不提供则默认去除所有图中文字）</td>
             <td><input class="input-style" type="text" name="watermarkName"></td>
         </tr>
-
-
         <tr>
-            <td>矩阵坐标（非必需，如不提供默认为图中所有文字的矩阵）</td>
+            <td>矩形坐标（非必需，如不提供默认为图中所有文字的矩形）</td>
             <td>
                 <input class="input-style" type="text" name="rectangles">
             </td>
         </tr>
-
         <tr>
             <td>排除水印关键字（非必需，如不提供则默认去除所有）</td>
             <td>
                 <input class="input-style" type="text" name="excludeKeywords">
             </td>
         </tr>
-
         <tr>
             <td>是否异步（非必需，默认为 false 不进行异步响应）</td>
             <td><input class="input-style" type="text" name="sync"></td>
         </tr>
-
         <tr>
             <td>回调接口（同步为 true 时必须）</td>
             <td><input class="input-style" type="text" name="callback"></td>
         </tr>
         <tr>
-            <td>偏移量（非必需，如不提供则按照图中文字的矩阵值为准）</td>
+            <td>偏移量（非必需，如不提供则按照图中文字的矩形值为准）</td>
             <td><input class="input-style" type="text" name="offset"></td>
         </tr>
         <tr>
-
             <th colspan="2">
                 <span style="color: seagreen">选择文件上传方式</span>
                 <br>
@@ -130,19 +123,18 @@
             <td><input class="input-style" type="submit" value="上传"></td>
         </tr>
 
-        <input type="hidden" value="demo" name="referrer">
-
-
     </table>
 
 </form>
 <br><br>
 <div id="api" align="center">
+    <a href="#" th:href="@{/access/demo(openid=${param.openid})}"><span><b>在线演示</b></span></a>
+    <br><br>
     <a href="#" th:href="@{/ApiDocument.html}"><span><b>API Document</b></span></a>
     <br><br>
-    <a href="#" th:href="@{/SDK/Python/PythonSDK.py}"><span><b>Python SDK</b></span></a>
+    <a href="#" th:href="@{/SDK/Python/PythonSDK.html}"><span><b>Python SDK</b></span></a>
     <br><br>
-    <a href="#" th:href="@{/SDK/Java/JavaSDK.java}"><span><b>Java SDK</b></span></a>
+    <a href="#" th:href="@{/SDK/Java/java-sdk-maven.zip}"><span><b>Java SDK</b></span></a>
 </div>
 </body>
 </html>
