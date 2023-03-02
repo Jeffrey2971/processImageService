@@ -6,6 +6,16 @@
 
 <mapper namespace="com.jeffrey.processimageservice.mapper.LoginControllerServiceImplMapper">
 
+    <update id="updatePasswordByUsername">
+        UPDATE `account`
+        SET `password` = #{arg1}
+        WHERE `username` = #{arg0};
+    </update>
+    <update id="updatePasswordByMail">
+        UPDATE `account`
+        SET `password` = #{arg1}
+        WHERE `email` = #{arg0};
+    </update>
 
 
     <select id="selectAccountInfoByUsername" resultType="com.jeffrey.processimageservice.entities.sign.AccountInfo">
@@ -18,5 +28,19 @@
         select `id`, `public_key` as publicKey, `private_secret` as privateSecret
         from authorized_accounts_list as t1
         WHERE t1.id = (SELECT t2.id FROM `account` as t2 WHERE t2.username = #{username})
+    </select>
+
+    <select id="getPage" resultType="com.jeffrey.processimageservice.vo.PageInnerData">
+        SELECT `status`, `message`, `sign`, `create_time` as finishedTime, `aid` as accountId FROM `process_status` WHERE `aid` = #{aid}
+    </select>
+
+    <select id="getAllCount" resultType="java.lang.Long">
+        SELECT count(*) FROM process_status WHERE `aid` = #{aid}
+    </select>
+    <select id="selectAccountInfoByEmail"
+            resultType="com.jeffrey.processimageservice.entities.sign.AccountInfo">
+        SELECT `username`, `password`
+        FROM `account`
+        WHERE `email` = #{email};
     </select>
 </mapper>
