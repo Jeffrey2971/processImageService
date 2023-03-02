@@ -10,7 +10,7 @@ import java.util.List;
  */
 
 
-public class RegisterException extends RuntimeException{
+public class RegisterException extends ClientException{
 
     private static final long serialVersionUID = -6524468108675722939L;
 

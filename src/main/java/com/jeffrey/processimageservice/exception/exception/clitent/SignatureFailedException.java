@@ -6,7 +6,7 @@ package com.jeffrey.processimageservice.exception.exception.clitent;
  */
 
 
-public class SignatureFailedException extends RuntimeException{
+public class SignatureFailedException extends ClientException{
     private static final long serialVersionUID = -7034468108675715939L;
 
     public SignatureFailedException() {

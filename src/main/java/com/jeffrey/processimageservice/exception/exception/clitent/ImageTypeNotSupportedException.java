@@ -6,9 +6,7 @@ package com.jeffrey.processimageservice.exception.exception.clitent;
  */
 
 
-public class ImageTypeNotSupportedException extends RuntimeException{
-
-    private static final long serialVersionUID = -7034468190745722939L;
+public class ImageTypeNotSupportedException extends ClientException{
 
     public ImageTypeNotSupportedException(String message) {
         super(message);

@@ -6,12 +6,9 @@ package com.jeffrey.processimageservice.exception.exception.clitent;
  */
 
 
-public class FileTooLargeException extends RuntimeException{
-
-    private static final long serialVersionUID = -7034897190745722939L;
+public class FileTooLargeException extends ClientException{
 
     public FileTooLargeException(String message) {
         super(message);
     }
-
 }

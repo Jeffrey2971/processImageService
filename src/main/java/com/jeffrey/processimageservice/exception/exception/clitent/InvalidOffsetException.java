@@ -10,9 +10,7 @@ import java.util.ArrayList;
  */
 
 
-public class InvalidOffsetException extends RuntimeException{
-    private static final long serialVersionUID = -7986628190745722939L;
-
+public class InvalidOffsetException extends ClientException{
     public InvalidOffsetException(String message, ArrayList<Point> rectangles) {
         super(message);
     }
