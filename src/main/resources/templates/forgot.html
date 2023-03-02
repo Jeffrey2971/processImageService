@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>重置密码</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <style>
+        .captcha-input {
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-container">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">密码找回</div>
+                <div class="layui-card-body">
+                    <form class="layui-form" action="">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">邮箱</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="email" required lay-verify="required|email"
+                                       placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">验证码</label>
+                            <div class="layui-input-block">
+                                <div class="layui-inline">
+                                    <input type="text" name="captcha" required lay-verify="required|captcha"
+                                           placeholder="请输入验证码" autocomplete="off"
+                                           class="layui-input captcha-input" id="code">
+                                </div>
+                                <div class="layui-inline">
+                                    <button type="button" class="layui-btn layui-btn-normal" id="sendCaptcha">
+                                        发送验证码
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="sendEmail" id="sendMail">点击提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+<script th:src="@{/js/jsencrypt.min.js}"></script>
+<script th:src="@{/layui/layui.js}"></script>
+<script th:inline="javascript">
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+
+        var countdown = 60;
+        var timer;
+
+        const encrypt = new JSEncrypt();
+        const publicKey = [[${rsaPublicKey}]];
+        const dynamicDomain = [[${dynamicDomain}]];
+        encrypt.setPublicKey(publicKey);
+
+        // 发送验证码
+        $('#sendCaptcha').on('click', function () {
+
+            const email = $('input[name="email"]').val();
+
+            if (!email) {
+                layer.msg('请输入邮箱');
+                return false;
+            }
+
+            var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email)) {
+                layer.msg('邮件格式不正确');
+                return false;
+            }
+
+            // TODO: 发送验证码逻辑，加密参数
+
+
+            const formData = new FormData();
+            formData.append("mail", encrypt.encrypt(email));
+            $.ajax({
+                url: dynamicDomain + '/user/send',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (msg) {
+                    if (msg === 'OK') {
+                        alert('验证码已发送到您的电子邮件地址，请查收！');
+                    } else if (msg === 'MAIL_NOT_EXISTS') {
+                        alert('您输入的邮箱不存在，请修改后稍后重试')
+                    } else if (msg === 'PARAM_EMPTY') {
+                        alert('参数不能为空');
+                    } else if (msg === 'PARAM_NOT_SAFE') {
+                        alert('传输过程不安全，请刷新网页后重试')
+                    } else {
+                        alert('邮件发送失败，请稍后再试');
+                    }
+                },
+                error: function (error) {
+                    alert('邮件发送失败，请稍后再试');
+                    console.log(error)
+                },
+            });
+
+            $(this).attr('disabled', true).addClass('layui-btn-disabled');
+            timer = setInterval(function () {
+                countdown--;
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    $('#sendCaptcha').attr('disabled', false).removeClass('layui-btn-disabled').text('发送验证码');
+                    countdown = 60;
+                } else {
+                    $('#sendCaptcha').text('重新发送(' + countdown + ')');
+                }
+            }, 1000);
+        }); // 请生成一个html，用于使用邮箱找回密码的页面
+
+        // 自定义表单验证规则
+        form.verify({
+            captcha: function (value, item) {
+                if (!/^[a-zA-Z0-9]{6}$/.test(value)) {
+                    return '验证码必须是6位英文或数字';
+                }
+            },
+        });
+
+        // 提交表单
+        form.on('submit(sendEmail)', function (value, data) {
+            const sendMailBtn = $('#sendMail')
+            sendMailBtn.attr('disabled', true).addClass('layui-btn-disabled').text('处理中，请稍后');
+
+            const code = $('#code').val();
+            const email = $('input[name="email"]').val();
+
+            // TODO: 加密邮箱参数、提交表单
+            const formData = new FormData();
+            formData.append('mail', encrypt.encrypt(email));
+            formData.append('code', encrypt.encrypt(code));
+
+            // 使用了 ajax 请求就不使用后端视图跳转了，发送重置链接至目标邮箱地址
+            $.ajax({
+                url: dynamicDomain + '/user/forgot',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response === 'OK') {
+                        alert('您通过了验证，重置链接已发送至您的邮箱地址，您只需要点击邮件中的链接进行密码重置即可');
+                    } else if (response === 'VERIFICATION_FAILED') {
+                        alert('验证不通过，原因验证码不正确');
+                    } else if (response === 'SERVER_ERROR') {
+                        alert('额，服务器开小差了，请稍后再试')
+                    } else {
+                        alert('验证不通过，请稍后重试')
+                    }
+                    console.log(response)
+                },
+                error: function () {
+                    alert('网络貌似出现了问题，请稍后重试');
+                },
+            })
+            sendMailBtn.attr('disabled', false).removeClass('layui-btn-disabled').text('点击提交');
+            console.log(data)
+
+            return false;
+        });
+
+    });
+</script>
+
