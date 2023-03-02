@@ -1,5 +1,6 @@
-package com.jeffrey.processimageservice.entities;
+package com.jeffrey.processimageservice.entities.register;
 
+import com.jeffrey.processimageservice.entities.FailedItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

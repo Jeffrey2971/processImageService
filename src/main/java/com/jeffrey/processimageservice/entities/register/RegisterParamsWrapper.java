@@ -1,4 +1,4 @@
-package com.jeffrey.processimageservice.entities;
+package com.jeffrey.processimageservice.entities.register;
 
 import com.jeffrey.processimageservice.conf.InitAccountParamProperties;
 import lombok.AllArgsConstructor;

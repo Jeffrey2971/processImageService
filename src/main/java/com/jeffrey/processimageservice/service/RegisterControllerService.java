@@ -1,10 +1,9 @@
 package com.jeffrey.processimageservice.service;
 
 
-import com.jeffrey.processimageservice.entities.RegisterParams;
+import com.jeffrey.processimageservice.entities.register.RegisterParams;
 import com.jeffrey.processimageservice.entities.enums.LoginStatus;
 import com.jeffrey.processimageservice.exception.exception.clitent.RegisterException;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author jeffrey
@@ -19,9 +18,9 @@ public interface RegisterControllerService {
      */
     Enum<LoginStatus> accountIsExists(RegisterParams registerParams);
 
-    Enum<LoginStatus> usernameIsExists(String username);
+    Enum<LoginStatus> usernameCanUse(String username);
 
-    Enum<LoginStatus> emailIsExists(String email);
+    Enum<LoginStatus> emailCanUse(String email);
 
     /**
      * 查看参数是否符合预期要求，需确认前端正则规则和后端正则规则相匹配

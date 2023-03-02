@@ -1,7 +1,6 @@
 package com.jeffrey.processimageservice.mapper;
 
-import com.jeffrey.processimageservice.entities.RegisterParams;
-import com.jeffrey.processimageservice.entities.RegisterParamsWrapper;
+import com.jeffrey.processimageservice.entities.register.RegisterParamsWrapper;
 import org.springframework.stereotype.Repository;
 
 /**

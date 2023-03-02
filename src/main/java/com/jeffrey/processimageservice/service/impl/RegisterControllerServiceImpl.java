@@ -1,8 +1,8 @@
 package com.jeffrey.processimageservice.service.impl;
 
 import com.jeffrey.processimageservice.conf.InitAccountParamProperties;
-import com.jeffrey.processimageservice.entities.RegisterParams;
-import com.jeffrey.processimageservice.entities.RegisterParamsWrapper;
+import com.jeffrey.processimageservice.entities.register.RegisterParams;
+import com.jeffrey.processimageservice.entities.register.RegisterParamsWrapper;
 import com.jeffrey.processimageservice.entities.enums.LoginStatus;
 import com.jeffrey.processimageservice.exception.exception.clitent.RegisterException;
 import com.jeffrey.processimageservice.mapper.RegisterControllerServiceMapper;
@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.security.SecureRandom;
 import java.sql.Date;
@@ -87,7 +86,7 @@ public class RegisterControllerServiceImpl implements RegisterControllerService 
     }
 
     @Override
-    public Enum<LoginStatus> usernameIsExists(String username) {
+    public Enum<LoginStatus> usernameCanUse(String username) {
         Integer count = registerControllerServiceMapper.usernameIsExists(username);
         if (count == null || count <= 0) {
             return LoginStatus.OK;
@@ -96,7 +95,7 @@ public class RegisterControllerServiceImpl implements RegisterControllerService 
     }
 
     @Override
-    public Enum<LoginStatus> emailIsExists(String email) {
+    public Enum<LoginStatus> emailCanUse(String email) {
         Integer count = registerControllerServiceMapper.emailIsExists(email);
         if (count == null || count <= 0) {
             return LoginStatus.OK;
@@ -121,6 +120,7 @@ public class RegisterControllerServiceImpl implements RegisterControllerService 
         try {
             registerControllerServiceMapper.register(registerParamsWrapper);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RegisterException("账号注册异常");
         }
 
@@ -130,8 +130,8 @@ public class RegisterControllerServiceImpl implements RegisterControllerService 
     @Override
     public void creationKey(int aid) {
 
-        String creationPublicKey = generateRandomString(32, DATA_FOR_RANDOM_PUBLIC_KEY);
-        String creationPrivateKey = generateRandomString(128, DATA_FOR_RANDOM_PRIVATE_KEY);
+        String creationPublicKey = generateRandomString(16, DATA_FOR_RANDOM_PUBLIC_KEY);
+        String creationPrivateKey = generateRandomString(32, DATA_FOR_RANDOM_PRIVATE_KEY);
 
         registerControllerServiceMapper.creationKey(aid, creationPublicKey, creationPrivateKey);
 
