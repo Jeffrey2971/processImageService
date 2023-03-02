@@ -29,31 +29,25 @@
                 <span style="color: red">该参数在 API 调用时，请参照 API 文档计算出 sign 后在 Header 中指定</span>
 
                 <br>
-                <span style="color: red">公钥（publicKey）以及私钥（privateKey）请 <a th:href="@{/main}">点击此处获取</a></span>
+                <span style="color: red">公钥（publicKey）以及私钥（privateKey）请 <a th:href="@{/user/main}">点击此处获取</a></span>
             </th>
-        </tr>
-        <tr>
-            <td>imageMd5(originImageData -> byte[] -> md5(byte[]))</td>
-            <td>
-                <input type="text" class="input-style" name="demo_image_md5">
-            </td>
         </tr>
         <tr>
             <td>publicKey</td>
             <td>
-                <input type="text" class="input-style" name="demo_public_key">
+                <input type="text" class="input-style" name="publicKey">
             </td>
         </tr>
         <tr>
             <td>salt</td>
             <td>
-                <input type="text" class="input-style" name="demo_salt">
+                <input type="text" class="input-style" name="salt">
             </td>
         </tr>
         <tr>
             <td>sign</td>
             <td>
-                <input type="text" class="input-style" name="demo_sign">
+                <input type="text" class="input-style" name="sign">
             </td>
         </tr>
         <tr>
@@ -97,7 +91,7 @@
                 <br>
                 <span style="color: red">优先级提示：File > URL > Base64</span>
                 <br>
-                <span style="color: red">使用 Base64 方式上传不建议原图片大小超过 512 k</span>
+                <span style="color: red">当前测试页中，不建议使用超过 512 kb 的 Base64 编码，避免页面卡顿</span>
 
             </th>
         </tr>
