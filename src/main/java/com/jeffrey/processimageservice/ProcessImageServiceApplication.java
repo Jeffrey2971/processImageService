@@ -8,7 +8,8 @@ import org.springframework.boot.system.ApplicationHome;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.scheduling.annotation.EnableScheduling;
+//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import java.io.File;
 import java.util.Objects;
@@ -17,9 +18,10 @@ import java.util.Objects;
  * @author jeffrey
  */
 @SpringBootApplication
-@EnableWebSecurity
+//@EnableWebSecurity
 @EnableAsync
 @EnableCaching
+@EnableScheduling
 @Slf4j
 @EnableAspectJAutoProxy(exposeProxy = true)
 @MapperScan("com.jeffrey.processimageservice.mapper")
@@ -29,6 +31,22 @@ public class ProcessImageServiceApplication {
     private static String appPath;
     private static File originImagePath;
     private static File targetImage;
+
+//    static {
+//        // 在启动时启用 Java 远程调试
+//        System.setProperty("java.awt.headless", "false");
+//        System.setProperty("java.rmi.server.hostname", "localhost");
+//        System.setProperty("com.sun.management.jmxremote", "");
+//        System.setProperty("com.sun.management.jmxremote.port", "9000");
+//        System.setProperty("com.sun.management.jmxremote.ssl", "false");
+//        System.setProperty("com.sun.management.jmxremote.authenticate", "false");
+//        System.setProperty("com.sun.management.jmxremote.local.only", "false");
+//        System.setProperty("com.sun.management.jmxremote.rmi.port", "9000");
+//        System.setProperty("com.sun.management.jmxremote.host", "localhost");
+//        System.setProperty("java.net.preferIPv4Stack", "true");
+//        System.setProperty("java.rmi.server.useLocalHostname", "true");
+//        System.setProperty("java.rmi.server.codebase", ProcessImageServiceApplication.class.getProtectionDomain().getCodeSource().getLocation().toString());
+//    }
 
     public static void main(String[] args) {
 
