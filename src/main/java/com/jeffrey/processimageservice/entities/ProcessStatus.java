@@ -17,6 +17,7 @@ public class ProcessStatus {
     private Integer id;
     private Enum<ProcessStatusEnum> status;
     private String message;
+    private String sign;
     private String createTime;
     private Integer aid;
 }

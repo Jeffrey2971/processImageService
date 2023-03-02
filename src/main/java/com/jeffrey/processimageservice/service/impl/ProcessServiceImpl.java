@@ -1,24 +1,29 @@
 package com.jeffrey.processimageservice.service.impl;
 
 import com.jeffrey.processimageservice.ProcessImageServiceApplication;
-import com.jeffrey.processimageservice.aop.annotation.CacheProcessedResponse;
-import com.jeffrey.processimageservice.aop.annotation.UpdateAccountUsed;
+import com.jeffrey.processimageservice.aop.annotation.api.CacheProcessedResponse;
+import com.jeffrey.processimageservice.aop.annotation.api.UpdateAccountUsed;
 import com.jeffrey.processimageservice.entities.*;
 import com.jeffrey.processimageservice.entities.enums.ResponseStatus;
+import com.jeffrey.processimageservice.entities.enums.SupportUploadImageType;
 import com.jeffrey.processimageservice.entities.response.Data;
 import com.jeffrey.processimageservice.entities.response.GenericResponse;
 import com.jeffrey.processimageservice.entities.response.Point;
 import com.jeffrey.processimageservice.entities.sign.EncryptedInfo;
 import com.jeffrey.processimageservice.entities.translate.TranslationData;
+import com.jeffrey.processimageservice.exception.exception.ArgumentsOverwriteException;
 import com.jeffrey.processimageservice.exception.exception.ProcessImageFailedException;
-
+import com.jeffrey.processimageservice.exception.exception.clitent.ImageTypeNotSupportedException;
 import com.jeffrey.processimageservice.service.ProcessService;
 import com.jeffrey.processimageservice.service.TranslateService;
+
+import com.jeffrey.processimageservice.utils.FileUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -38,14 +43,16 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
     private final LinkedBlockingQueue<AsyncPendingTasksItem> asyncPendingTasksItemLinkedBlockingQueue;
     private final ThreadLocal<EncryptedInfo> encryptedInfoThreadLocal;
     private final TranslateService translateService;
+    private final TreeMap<Long, File> cacheTaskMap;
     private static long prev;
     private final Info info;
 
     @Autowired
-    public ProcessServiceImpl(LinkedBlockingQueue<AsyncPendingTasksItem> asyncPendingTasksItemLinkedBlockingQueue, ThreadLocal<EncryptedInfo> encryptedInfoThreadLocal, TranslateService translateService, Info info) {
+    public ProcessServiceImpl(LinkedBlockingQueue<AsyncPendingTasksItem> asyncPendingTasksItemLinkedBlockingQueue, ThreadLocal<EncryptedInfo> encryptedInfoThreadLocal, TranslateService translateService, TreeMap<Long, File> cacheTaskMap, Info info) {
         this.asyncPendingTasksItemLinkedBlockingQueue = asyncPendingTasksItemLinkedBlockingQueue;
         this.encryptedInfoThreadLocal = encryptedInfoThreadLocal;
         this.translateService = translateService;
+        this.cacheTaskMap = cacheTaskMap;
         this.info = info;
     }
 
@@ -70,6 +77,7 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
 
             if (!asyncPendingTasksItemLinkedBlockingQueue.contains(asyncPendingTasksItem)) {
                 asyncPendingTasksItemLinkedBlockingQueue.put(asyncPendingTasksItem);
+                log.info("添加异步任务，当前长度：{}", asyncPendingTasksItemLinkedBlockingQueue.size());
             }
 
             return new GenericResponse(
@@ -102,12 +110,11 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
 
         this.ensureParams(wrapper);
 
-        int processStatus = 0;
+        int processStatus;
 
         RequestParams requestParams = wrapper.getRequestParams();
 
         Object ocrRectangles = requestParams.getRectangles();
-
 
         ArrayList<Point> rectangles = (ArrayList<Point>) ocrRectangles;
 
@@ -151,7 +158,7 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
             return new Data(ResponseStatus.SC_PROCESS_FAILED.getValue(), 0, "FAILED::服务端异常", null, null);
         }
 
-        return new Data(processStatus, rectangles.size(), "SUCCESS::调用成功", rectangles, info.getServerDomain() + "/targetImages/" + targetImage.getName());
+        return new Data(processStatus, rectangles.size(), "SUCCESS::处理成功", rectangles, info.getServerDomain() + "/targetImages/" + targetImage.getName());
     }
 
     @SuppressWarnings("unchecked")
@@ -161,8 +168,8 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
 
         // -------------------------- Process Rectangles Param -------------------------- //
 
-        if (metaData.getRectangles() instanceof String || metaData.getRectangles() == null) {
-            // 如果指定了这个参数这里应该为 List 而不是 String
+        if (metaData.getRectangles() == null || !(metaData.getRectangles() instanceof List)) {
+            // 为 List 表示指定了 rectangles，为 String 或 null 则未制定
 
             byte[] finalImageBytes = wrapper.getFinalImageBytes();
 
@@ -170,6 +177,7 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
 
             TranslationData imageData = translateService.getData(finalImageInputStream);
 
+            // 要去除的水印坐标
             ArrayList<Point> points = new ArrayList<>();
 
             if (imageData.getData() != null) {
@@ -182,13 +190,36 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
 
                     // ---------------- 在这里判断是否排除或指定水印 ---------------- //
 
+                    // 排除给定的，去除其它的
+                    Object excludeKeywords = metaData.getExcludeKeywords();
 
+                    // 去除给定的，放行其它的
+                    Object markName = metaData.getWatermarkName();
+
+                    if (markName instanceof List) {
+                        ArrayList<String> markNameList = (ArrayList<String>) markName;
+                        if (markNameList.size() > 0) {
+
+                            // 如果当前处理的矩形区域中的文字和给定需要去除的水印名称相等则继续放入 points 集合中，否则跳过本次矩形处理
+                            if (!markNameList.contains(src.replace(" ", ""))) {
+                                log.info("放行：{}", src);
+                                continue;
+                            }
+                        }
+                    } else if (excludeKeywords instanceof List) {
+                        ArrayList<String> excludeKeywordList = (ArrayList<String>) excludeKeywords;
+                        if (excludeKeywordList.size() > 0) {
+                            if (excludeKeywordList.contains(src.replace(" ", ""))) {
+                                log.info("排除：{}", src);
+                                continue;
+                            }
+                        }
+                    }
 
                     // --------------------------------------------------------- //
 
                     String[] rect = segmentedData.getRect().split(" ");
-
-                    Point point = new Point(Integer.parseInt(
+                    points.add(new Point(Integer.parseInt(
 
                             rect[0]),
                             Integer.parseInt(rect[1]),
@@ -196,9 +227,7 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
                             Integer.parseInt(rect[3]),
                             segmentedData.getLineCount(),
                             src
-                    );
-
-                    points.add(point);
+                    ));
                 }
             }
             metaData.setRectangles(points);
@@ -223,28 +252,27 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
 
                 deepCopy.add(new Point(rectangle.getX(), rectangle.getY(), rectangle.getW(), rectangle.getH(), null, null));
 
-                rectangle.setX(keys.get(0).startsWith("+") ? rectangle.getX() + offsetMaps.get(keys.get(0)) : rectangle.getX() - offsetMaps.get(keys.get(0)));
+                rectangle.setX(keys.get(0).startsWith("+") ?
+                        rectangle.getX() + offsetMaps.get(keys.get(0)) :
+                        rectangle.getX() - offsetMaps.get(keys.get(0)));
 
-                rectangle.setY(keys.get(1).startsWith("-") ? rectangle.getY() - offsetMaps.get(keys.get(1)) : rectangle.getY() + offsetMaps.get(keys.get(1)));
+                rectangle.setY(keys.get(1).startsWith("-") ?
+                        rectangle.getY() - offsetMaps.get(keys.get(1)) :
+                        rectangle.getY() + offsetMaps.get(keys.get(1)));
 
-                rectangle.setW(keys.get(2).startsWith("+") ? rectangle.getW() + offsetMaps.get(keys.get(2)) : rectangle.getW() - offsetMaps.get(keys.get(2)));
+                rectangle.setW(keys.get(2).startsWith("+") ?
+                        rectangle.getW() + offsetMaps.get(keys.get(2)) :
+                        rectangle.getW() - offsetMaps.get(keys.get(2)));
 
-                rectangle.setH(keys.get(3).startsWith("-") ? rectangle.getH() - offsetMaps.get(keys.get(3)) : rectangle.getH() + offsetMaps.get(keys.get(3)));
+                rectangle.setH(keys.get(3).startsWith("-") ?
+                        rectangle.getH() - offsetMaps.get(keys.get(3)) :
+                        rectangle.getH() + offsetMaps.get(keys.get(3)));
 
             }
             metaData.setOriginRectangles(deepCopy);
         }
 
         wrapper.setRequestParams(metaData);
-    }
-
-    private synchronized long getDiffTimeStamp() {
-        long l = System.currentTimeMillis();
-        while (l == prev) {
-            l = System.currentTimeMillis();
-        }
-        prev = l;
-        return l;
     }
 
     private int process(File originImage, ArrayList<Point> rectangles, File targetImage, Object showOnly) {
@@ -264,9 +292,9 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
 
             command.append(((Boolean) showOnly) ? ":show=1" : ":show=0");
 
-            if (index != rectangles.size()) command.append(",");
-
-
+            if (index != rectangles.size()) {
+                command.append(",");
+            }
         }
 
         command.append(" \" ").append(targetImage);
@@ -304,9 +332,76 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
             // throw new ProcessImageFailedException("图片处理异常，本次请求不扣除使用次数");
             return ResponseStatus.SC_PROCESS_FAILED.getValue();
         } finally {
-
+            long expireTime = System.currentTimeMillis() + info.getCacheConfig().getTimeUnit().toMillis(info.getCacheConfig().getExpire());
+            cacheTaskMap.put(expireTime, targetImage);
         }
 
-        return 0;
+        return ResponseStatus.SC_PROCESS_SUCCESS.getValue();
+    }
+
+    @Override
+    public GenericResponse simpleDemoProcess(MultipartFile file, LinkedList<String> rect) {
+
+        try {
+
+            int x = Integer.parseInt(rect.get(0));
+            int y = Integer.parseInt(rect.get(1));
+            int w = Integer.parseInt(rect.get(2));
+            int h = Integer.parseInt(rect.get(3));
+
+            ArrayList<Point> points = new ArrayList<>(Collections.singletonList(new Point(x, y, w, h, null, null)));
+
+            byte[] bytes = FileCopyUtils.copyToByteArray(file.getInputStream());
+            SupportUploadImageType supportUploadImageType = FileUtil.getSupportUploadImageType(bytes);
+
+            if (supportUploadImageType == null) {
+                throw new ImageTypeNotSupportedException("上传文件类型不受支持");
+            }
+
+            String enumTypeName = supportUploadImageType.name();
+            String imageType = "IMAGE_PNG".equals(enumTypeName) ? ".png" : "IMAGE_BMP".equals(enumTypeName) ? ".bmp" : enumTypeName.equals("IMAGE_JPEG") ? ".jpeg" : null;
+
+            File originPath = new File(ProcessImageServiceApplication.getOriginImagePath(), getDiffTimeStamp() + imageType);
+            File targetPath = new File(ProcessImageServiceApplication.getTargetImage(), getDiffTimeStamp() + imageType);
+
+            FileCopyUtils.copy(bytes, originPath);
+
+            int statusCode = this.process(originPath, points, targetPath, true);
+
+            if (ResponseStatus.SC_PROCESS_SUCCESS.getValue() == statusCode) {
+
+                return new GenericResponse(
+                        ResponseStatus.SC_OK.getValue(),
+                        "SUCCESS::调用成功",
+                        "json",
+                        null,
+                        null,
+                        null,
+                        null,
+                        new Data(
+                                ResponseStatus.SC_PROCESS_SUCCESS.getValue(),
+                                null,
+                                "SUCCESS::处理成功",
+                                points,
+                                info.getServerDomain() + "/targetImages/" + targetPath.getName()),
+                        null
+                );
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (NumberFormatException e) {
+            throw new ArgumentsOverwriteException("提供的坐标不是一个有效的 Integer 类型");
+        }
+
+        return null;
+    }
+
+    private synchronized long getDiffTimeStamp() {
+        long l = System.currentTimeMillis();
+        while (l == prev) {
+            l = System.currentTimeMillis();
+        }
+        prev = l;
+        return l;
     }
 }

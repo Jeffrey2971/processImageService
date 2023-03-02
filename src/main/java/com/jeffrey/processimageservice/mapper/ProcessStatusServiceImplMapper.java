@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProcessStatusServiceImplMapper {
     void save(ProcessStatus processStatus);
+
+    Integer selectIdByUserOpenId(String openid);
 }

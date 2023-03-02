@@ -11,4 +11,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ProcessStatusService {
     void save(ProcessStatus processStatus);
+
+    Integer selectIdByUserOpenId(String openid);
 }

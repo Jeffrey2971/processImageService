@@ -23,4 +23,13 @@ public class ProcessStatusServiceImpl implements ProcessStatusService {
     public void save(ProcessStatus processStatus) {
         processStatusServiceImplMapper.save(processStatus);
     }
+
+    @Override
+    public Integer selectIdByUserOpenId(String openid) {
+        Integer id = processStatusServiceImplMapper.selectIdByUserOpenId(openid);
+        if (id == null || id == 0) {
+            return 0;
+        }
+        return id;
+    }
 }

@@ -7,9 +7,12 @@
 <mapper namespace="com.jeffrey.processimageservice.mapper.ProcessStatusServiceImplMapper">
 
     <insert id="save">
-        INSERT INTO `process_status` (status, message, create_time, aid)
-        VALUES (#{status}, #{message}, #{createTime}, #{aid});
-
+        INSERT INTO `process_status` (status, message, sign, create_time, aid)
+        VALUES (#{status}, #{message}, #{sign}, #{createTime}, #{aid});
     </insert>
+
+    <select id="selectIdByUserOpenId" resultType="java.lang.Integer">
+        SELECT `id` FROM `public_account` WHERE `openid` = #{openid}
+    </select>
 
 </mapper>
