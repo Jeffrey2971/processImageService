@@ -1,9 +1,16 @@
 package com.jeffrey.processimageservice.controller;
 
-import com.jeffrey.processimageservice.aop.annotation.Report;
+import com.jeffrey.processimageservice.aop.annotation.demo.CacheAspect;
+import com.jeffrey.processimageservice.aop.annotation.demo.InitPublicAccountUserAspect;
+import com.jeffrey.processimageservice.aop.annotation.demo.UpdatePublicAccountUserData;
+import com.jeffrey.processimageservice.aop.annotation.generic.Report;
+import com.jeffrey.processimageservice.entities.DemoRequestParams;
 import com.jeffrey.processimageservice.entities.RequestParamsWrapper;
 import com.jeffrey.processimageservice.entities.response.GenericResponse;
+import com.jeffrey.processimageservice.exception.exception.clitent.AccountException;
 import com.jeffrey.processimageservice.service.ProcessService;
+import com.jeffrey.processimageservice.service.PublicAccountService;
+import com.jeffrey.processimageservice.strategy.StrategyFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,19 +21,20 @@ import org.springframework.web.bind.annotation.*;
  * @author jeffrey
  * @since JDK 1.8
  */
-
-@Controller
 @Slf4j
+@Controller
 @RequestMapping("/access")
 public class ImageApiAccessController {
 
     private final ProcessService processService;
+    private final PublicAccountService publicAccountService;
     private final ThreadLocal<RequestParamsWrapper> requestParamsWrapperThreadLocal;
 
 
     @Autowired
-    public ImageApiAccessController(ProcessService processService, ThreadLocal<RequestParamsWrapper> requestParamsWrapperThreadLocal) {
+    public ImageApiAccessController(ProcessService processService, PublicAccountService publicAccountService, ThreadLocal<RequestParamsWrapper> requestParamsWrapperThreadLocal) {
         this.processService = processService;
+        this.publicAccountService = publicAccountService;
         this.requestParamsWrapperThreadLocal = requestParamsWrapperThreadLocal;
     }
 
@@ -35,10 +43,34 @@ public class ImageApiAccessController {
         return "upload.html";
     }
 
+    @GetMapping("/demo")
+    public String jumpRectanglePage() {
+        return "rectangle.html";
+    }
+
+    @PostMapping(value = "/demo-preview", produces = "application/json;charset=UTF-8")
+    @InitPublicAccountUserAspect
+    @UpdatePublicAccountUserData
+    @CacheAspect
+    @ResponseBody
+    @Report
+    public GenericResponse processPublicAccountPreviewFile(DemoRequestParams demoRequestParams) {
+
+        if (!StrategyFactory.publicAccountExperienceAccessParamsIsOk(demoRequestParams)) {
+            throw new AccountException("非法参数");
+        }
+
+        if (!publicAccountService.isPublicAccountUser(demoRequestParams.getOpenid())) {
+            throw new AccountException("请先关注公众号");
+        }
+
+        return processService.simpleDemoProcess(demoRequestParams.getFile(), demoRequestParams.getRect());
+    }
+
     @PostMapping(produces = "application/json;charset=UTF-8")
     @ResponseBody
     @Report
-    public GenericResponse processSingleFile() {
+    public GenericResponse processApiSingleFile() {
 
         RequestParamsWrapper requestParamsWrapper = requestParamsWrapperThreadLocal.get();
 
