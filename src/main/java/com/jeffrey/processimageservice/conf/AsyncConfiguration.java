@@ -28,9 +28,7 @@ public class AsyncConfiguration implements AsyncConfigurer {
 
     @Override
     public Executor getAsyncExecutor() {
-
         return myTaskExecutor;
-
     }
 
     @Override

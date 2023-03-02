@@ -22,6 +22,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 ////                .csrf().csrfTokenRepository(csrfTokenRepository());
 //    }
 
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests().anyRequest().permitAll()
