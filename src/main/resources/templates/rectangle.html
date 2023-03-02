@@ -20,7 +20,10 @@
         <div id="selector"></div>
     </div>
 </div>
-<script>
+<script th:inline="javascript">
+
+    const dynamicDomain = [[${dynamicDomain}]]
+
     const image = $("#image")[0];
     const selector = $("#selector")[0];
     const body = document.body;
@@ -85,14 +88,14 @@
 
             var file = $('input[type="file"]')[0].files[0];
             const url = new URL(window.location.href);
-            const openid = url.searchParams.get("openid")
+            const openid = url.searchParams.get("openid");
 
             formData.append('file', file);
             formData.append('rect', result);
             formData.append("openid", openid)
 
             $.ajax({
-                url: 'https://www.processimage.cn:4433/access/demo-preview',
+                url: dynamicDomain + '/access/demo-preview',
                 data: formData,
                 type: 'POST',
                 processData: false,
