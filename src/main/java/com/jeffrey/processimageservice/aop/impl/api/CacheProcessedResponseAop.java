@@ -1,4 +1,4 @@
-package com.jeffrey.processimageservice.aop.impl;
+package com.jeffrey.processimageservice.aop.impl.api;
 
 import com.google.gson.Gson;
 import com.jeffrey.processimageservice.entities.RequestParams;
@@ -38,7 +38,7 @@ public class CacheProcessedResponseAop {
         this.redisTemplate = redisTemplate;
     }
 
-    @Pointcut("@annotation(com.jeffrey.processimageservice.aop.annotation.CacheProcessedResponse)")
+    @Pointcut("@annotation(com.jeffrey.processimageservice.aop.annotation.api.CacheProcessedResponse)")
     private void cacheProcessedResponseAop() {
     }
 
@@ -51,6 +51,7 @@ public class CacheProcessedResponseAop {
 
         EncryptedInfo encryptedInfo;
         RequestParamsWrapper requestParamsWrapper;
+        Boolean hasKey;
 
         // 因回调线程导致 requestParamsWrapper 和 encryptedInfo 失效，确保这两个参数可用
         if (isAsyncTask instanceof Boolean && isAsyncTask.equals(true)) {
@@ -71,7 +72,8 @@ public class CacheProcessedResponseAop {
         String imageUniqueIdentification = encryptedInfo.getImageUniqueIdentification();
         String imageId = DigestUtils.md5Hex(signatureParamsToString + imageUniqueIdentification);
 
-        if (redisTemplate.hasKey(imageId)) {
+        hasKey = redisTemplate.hasKey(imageId);
+        if (hasKey != null && hasKey) {
 
             ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
 
@@ -94,7 +96,8 @@ public class CacheProcessedResponseAop {
             RequestParams originRequestParams = requestParamsWrapper.getRequestParamsClone();
             if (originRequestParams != null) {
                 if (genericResponse.getData().getProcessStatus() != ResponseStatus.SC_PROCESS_ASYNC_REQUEST.getValue()) {
-                    if (!redisTemplate.hasKey(imageId)) {
+                    hasKey = redisTemplate.hasKey(imageId);
+                    if (hasKey != null && !hasKey) {
                         ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
                         opsForValue.set(imageId, new Gson().toJson(genericResponse));
                         redisTemplate.expire(imageId, 5, TimeUnit.HOURS);
