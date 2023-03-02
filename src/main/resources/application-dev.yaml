@@ -1,0 +1,138 @@
+logging:
+  level:
+    root: DEBUG
+server:
+  port: 80
+  servlet:
+    encoding:
+      force-response: true
+
+sa-token:
+  is-print: off
+
+mail-conf:
+  host: smtp.office365.com
+  port: 587
+  dual-authentication-username: mail@outlook.com
+  dual-authentication-password: password
+  from: mail@xxx.com
+  cc:
+    # - 664490254@qq.com
+  mail-smtp-starttls-enable: true
+  mail-smtp-starttls-required: true
+
+spring:
+  admin:
+    client:
+      url: http://localhost:8100
+      instance:
+        service-url: http://localhost:80
+
+  application:
+    name: process-image
+  jackson:
+    default-property-inclusion: non_null
+    locale: zh_CN
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    timeout: 8s
+    database: 1
+    lettuce:
+      pool:
+        max-active: 10
+        max-idle: 10
+        min-idle: 10
+        max-wait: 8s
+  cache:
+    type: redis
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://127.0.0.1:3306/process_image_watermark?characterEncoding=UTF-8
+    username: root
+    password: aa123123
+
+    druid:
+      stat-view-servlet:
+        enabled: true
+        # 允许清空统计数据
+        reset-enable: true
+        # 为 Druid 监控配置访问权限(配置访问监控信息的用户与密码)
+        login-username: jeffrey
+        login-password: jeffrey0203
+        allow:
+      web-stat-filter:
+        enabled: true
+        urlPattern: /*
+        exclusions: '*.js, *.gif, *.png, *.jpg, *.css, *.ico, /druid/*'
+      filters:
+        stat, wall
+      filter:
+        stat:
+          slow-sql-millis: 2000
+          log-slow-sql: true
+          enabled: true
+        wall:
+          enabled: true
+          config:
+            drop-table-allow: false
+      aop-patterns: com.jeffrey.processimageservice
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+mybatis:
+  # type-aliases-package: com.jeffrey.processimageservice.dao
+  mapper-locations: classpath:mapper/*.xml
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+info:
+  server-domain: http://localhost
+  get-user-info-url: https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN
+  secret-key-location: # 用户调用内部服务安全密钥，用于获取公众号 token
+  get-public-account-token-url: https://www.processimage.cn/security/inner/api/getToken?secretKey=
+  rsa-public-key: 公钥
+  rsa-private-key: 私钥
+  cache-config:
+    time-unit: HOURS
+    expire: 5
+
+account:
+  api-can-use-count: 100
+  api-used-count: 0
+
+
+translate:
+  api: https://fanyi-api.baidu.com/api/trans/sdk/picture
+  app-id: api id
+  app-key: api key
+  version: 3
+  mac: mac
+  cuid: APICUID
+  paste: 0
+  from: zh
+  to: zh
+
+pool:
+  core-pool-size: 8
+  max-pool-size: 32
+  queue-capacity: 2000
+  keep-alive-seconds: 300
+  threadNamePrefix: jeffrey-async-task ->
+  wait-for-tasks-to-complete-on-shutdown: true
+  await-termination-seconds: 30
