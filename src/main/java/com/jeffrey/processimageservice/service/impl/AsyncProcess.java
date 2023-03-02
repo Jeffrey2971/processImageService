@@ -32,15 +32,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class AsyncProcess implements ApplicationRunner {
     private final ProcessService processService;
     private final Info info;
-    private final LinkedBlockingQueue<AsyncPendingTasksItem> linkedBlockingQueue;
-
+    private final LinkedBlockingQueue<AsyncPendingTasksItem> asyncPendingTasksItemLinkedBlockingQueue;
     private final ThreadPoolTaskExecutor myTaskExecutor;
 
     @Autowired
-    public AsyncProcess(ProcessService processService, Info info, LinkedBlockingQueue<AsyncPendingTasksItem> linkedBlockingQueue, ThreadPoolTaskExecutor myTaskExecutor) {
+    public AsyncProcess(ProcessService processService, Info info, LinkedBlockingQueue<AsyncPendingTasksItem> asyncPendingTasksItemLinkedBlockingQueue, ThreadPoolTaskExecutor myTaskExecutor) {
         this.processService = processService;
         this.info = info;
-        this.linkedBlockingQueue = linkedBlockingQueue;
+        this.asyncPendingTasksItemLinkedBlockingQueue = asyncPendingTasksItemLinkedBlockingQueue;
+
         this.myTaskExecutor = myTaskExecutor;
     }
 
@@ -61,8 +61,8 @@ public class AsyncProcess implements ApplicationRunner {
 
             try {
 
-                log.info("等待解除队列阻塞");
-                AsyncPendingTasksItem asyncPendingTasksItem = linkedBlockingQueue.take();
+                log.info("sync queue size：{}", asyncPendingTasksItemLinkedBlockingQueue.size());
+                AsyncPendingTasksItem asyncPendingTasksItem = asyncPendingTasksItemLinkedBlockingQueue.take();
 
                 myTaskExecutor.execute(new Runnable() {
 
