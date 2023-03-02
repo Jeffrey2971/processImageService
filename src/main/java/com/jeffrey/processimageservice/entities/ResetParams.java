@@ -10,11 +10,10 @@ import lombok.NoArgsConstructor;
  */
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class RegisterParams {
-    private String username;
-    private String password;
-    private String ensure;
-    private String email;
+@NoArgsConstructor
+public class ResetParams {
+    private String newPassword;
+    private String currentPassword;
+    private String uniqueToken;
 }
