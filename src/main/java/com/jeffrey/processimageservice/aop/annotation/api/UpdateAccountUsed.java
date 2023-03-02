@@ -1,4 +1,4 @@
-package com.jeffrey.processimageservice.aop.annotation;
+package com.jeffrey.processimageservice.aop.annotation.api;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

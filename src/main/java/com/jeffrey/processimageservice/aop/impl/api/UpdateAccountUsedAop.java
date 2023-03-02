@@ -1,9 +1,10 @@
-package com.jeffrey.processimageservice.aop.impl;
+package com.jeffrey.processimageservice.aop.impl.api;
 
 import com.jeffrey.processimageservice.entities.enums.AccountStatus;
 import com.jeffrey.processimageservice.entities.enums.ResponseStatus;
 import com.jeffrey.processimageservice.entities.sign.EncryptedInfo;
 import com.jeffrey.processimageservice.service.AccountService;
+import com.jeffrey.processimageservice.strategy.StrategyFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -61,7 +62,7 @@ public class UpdateAccountUsedAop {
         this.encryptedInfoThreadLocal = encryptedInfoThreadLocal;
     }
 
-    @Pointcut("@annotation(com.jeffrey.processimageservice.aop.annotation.UpdateAccountUsed)")
+    @Pointcut("@annotation(com.jeffrey.processimageservice.aop.annotation.api.UpdateAccountUsed)")
     private void updateAccountUsedAopCut() {
     }
 
@@ -83,19 +84,7 @@ public class UpdateAccountUsedAop {
             // 在调用连接点方法之前不修改账户信息
             GenericResponse genericResponse = (GenericResponse) pjp.proceed();
 
-            // 代优化语句
-            boolean shouldNotModifyCounts =
-
-                    // 是缓存不扣除
-                    genericResponse.getHttpCode() == ResponseStatus.SC_NOT_MODIFIED.getValue()
-                            ||
-                            // data 处理对象状态码不为 0 不扣除
-                            genericResponse.getData().getProcessStatus() != ResponseStatus.SC_PROCESS_SUCCESS.getValue()
-                                    &&
-                                    // 非缓存请求且成功处理了但结果为 52002 则依然应该正常扣除后进行缓存
-                                    !(genericResponse.getHttpCode() == ResponseStatus.SC_OK.getValue()
-                                            //
-                                            && genericResponse.getData().getProcessStatus() == ResponseStatus.SC_PROCESS_WHITE_IMAGE.getValue());
+            boolean shouldNotModifyCounts = StrategyFactory.shouldNotModifyCounts(genericResponse);
 
             accountInfo.setApiCanUseCount(shouldNotModifyCounts ? accountInfo.getApiCanUseCount() : accountInfo.getApiCanUseCount() - 1);
             accountInfo.setApiUsedCount(shouldNotModifyCounts ? accountInfo.getApiUsedCount() : accountInfo.getApiUsedCount() + 1);
