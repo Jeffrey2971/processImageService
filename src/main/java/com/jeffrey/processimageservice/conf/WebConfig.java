@@ -1,18 +1,22 @@
 package com.jeffrey.processimageservice.conf;
 
 import com.jeffrey.processimageservice.ProcessImageServiceApplication;
-import com.jeffrey.processimageservice.interceptor.CheckRequestParams;
-import com.jeffrey.processimageservice.interceptor.SignatureVerificationInterceptor;
+import com.jeffrey.processimageservice.filter.RequestFilter;
+import com.jeffrey.processimageservice.interceptor.*;
+import com.jeffrey.processimageservice.resolver.DecryptHandlerMethodArgumentResolver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.accept.HeaderContentNegotiationStrategy;
 import org.springframework.web.accept.ParameterContentNegotiationStrategy;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -25,14 +29,23 @@ import java.util.concurrent.TimeUnit;
 public class WebConfig implements WebMvcConfigurer {
 
     private final SignatureVerificationInterceptor signatureVerificationInterceptor;
+    private final DecryptHandlerMethodArgumentResolver decryptHandlerMethodArgumentResolver;
 
-    private final CheckRequestParams checkRequestParams;
+    private final CheckRequestParamsInterceptor checkRequestParamsInterceptor;
 
+    private final UserRegisterInterceptor userRegisterInterceptor;
+
+    private final ResponseDynamicDomainInterceptor responseDynamicDomainInterceptor;
+    private final LoginInterceptor loginInterceptor;
 
     @Autowired
-    public WebConfig(SignatureVerificationInterceptor signatureVerificationInterceptor, CheckRequestParams checkRequestParams) {
+    public WebConfig(SignatureVerificationInterceptor signatureVerificationInterceptor, DecryptHandlerMethodArgumentResolver decryptHandlerMethodArgumentResolver, CheckRequestParamsInterceptor checkRequestParamsInterceptor, UserRegisterInterceptor userRegisterInterceptor, ResponseDynamicDomainInterceptor responseDynamicDomainInterceptor, LoginInterceptor loginInterceptor) {
         this.signatureVerificationInterceptor = signatureVerificationInterceptor;
-        this.checkRequestParams = checkRequestParams;
+        this.decryptHandlerMethodArgumentResolver = decryptHandlerMethodArgumentResolver;
+        this.checkRequestParamsInterceptor = checkRequestParamsInterceptor;
+        this.userRegisterInterceptor = userRegisterInterceptor;
+        this.responseDynamicDomainInterceptor = responseDynamicDomainInterceptor;
+        this.loginInterceptor = loginInterceptor;
     }
 
     @Override
@@ -51,8 +64,16 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(checkRequestParams).addPathPatterns("/access/**").order(1);
-        registry.addInterceptor(signatureVerificationInterceptor).addPathPatterns("/access/**").order(2);
+        registry.addInterceptor(loginInterceptor).addPathPatterns("/user/**").excludePathPatterns("/user/login", "/user/register/**", "/user/forgot/**", "/user/send/**", "/user/reset/**");
+        registry.addInterceptor(signatureVerificationInterceptor).addPathPatterns("/access/**").excludePathPatterns("/access/demo-preview/**", "/register/**");
+        registry.addInterceptor(checkRequestParamsInterceptor).addPathPatterns("/access/**").excludePathPatterns("/access/demo-preview/**", "/register/**");
+        registry.addInterceptor(userRegisterInterceptor).addPathPatterns("/register/**").excludePathPatterns("/access/demo-preview/**", "/access/**", "/register/async-check/**");
+        registry.addInterceptor(responseDynamicDomainInterceptor);
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(decryptHandlerMethodArgumentResolver);
     }
 
     @Override
