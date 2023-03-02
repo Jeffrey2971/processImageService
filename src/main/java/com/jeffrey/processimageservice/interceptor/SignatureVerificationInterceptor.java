@@ -43,18 +43,20 @@ public class SignatureVerificationInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        String sign;
-        if ("demo".equals(request.getParameter("referrer"))) {
-            sign = request.getParameter("demo_sign");
-        } else {
-            sign = request.getHeader("x-jeffrey-api-sign");
+        String sign = request.getHeader("x-access-api-sign");
+
+        if ("demoPage".equals(request.getParameter("ref"))) {
+            sign = request.getParameter("x-access-api-sign");
         }
 
+
+
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+
         MultipartFile uploadFile = multipartRequest.getFile("uploadFile");
 
-        String publicKey = request.getParameter("demo_public_key");
-        String salt = request.getParameter("demo_salt");
+        String publicKey = request.getParameter("publicKey");
+        String salt = request.getParameter("salt");
 
         if (!StringUtils.isBlank(sign) && uploadFile != null && !StringUtils.isBlank(salt) && StringUtils.isNumeric(salt)) {
             InputStream inputStream = uploadFile.getInputStream();

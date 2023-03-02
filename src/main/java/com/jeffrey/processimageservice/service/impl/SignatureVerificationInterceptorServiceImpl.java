@@ -34,7 +34,7 @@ public class SignatureVerificationInterceptorServiceImpl implements SignatureVer
         byte[] imageBytes = signatureParams.getImageBytes();
 
         if (
-                StringUtils.hasText(publicKey) && publicKey.length() == 32 &&
+                StringUtils.hasText(publicKey) && publicKey.length() == 16 &&
                         String.valueOf(salt).length() == 8 &&
                         imageBytes != null && imageBytes.length > 0
         ) {
