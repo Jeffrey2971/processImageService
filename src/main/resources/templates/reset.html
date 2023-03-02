@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>密码重置</title>
+    <script th:src="@{/js/jsencrypt.min.js}"></script>
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/reset.css}">
+</head>
+<body>
+
+<form>
+    <h1>重置您的密码</h1>
+    <label for="old-password" class="h">您原来的密码:</label>
+    <input type="password" id="old-password" class="h" name="old-password" minlength="6" maxlength="12" required>
+    <label for="new-password">您的新密码:</label>
+    <input type="password" id="new-password" name="new-password" minlength="6" maxlength="12" required>
+    <label for="confirm-password">确认您的新密码:</label>
+    <input type="password" id="confirm-password" name="confirm-password" minlength="6" maxlength="12" required>
+    <input type="submit" value="重置密码" id="sub">
+</form>
+<script th:inline="javascript">
+
+    /** URL 方案 **/
+
+    // const url = new URL(window.location.href);
+    // const isLogin = url.searchParams.get('login');
+    // const currentPassword = $('#old-password');
+    // if (isLogin === 'true') {
+    //     currentPassword.show();
+    // } else if (isLogin === 'false') {
+    //     currentPassword.hide();
+    // } else {
+    //     alert('这个页面可能加载不正确');
+    // }
+
+    /* 视图方案 */
+
+    const isLogin = [[${isLogin}]]
+    const passwordInput = $('.h');
+
+
+    if (isLogin === true) {
+        passwordInput.show();
+    } else if (isLogin === false) {
+        passwordInput.hide();
+    } else {
+        alert('这个页面可能加载不正确');
+    }
+
+</script>
+<script th:inline="javascript">
+
+    const publicKey = [[${rsaPublicKey}]];
+    const dynamicDomain = [[${dynamicDomain}]]
+    const encrypt = new JSEncrypt();
+    encrypt.setPublicKey(publicKey);
+
+    $('#sub').on('click', function () {
+
+        const currentPassword = $('#old-password').val();
+        const newPassword = $('#new-password').val();
+        const confirmPassword = $('#confirm-password').val();
+
+        if (isLogin === true) {
+            if (currentPassword === newPassword) {
+                alert('原密码和新密码不能相同，请重新修改');
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                alert('新密码和确认新密码不一致，请重新修改');
+                return;
+            }
+            if (!(paramsCheck(currentPassword) || paramsCheck((newPassword)) || paramsCheck(confirmPassword))) {
+                alert('密码必须包含大小写字母和数字的组合，可以使用特殊字符，长度在 8-12 之间');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('currentPassword', encrypt.encrypt(currentPassword));
+            formData.append('newPassword', encrypt.encrypt(newPassword));
+
+            $.ajax({
+                url: dynamicDomain + '/user/change',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                async: false,
+                success: function (response) {
+                    // 成功响应，不代表成功重置
+                    if (response === 'OK') {
+                        alert('密码重置成功，您的会话已下线，请点击确定/关闭返回登陆页');
+                        window.location.reload();
+                    } else if (response === 'CURRENT_PASSWORD_INVALID') {
+                        alert('密码重置失败，原因是原密码不正确，请点击确定/关闭重试')
+                    } else if (response === 'SAME') {
+                        alert('密码充值失败，原因是原密码和新密码相同，请点击确定/关闭重试')
+                    } else {
+                        alert("密码重置失败，原因是：" + response);
+                    }
+                },
+                error: function (details) {
+                    alert('密码重置失败，请重试');
+                    console.log(details)
+                },
+            });
+
+        } else if (isLogin === false) {
+
+            if (newPassword !== confirmPassword) {
+                alert('新密码和确认新密码不一致，请重新修改');
+                return;
+            }
+            if (!(paramsCheck(currentPassword) || paramsCheck((newPassword)) || paramsCheck(confirmPassword))) {
+                alert('密码必须包含大小写字母和数字的组合，可以使用特殊字符，长度在 8-12 之间');
+                return;
+            }
+
+            const url = new URL(window.location.href);
+            const uniqueToken = url.searchParams.get("uniqueToken");
+            const formData = new FormData();
+
+            formData.append('currentPassword', encrypt.encrypt(currentPassword));
+            formData.append('newPassword', encrypt.encrypt(newPassword));
+            formData.append('uniqueToken', encrypt.encrypt(uniqueToken));
+
+            $.ajax({
+                url: dynamicDomain + '/user/reset',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                async: false,
+                success: function (response) {
+                    // 成功响应，不代表成功重置
+                    if (response === 'OK') {
+                        alert('密码重置成功，您现在可关闭当前页面或点击确定/关闭前往登陆页');
+                        window.location.href = '/user/login';
+                    } else if (response === 'SAME') {
+                        alert('密码重置失败，因为您输入的密码和您当前账户的密码一致，可直接登陆');
+                    } else if (response === 'UNKNOWN' || response === 'NO') {
+                        alert('密码重置失败，因为发生了一些不可预知的事情，请重试');
+                    }
+                },
+                error: function (details) {
+                    alert('密码重置失败，请重试');
+                    console.log(details)
+                },
+            });
+        } else {
+            alert('页面加载可能不正确')
+        }
+    });
+
+    function paramsCheck(data) {
+        return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,12}$/.test(data);
+    }
+</script>
+</body>
+</html>
