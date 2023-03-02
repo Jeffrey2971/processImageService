@@ -6,8 +6,9 @@ package com.jeffrey.processimageservice.exception.exception.clitent;
  */
 
 
-public class AccountException extends ClientException{
-    public AccountException(String message) {
+public class AccountPasswordResetException extends ClientException{
+
+    public AccountPasswordResetException(String message) {
         super(message);
     }
 }
