@@ -14,4 +14,11 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "info")
 public class Info {
     private String serverDomain;
+    private String getPublicAccountTokenUrl;
+    private String secretKeyLocation;
+    private String getUserInfoUrl;
+    private String rsaPublicKey;
+    private String rsaPrivateKey;
+    private CacheConfig cacheConfig;
+
 }
