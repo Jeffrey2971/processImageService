@@ -1,30 +1,36 @@
 package com.jeffrey.processimageservice.conf;
 
-import com.jeffrey.processimageservice.entities.AsyncPendingTasksItem;
-import com.jeffrey.processimageservice.entities.ProcessStatus;
-import com.jeffrey.processimageservice.entities.RequestParamsWrapper;
+import com.jeffrey.processimageservice.entities.*;
 import com.jeffrey.processimageservice.entities.sign.EncryptedInfo;
+import com.jeffrey.processimageservice.filter.RequestFilter;
+import com.jeffrey.processimageservice.security.Decrypt;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+import java.util.TreeMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -37,30 +43,52 @@ import java.util.concurrent.ThreadPoolExecutor;
 @EnableConfigurationProperties({
         TranslateProperties.class,
         MyThreadPoolTaskExecutorProperties.class,
-        InitAccountParamProperties.class
+        InitAccountParamProperties.class,
+        JavaMailSenderProperties.class
 })
 public class ProcessImageServiceAutoConfiguration {
 
-//    @Value("${spring.redis.host}")
-//    private String redisHost;
-//
-//    @Value("${spring.redis.port}")
-//    private int redisPort;
-//    @Value("${spring.redis.password}")
-//    private String password;
-//
-//    @Value("${spring.redis.database}")
-//    private int database;
+    @Bean
+    public FilterRegistrationBean<RequestFilter> filterRegistrationConf(RequestFilter requestFilter){
+        FilterRegistrationBean<RequestFilter> requestFilterFilterRegistrationBean = new FilterRegistrationBean<>();
+        requestFilterFilterRegistrationBean.setFilter(requestFilter);
+        requestFilterFilterRegistrationBean.addUrlPatterns("/*");
+        requestFilterFilterRegistrationBean.setName("requestFilter");
+        requestFilterFilterRegistrationBean.setOrder(1);
+        return requestFilterFilterRegistrationBean;
+    }
 
-//    @Bean
-//    public RedisConnectionFactory redisConnectionFactory() {
-//        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
-//        configuration.setHostName(redisHost);
-//        configuration.setPort(redisPort);
-//        configuration.setPassword(password);
-//        configuration.setDatabase(database);
-//        return new LettuceConnectionFactory(configuration);
-//    }
+    @Bean(name = "myJavaMailSender")
+    public JavaMailSender javaMailSender(JavaMailSenderProperties javaMailSenderProperties){
+        JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
+        javaMailSender.setHost(javaMailSenderProperties.getHost());
+        javaMailSender.setPort(javaMailSenderProperties.getPort());
+        javaMailSender.setUsername(javaMailSenderProperties.getDualAuthenticationUsername());
+        javaMailSender.setPassword(javaMailSenderProperties.getDualAuthenticationPassword());
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.starttls.enable", String.valueOf(javaMailSenderProperties.getMailSmtpStarttlsEnable()));
+        properties.setProperty("mail.smtp.starttls.required", String.valueOf(javaMailSenderProperties.getMailSmtpStarttlsRequired()));
+        javaMailSender.setJavaMailProperties(properties);
+        return javaMailSender;
+    }
+
+    @Bean(name = "mimeMessageHelper")
+    public MimeMessageHelper mimeMessageHelper(JavaMailSender myJavaMailSender,JavaMailSenderProperties javaMailSenderProperties){
+        MimeMessage mimeMessage = myJavaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+            mimeMessageHelper.setFrom(javaMailSenderProperties.getFrom());
+            String[] cc = javaMailSenderProperties.getCc();
+            if (cc != null && cc.length > 0) {
+
+                mimeMessageHelper.setCc(cc);
+            }
+            return mimeMessageHelper;
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            throw new RuntimeException("初始化邮件服务失败");
+        }
+    }
 
     @Bean(name = "redisTemplate")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
@@ -75,8 +103,18 @@ public class ProcessImageServiceAutoConfiguration {
     }
 
     @Bean(name = "encoder")
-    public BCryptPasswordEncoder bCryptPasswordEncoder(){
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder(12);
+    }
+
+    @Bean(name = "decrypt")
+    public Decrypt decrypt(Info info){
+        return new Decrypt(info);
+    }
+
+    @Bean(name = "cacheTaskMap")
+    public TreeMap<Long, File> cacheTaskMap(){
+        return new TreeMap<>();
     }
 
     @Bean(name = "myTaskExecutor")
@@ -98,6 +136,20 @@ public class ProcessImageServiceAutoConfiguration {
         return threadPoolTaskExecutor;
     }
 
+
+//    @Bean
+//    public MultipartConfigElement multipartConfigElement() {
+//        MultipartConfigFactory strategy = new MultipartConfigFactory();
+//        String location = "/Users/jeffrey/IdeaProjects/processImageService/src/main/resources";
+//        File tmpFile = new File(location);
+//        if (!tmpFile.exists()) {
+//            tmpFile.mkdirs();
+//        }
+//        strategy.setLocation(location);
+//        return strategy.createMultipartConfig();
+//    }
+
+
     @Bean(name = "requestParamsWrapperThreadLocal")
     public ThreadLocal<RequestParamsWrapper> requestParamsWrapperLocal() {
         return new ThreadLocal<>();
@@ -107,7 +159,6 @@ public class ProcessImageServiceAutoConfiguration {
     public ThreadLocal<EncryptedInfo> encryptedInfoThreadLocal() {
         return new ThreadLocal<>();
     }
-
 
     @Bean(value = "restTemplate")
     public RestTemplate restTemplate() {
@@ -153,9 +204,8 @@ public class ProcessImageServiceAutoConfiguration {
         return new LinkedBlockingQueue<>();
     }
 
-
     @Bean(name = "reportTaskQueue")
-    public LinkedBlockingQueue<ProcessStatus> reportTaskThreadLocal(){
+    public LinkedBlockingQueue<ProcessStatus> reportTaskThreadLocal() {
         return new LinkedBlockingQueue<>();
     }
 }
