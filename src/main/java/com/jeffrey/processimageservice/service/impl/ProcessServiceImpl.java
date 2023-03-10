@@ -336,7 +336,13 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
             cacheTaskMap.put(expireTime, targetImage);
         }
 
+        if (!targetImage.exists()) {
+            log.warn("处理完成但没有找到目标文件");
+            return ResponseStatus.SC_PROCESS_FAILED.getValue();
+        }
+
         return ResponseStatus.SC_PROCESS_SUCCESS.getValue();
+
     }
 
     @Override
@@ -368,32 +374,30 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
 
             int statusCode = this.process(originPath, points, targetPath, true);
 
-            if (ResponseStatus.SC_PROCESS_SUCCESS.getValue() == statusCode) {
+            boolean processStatus = ResponseStatus.SC_PROCESS_SUCCESS.getValue() == statusCode && targetPath.exists();
 
-                return new GenericResponse(
-                        ResponseStatus.SC_OK.getValue(),
-                        "SUCCESS::调用成功",
-                        "json",
-                        null,
-                        null,
-                        null,
-                        null,
-                        new Data(
-                                ResponseStatus.SC_PROCESS_SUCCESS.getValue(),
-                                null,
-                                "SUCCESS::处理成功",
-                                points,
-                                info.getServerDomain() + "/targetImages/" + targetPath.getName()),
-                        null
-                );
-            }
+            return new GenericResponse(
+                    ResponseStatus.SC_OK.getValue(),
+                    "SUCCESS::调用成功",
+                    "json",
+                    null,
+                    null,
+                    null,
+                    null,
+                    new Data(
+                            statusCode,
+                            null,
+                            processStatus ? "SUCCESS::处理成功" : "FAILED::处理失败",
+                            points,
+                            processStatus ? info.getServerDomain() + "/targetImages/" + targetPath.getName() : null),
+                    null
+            );
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (NumberFormatException e) {
             throw new ArgumentsOverwriteException("提供的坐标不是一个有效的 Integer 类型");
         }
-
-        return null;
     }
 
     private synchronized long getDiffTimeStamp() {
