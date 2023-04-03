@@ -19,7 +19,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         try {
             StpUtil.checkLogin();
         } catch (Exception e) {
-            response.sendRedirect("/user/login?msg=login_required");
+            response.sendRedirect("/watermark/user/login?msg=login_required");
             return false;
         }
         return true;

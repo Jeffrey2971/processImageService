@@ -7,7 +7,7 @@
     <packaging>jar</packaging>
 
 
-    <version>processImageService-1.9.49</version>
+    <version>1.11.63</version>
 
     <name>processImageService</name>
     <description>processImageService</description>
@@ -166,6 +166,7 @@
             <artifactId>druid-spring-boot-starter</artifactId>
             <version>1.2.15</version>
         </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -183,6 +184,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20210307</version>
+        </dependency>
+
     </dependencies>
 
     <build>

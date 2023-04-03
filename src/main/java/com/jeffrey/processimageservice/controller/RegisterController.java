@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
  * @since JDK 1.8
  */
 
-@Controller()
+@Controller
 @RequestMapping(value = "/user/register")
 @Slf4j
 public class RegisterController {

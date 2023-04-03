@@ -5,8 +5,12 @@
     <!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">-->
     <!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
     <title>图片上传</title>
-    <link rel="stylesheet" th:href="@{/css/rectangleControl.css}"></link>
-    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+<!--    <link rel="stylesheet" th:href="@{/css/rectangleControl.css}"></link>-->
+<!--    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>-->
+
+    <link rel="stylesheet" href="https://www.processimage.cn/watermark/css/rectangleControl.css"/>
+    <script src="https://www.processimage.cn/watermark/js/jquery-3.3.1.min.js"></script>
+
 </head>
 <body>
 <div class="wrap">
@@ -20,6 +24,15 @@
         <div id="selector"></div>
     </div>
 </div>
+
+<script>
+    var url = new URL(window.location.href);
+    var openid = url.searchParams.get("openid");
+    if (openid == null || openid === '') {
+        alert('当前测试页面缺少 openid 参数，请关注公众号后在微信打开这个页面');
+    }
+</script>
+
 <script th:inline="javascript">
 
     const dynamicDomain = [[${dynamicDomain}]]
@@ -87,8 +100,7 @@
             const formData = new FormData();
 
             var file = $('input[type="file"]')[0].files[0];
-            const url = new URL(window.location.href);
-            const openid = url.searchParams.get("openid");
+
 
             formData.append('file', file);
             formData.append('rect', result);

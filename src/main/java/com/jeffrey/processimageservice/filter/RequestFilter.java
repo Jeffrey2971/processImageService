@@ -36,7 +36,22 @@ public class RequestFilter implements Filter {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             String ipAddress = GetRequestAddressUtil.getIPAddress(httpServletRequest);
             log.warn("拒绝关闭期间请求：{}", ipAddress);
-            GenericResponse genericResponse = new GenericResponse(HttpStatus.SERVICE_UNAVAILABLE.value(), "SHUTTING::服务正在停止", "json", null, null, "ExceptionHandler[ServiceShuttingDownException.class]", ipAddress, new Data(52001, null, "UNHANDLED::因其他问题导致未处理", null, null));
+            GenericResponse genericResponse = new GenericResponse(
+                    HttpStatus.SERVICE_UNAVAILABLE.value(),
+                    "SHUTTING::服务正在停止",
+                    "json",
+                    null,
+                    null,
+                    "ExceptionHandler[ServiceShuttingDownException.class]",
+                    ipAddress,
+                    new Data(
+                            52001,
+                            null,
+                            "UNHANDLED::因其他问题导致未处理",
+                            null,
+                            null
+                    )
+            );
             response.setContentType("application/json;charset=UTF-8");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(new Gson().toJson(genericResponse));

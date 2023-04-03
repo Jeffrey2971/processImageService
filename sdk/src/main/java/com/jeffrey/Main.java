@@ -42,7 +42,7 @@ public class Main {
                     requestBodyBuilder.addFormDataPart("callback", "see api document");
                     requestBodyBuilder.addFormDataPart("rectangles", "see api document");
                     requestBodyBuilder.addFormDataPart("markNames", "see api document");
-                    requestBodyBuilder.addFormDataPart("excludeKeywords", "");
+                    requestBodyBuilder.addFormDataPart("excludeKeywords", "see api document");
                     requestBodyBuilder.addFormDataPart("onlyOcr", "true or false");
                     requestBodyBuilder.addFormDataPart("show", "true or false");
                  */

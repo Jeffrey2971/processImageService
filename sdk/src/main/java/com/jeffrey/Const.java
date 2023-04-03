@@ -3,17 +3,17 @@ package com.jeffrey;
 import java.io.File;
 
 /**
- * public_key 和 private_key 请 <a href="https://www.processimage.cn:4433/login">到这里获取</a>
+ * public_key 和 private_key 请 <a href="https://www.processimage.cn/watermark/user/login">到这里获取</a>
  *
  * @author jeffrey
  * @since JDK 1.8
  */
 
 public class Const {
-    public static final String PUBLIC_KEY = "fCmTdaaURBy0IGf6";
-    public static final String PRIVATE_KEY = "91Ut*$seTuHbNp8aVmp6z98mtaVBEO_U";
-    public static final File IMAGE_FILE = new File("/Users/jeffrey/Desktop/demo.jpg");
-    public static final String TARGET_URL = "https://www.processimage.cn:4433/access";
+    public static final String PUBLIC_KEY = "";
+    public static final String PRIVATE_KEY = "";
+    public static final File IMAGE_FILE = new File("");
+    public static final String TARGET_URL = "https://www.processimage.cn/watermark/access";
 
     static {
 
