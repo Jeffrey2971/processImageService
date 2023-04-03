@@ -4,6 +4,7 @@ logging:
 server:
   port: 80
   servlet:
+    context-path: /watermark
     encoding:
       force-response: true
 
@@ -17,16 +18,19 @@ mail-conf:
   dual-authentication-password: password
   from: mail@xxx.com
   cc:
-    # - 664490254@qq.com
+  # - 664490254@qq.com
   mail-smtp-starttls-enable: true
   mail-smtp-starttls-required: true
 
 spring:
-  admin:
-    client:
-      url: http://localhost:8100
-      instance:
-        service-url: http://localhost:80
+  boot:
+    admin:
+      client:
+        username: springboot-admin 账户
+        password: springboot-admin 密码
+        url: springboot-admin 注册地址
+        instance:
+          service-url: http://localhost:80
 
   application:
     name: process-image
