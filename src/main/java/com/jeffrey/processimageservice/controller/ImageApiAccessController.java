@@ -38,14 +38,19 @@ public class ImageApiAccessController {
         this.requestParamsWrapperThreadLocal = requestParamsWrapperThreadLocal;
     }
 
-    @GetMapping()
+    @GetMapping
     public String jumpDemoPage() {
-        return "upload.html";
+        return "welcome";
+    }
+
+    @GetMapping("/upload")
+    public String jumpUploadPage(){
+        return "upload";
     }
 
     @GetMapping("/demo")
     public String jumpRectanglePage() {
-        return "rectangle.html";
+        return "rectangle";
     }
 
     @PostMapping(value = "/demo-preview", produces = "application/json;charset=UTF-8")
