@@ -5,13 +5,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jeffrey.processimageservice.entities.RequestParams;
 import com.jeffrey.processimageservice.entities.RequestParamsWrapper;
-import com.jeffrey.processimageservice.entities.enums.SupportUploadImageType;
-import com.jeffrey.processimageservice.entities.enums.UploadMethodType;
+import com.jeffrey.processimageservice.enums.MarkType;
+import com.jeffrey.processimageservice.enums.SupportUploadImageType;
+import com.jeffrey.processimageservice.enums.UploadMethodType;
 import com.jeffrey.processimageservice.entities.response.Point;
 import com.jeffrey.processimageservice.exception.exception.ArgumentsOverwriteException;
 import com.jeffrey.processimageservice.exception.exception.clitent.FileTooLargeException;
 import com.jeffrey.processimageservice.exception.exception.clitent.ImageTypeNotSupportedException;
 import com.jeffrey.processimageservice.exception.exception.server.UnknownArgumentException;
+import com.jeffrey.processimageservice.model.GenericMark;
 import com.jeffrey.processimageservice.utils.FileUtil;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -244,21 +246,30 @@ public class CheckRequestParamsInterceptor implements HandlerInterceptor {
                 String param = (String) watermarkName;
                 if (StringUtils.hasText(param)) {
                     JsonNode root = new ObjectMapper().readTree(param);
-                    JsonNode markNames = root.get("markNames");
-
-                    if (markNames == null || markNames.size() == 0) {
+                    JsonNode keywords = root.get("items");
+                    if (keywords == null || keywords.size() == 0) {
                         throw new ArgumentsOverwriteException("无效或空的 Json 树，请参照 API 接入文档并检查 json 语法错误");
                     }
 
-                    ArrayList<String> markNamesList = new ArrayList<>();
-                    for (JsonNode markName : markNames) {
-                        String word = markName.asText();
-                        if (markName.isNull() || !StringUtils.hasText(word)) {
-                            throw new ArgumentsOverwriteException("在参数 markNames 中，发现无效或空项");
+                    ArrayList<GenericMark> keyWordList = new ArrayList<>();
+
+                    for (JsonNode keyword : keywords) {
+                        String value = keyword.get("value").asText();
+
+                        if (keyword.isNull() || !StringUtils.hasText(value)) {
+                            throw new ArgumentsOverwriteException("在参数 items 中，发现无效或空项");
                         }
-                        markNamesList.add(word);
+
+                        String ruleStr = keyword.get("rule").asText();
+
+                        Enum<MarkType> rule = MarkType.SIMILAR.name().equalsIgnoreCase(ruleStr) ? MarkType.SIMILAR : MarkType.ABSOLUTE.name().equalsIgnoreCase(ruleStr) ? MarkType.ABSOLUTE : MarkType.DEFAULT;
+
+                        GenericMark item = new GenericMark(value, rule);
+
+                        keyWordList.add(item);
                     }
-                    params.setWatermarkName(markNamesList);
+
+                    params.setWatermarkName(keyWordList);
                 }
             }
 
@@ -266,17 +277,25 @@ public class CheckRequestParamsInterceptor implements HandlerInterceptor {
                 String param = (String) excludeKeywords;
                 if (StringUtils.hasText(param)) {
                     JsonNode root = new ObjectMapper().readTree(param);
-                    JsonNode keywords = root.get("keywords");
+                    JsonNode keywords = root.get("items");
                     if (keywords == null || keywords.size() == 0) {
                         throw new ArgumentsOverwriteException("无效或空的 Json 树，请参照 API 接入文档并检查 json 语法错误");
                     }
-                    ArrayList<String> keyWordList = new ArrayList<>();
+                    ArrayList<GenericMark> keyWordList = new ArrayList<>();
                     for (JsonNode keyword : keywords) {
-                        String word = keyword.asText();
-                        if (keyword.isNull() || !StringUtils.hasText(word)) {
-                            throw new ArgumentsOverwriteException("在参数 keywords 中，发现无效或空项");
+                        String value = keyword.get("value").asText();
+
+                        if (keyword.isNull() || !StringUtils.hasText(value)) {
+                            throw new ArgumentsOverwriteException("在参数 items 中，发现无效或空项");
                         }
-                        keyWordList.add(word);
+
+                        String ruleStr = keyword.get("rule").asText();
+
+                        Enum<MarkType> rule = MarkType.SIMILAR.name().equalsIgnoreCase(ruleStr) ? MarkType.SIMILAR : MarkType.ABSOLUTE.name().equalsIgnoreCase(ruleStr) ? MarkType.ABSOLUTE : MarkType.DEFAULT;
+
+                        GenericMark item = new GenericMark(value, rule);
+
+                        keyWordList.add(item);
                     }
                     params.setExcludeKeywords(keyWordList);
                 }
