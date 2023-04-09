@@ -4,8 +4,9 @@ import com.jeffrey.processimageservice.ProcessImageServiceApplication;
 import com.jeffrey.processimageservice.aop.annotation.api.CacheProcessedResponse;
 import com.jeffrey.processimageservice.aop.annotation.api.UpdateAccountUsed;
 import com.jeffrey.processimageservice.entities.*;
-import com.jeffrey.processimageservice.entities.enums.ResponseStatus;
-import com.jeffrey.processimageservice.entities.enums.SupportUploadImageType;
+import com.jeffrey.processimageservice.enums.MarkType;
+import com.jeffrey.processimageservice.enums.ResponseStatus;
+import com.jeffrey.processimageservice.enums.SupportUploadImageType;
 import com.jeffrey.processimageservice.entities.response.Data;
 import com.jeffrey.processimageservice.entities.response.GenericResponse;
 import com.jeffrey.processimageservice.entities.response.Point;
@@ -14,9 +15,11 @@ import com.jeffrey.processimageservice.entities.translate.TranslationData;
 import com.jeffrey.processimageservice.exception.exception.ArgumentsOverwriteException;
 import com.jeffrey.processimageservice.exception.exception.ProcessImageFailedException;
 import com.jeffrey.processimageservice.exception.exception.clitent.ImageTypeNotSupportedException;
+import com.jeffrey.processimageservice.model.GenericMark;
 import com.jeffrey.processimageservice.service.ProcessService;
 import com.jeffrey.processimageservice.service.TranslateService;
 
+import com.jeffrey.processimageservice.utils.EditDistanceUtil;
 import com.jeffrey.processimageservice.utils.FileUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +47,7 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
     private final ThreadLocal<EncryptedInfo> encryptedInfoThreadLocal;
     private final TranslateService translateService;
     private final TreeMap<Long, File> cacheTaskMap;
-    private static long prev;
+    private static String prev;
     private final Info info;
 
     @Autowired
@@ -130,9 +133,9 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
 
         String enumTypeName = wrapper.getSupportUploadImageTypeEnum().name();
 
-        String imageType = "IMAGE_PNG".equals(enumTypeName) ? ".png" : "IMAGE_BMP".equals(enumTypeName) ? ".bmp" : enumTypeName.equals("IMAGE_JPEG") ? ".jpeg" : null;
+        String imageType = "IMAGE_PNG".equals(enumTypeName) ? ".png" : "IMAGE_BMP".equals(enumTypeName) ? ".bmp" : "IMAGE_JPEG".equals(enumTypeName) ? ".jpeg" : null;
 
-        long innerPrev = getDiffTimeStamp();
+        String innerPrev = createName();
 
         File originImage = new File(ProcessImageServiceApplication.getOriginImagePath(), innerPrev + imageType);
         File targetImage = new File(ProcessImageServiceApplication.getTargetImage(), innerPrev + imageType);
@@ -184,50 +187,66 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
 
                 List<TranslationData.DataInfo.SegmentedData> content = imageData.getData().getContent();
 
-                for (TranslationData.DataInfo.SegmentedData segmentedData : content) {
+                Object excludeKeywords = metaData.getExcludeKeywords();
+                Object markName = metaData.getWatermarkName();
+
+                point: for (TranslationData.DataInfo.SegmentedData segmentedData : content) {
 
                     String src = segmentedData.getSrc();
 
                     // ---------------- 在这里判断是否排除或指定水印 ---------------- //
 
-                    // 排除给定的，去除其它的
-                    Object excludeKeywords = metaData.getExcludeKeywords();
-
-                    // 去除给定的，放行其它的
-                    Object markName = metaData.getWatermarkName();
 
                     if (markName instanceof List) {
-                        ArrayList<String> markNameList = (ArrayList<String>) markName;
-                        if (markNameList.size() > 0) {
-
-                            // 如果当前处理的矩形区域中的文字和给定需要去除的水印名称相等则继续放入 points 集合中，否则跳过本次矩形处理
-                            if (!markNameList.contains(src.replace(" ", ""))) {
-                                log.info("放行：{}", src);
-                                continue;
+                        ArrayList<GenericMark> markNameList = (ArrayList<GenericMark>) markName;
+                        float similarity = Float.parseFloat(info.getEditDistanceSimilar().replace("%", ""));
+                        for (GenericMark mark : markNameList) {
+                            Enum<MarkType> rule = mark.getRule();
+                            String value = mark.getValue();
+                            if (rule.equals(MarkType.SIMILAR) || rule.equals(MarkType.DEFAULT)) {
+                                float similarityRatio = EditDistanceUtil.getSimilarityRatio(value, src);
+                                if (!(similarityRatio >= similarity)) {
+                                    // 相似
+                                    log.info("排除：{}", src);
+                                    continue point;
+                                }
+                            } else if (rule.equals(MarkType.ABSOLUTE)) {
+                                if (!value.equals(src)) {
+                                    // 绝对一致
+                                    log.info("排除：{}", src);
+                                    continue point;
+                                }
                             }
+                            add(segmentedData, points, src);
                         }
                     } else if (excludeKeywords instanceof List) {
-                        ArrayList<String> excludeKeywordList = (ArrayList<String>) excludeKeywords;
-                        if (excludeKeywordList.size() > 0) {
-                            if (excludeKeywordList.contains(src.replace(" ", ""))) {
-                                log.info("排除：{}", src);
-                                continue;
+                        ArrayList<GenericMark> excludeKeywordList = (ArrayList<GenericMark>) excludeKeywords;
+                        float similarity = Float.parseFloat(info.getEditDistanceSimilar().replace("%", ""));
+                        for (GenericMark excludeKeyword : excludeKeywordList) {
+                            Enum<MarkType> rule = excludeKeyword.getRule();
+                            String value = excludeKeyword.getValue();
+                            if (rule.equals(MarkType.SIMILAR) || rule.equals(MarkType.DEFAULT)) {
+                                float similarityRatio = EditDistanceUtil.getSimilarityRatio(value, src);
+                                if (similarityRatio >= similarity) {
+                                    // 相似
+                                    log.info("排除：{}", src);
+                                    continue point;
+                                }
+                            } else if (rule.equals(MarkType.ABSOLUTE)) {
+                                if (value.equals(src)) {
+                                    // 绝对相似
+                                    log.info("排除：{}", src);
+                                    continue point;
+                                }
                             }
+                            add(segmentedData, points, src);
                         }
+                    } else {
+                        // 没指定需要去除的水印内容和排除的水印内容
+                        add(segmentedData, points, src);
                     }
 
-                    // --------------------------------------------------------- //
 
-                    String[] rect = segmentedData.getRect().split(" ");
-                    points.add(new Point(Integer.parseInt(
-
-                            rect[0]),
-                            Integer.parseInt(rect[1]),
-                            Integer.parseInt(rect[2]),
-                            Integer.parseInt(rect[3]),
-                            segmentedData.getLineCount(),
-                            src
-                    ));
                 }
             }
             metaData.setRectangles(points);
@@ -365,10 +384,10 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
             }
 
             String enumTypeName = supportUploadImageType.name();
-            String imageType = "IMAGE_PNG".equals(enumTypeName) ? ".png" : "IMAGE_BMP".equals(enumTypeName) ? ".bmp" : enumTypeName.equals("IMAGE_JPEG") ? ".jpeg" : null;
+            String imageType = "IMAGE_PNG".equals(enumTypeName) ? ".png" : "IMAGE_BMP".equals(enumTypeName) ? ".bmp" : "IMAGE_JPEG".equals(enumTypeName) ? ".jpeg" : null;
 
-            File originPath = new File(ProcessImageServiceApplication.getOriginImagePath(), getDiffTimeStamp() + imageType);
-            File targetPath = new File(ProcessImageServiceApplication.getTargetImage(), getDiffTimeStamp() + imageType);
+            File originPath = new File(ProcessImageServiceApplication.getOriginImagePath(), createName() + imageType);
+            File targetPath = new File(ProcessImageServiceApplication.getTargetImage(), createName() + imageType);
 
             FileCopyUtils.copy(bytes, originPath);
 
@@ -400,12 +419,30 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
         }
     }
 
-    private synchronized long getDiffTimeStamp() {
-        long l = System.currentTimeMillis();
-        while (l == prev) {
-            l = System.currentTimeMillis();
+    private synchronized String createName() {
+
+        String uid = UUID.randomUUID().toString();
+
+        while (uid.equals(prev)) {
+            prev = UUID.randomUUID().toString();;
         }
-        prev = l;
-        return l;
+        prev = uid;
+
+        return uid;
+    }
+
+    private void add(TranslationData.DataInfo.SegmentedData segmentedData, ArrayList<Point> points, String src){
+        // --------------------------------------------------------- //
+
+        String[] rect = segmentedData.getRect().split(" ");
+        points.add(new Point(Integer.parseInt(
+
+                rect[0]),
+                Integer.parseInt(rect[1]),
+                Integer.parseInt(rect[2]),
+                Integer.parseInt(rect[3]),
+                segmentedData.getLineCount(),
+                src
+        ));
     }
 }
