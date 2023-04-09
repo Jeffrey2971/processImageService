@@ -115,6 +115,7 @@ info:
   cache-config:
     time-unit: HOURS
     expire: 5
+  edit-distance-similar: 75.00%
 
 account:
   api-can-use-count: 100

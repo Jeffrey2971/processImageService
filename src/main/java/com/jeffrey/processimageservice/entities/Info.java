@@ -20,5 +20,6 @@ public class Info {
     private String rsaPublicKey;
     private String rsaPrivateKey;
     private CacheConfig cacheConfig;
+    private String editDistanceSimilar;
 
 }
