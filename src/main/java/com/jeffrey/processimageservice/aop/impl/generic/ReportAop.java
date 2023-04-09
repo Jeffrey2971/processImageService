@@ -3,8 +3,8 @@ package com.jeffrey.processimageservice.aop.impl.generic;
 
 import com.jeffrey.processimageservice.entities.DemoRequestParams;
 import com.jeffrey.processimageservice.entities.ProcessStatus;
-import com.jeffrey.processimageservice.entities.enums.ProcessStatusEnum;
-import com.jeffrey.processimageservice.entities.enums.ResponseStatus;
+import com.jeffrey.processimageservice.enums.ProcessStatusEnum;
+import com.jeffrey.processimageservice.enums.ResponseStatus;
 import com.jeffrey.processimageservice.entities.response.GenericResponse;
 import com.jeffrey.processimageservice.entities.sign.EncryptedInfo;
 import com.jeffrey.processimageservice.service.ProcessStatusService;

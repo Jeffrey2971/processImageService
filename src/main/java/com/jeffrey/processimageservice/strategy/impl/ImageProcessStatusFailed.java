@@ -1,6 +1,6 @@
 package com.jeffrey.processimageservice.strategy.impl;
 
-import com.jeffrey.processimageservice.entities.enums.ResponseStatus;
+import com.jeffrey.processimageservice.enums.ResponseStatus;
 import com.jeffrey.processimageservice.entities.response.GenericResponse;
 import com.jeffrey.processimageservice.strategy.ShoutNotUpdateCountsStrategy;
 

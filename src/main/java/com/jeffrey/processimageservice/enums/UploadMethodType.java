@@ -1,4 +1,4 @@
-package com.jeffrey.processimageservice.entities.enums;
+package com.jeffrey.processimageservice.enums;
 
 public enum UploadMethodType {
     URL,

@@ -1,7 +1,7 @@
 package com.jeffrey.processimageservice.aop.impl.api;
 
-import com.jeffrey.processimageservice.entities.enums.AccountStatus;
-import com.jeffrey.processimageservice.entities.enums.ResponseStatus;
+import com.jeffrey.processimageservice.enums.AccountStatus;
+import com.jeffrey.processimageservice.enums.ResponseStatus;
 import com.jeffrey.processimageservice.entities.sign.EncryptedInfo;
 import com.jeffrey.processimageservice.service.AccountService;
 import com.jeffrey.processimageservice.strategy.StrategyFactory;

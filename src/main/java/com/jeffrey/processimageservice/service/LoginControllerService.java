@@ -3,7 +3,7 @@ package com.jeffrey.processimageservice.service;
 import com.github.pagehelper.PageInfo;
 import com.jeffrey.processimageservice.entities.CreateMail;
 import com.jeffrey.processimageservice.entities.ResetParams;
-import com.jeffrey.processimageservice.entities.enums.ProcessStatusEnum;
+import com.jeffrey.processimageservice.enums.ProcessStatusEnum;
 import com.jeffrey.processimageservice.entities.sign.AccountInfo;
 import com.jeffrey.processimageservice.entities.sign.EncryptedInfo;
 import com.jeffrey.processimageservice.vo.PageInnerData;

@@ -3,7 +3,7 @@ package com.jeffrey.processimageservice.task;
 import com.google.gson.Gson;
 import com.jeffrey.processimageservice.entities.AsyncPendingTasksItem;
 import com.jeffrey.processimageservice.entities.Info;
-import com.jeffrey.processimageservice.entities.enums.ResponseStatus;
+import com.jeffrey.processimageservice.enums.ResponseStatus;
 import com.jeffrey.processimageservice.entities.response.GenericResponse;
 import com.jeffrey.processimageservice.service.ProcessService;
 import com.jeffrey.processimageservice.utils.RequestUtil;

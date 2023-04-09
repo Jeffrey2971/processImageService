@@ -1,7 +1,7 @@
 package com.jeffrey.processimageservice.entities;
 
-import com.jeffrey.processimageservice.entities.enums.SupportUploadImageType;
-import com.jeffrey.processimageservice.entities.enums.UploadMethodType;
+import com.jeffrey.processimageservice.enums.SupportUploadImageType;
+import com.jeffrey.processimageservice.enums.UploadMethodType;
 import lombok.Data;
 
 /**

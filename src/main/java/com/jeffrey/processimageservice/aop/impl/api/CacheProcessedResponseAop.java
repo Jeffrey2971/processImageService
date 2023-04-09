@@ -3,7 +3,7 @@ package com.jeffrey.processimageservice.aop.impl.api;
 import com.google.gson.Gson;
 import com.jeffrey.processimageservice.entities.RequestParams;
 import com.jeffrey.processimageservice.entities.RequestParamsWrapper;
-import com.jeffrey.processimageservice.entities.enums.ResponseStatus;
+import com.jeffrey.processimageservice.enums.ResponseStatus;
 import com.jeffrey.processimageservice.entities.response.GenericResponse;
 import com.jeffrey.processimageservice.entities.sign.EncryptedInfo;
 import lombok.extern.slf4j.Slf4j;

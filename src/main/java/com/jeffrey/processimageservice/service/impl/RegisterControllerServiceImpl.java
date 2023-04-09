@@ -3,7 +3,7 @@ package com.jeffrey.processimageservice.service.impl;
 import com.jeffrey.processimageservice.conf.InitAccountParamProperties;
 import com.jeffrey.processimageservice.entities.register.RegisterParams;
 import com.jeffrey.processimageservice.entities.register.RegisterParamsWrapper;
-import com.jeffrey.processimageservice.entities.enums.LoginStatus;
+import com.jeffrey.processimageservice.enums.LoginStatus;
 import com.jeffrey.processimageservice.exception.exception.clitent.RegisterException;
 import com.jeffrey.processimageservice.mapper.RegisterControllerServiceMapper;
 import com.jeffrey.processimageservice.service.RegisterControllerService;

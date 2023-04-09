@@ -1,7 +1,7 @@
 package com.jeffrey.processimageservice.controller;
 
 import com.jeffrey.processimageservice.entities.register.RegisterParams;
-import com.jeffrey.processimageservice.entities.enums.LoginStatus;
+import com.jeffrey.processimageservice.enums.LoginStatus;
 import com.jeffrey.processimageservice.exception.exception.clitent.RegisterException;
 import com.jeffrey.processimageservice.service.RegisterControllerService;
 import com.jeffrey.processimageservice.security.Decrypt;

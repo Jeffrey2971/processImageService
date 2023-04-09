@@ -1,6 +1,6 @@
 package com.jeffrey.processimageservice.entities;
 
-import com.jeffrey.processimageservice.entities.enums.ProcessStatusEnum;
+import com.jeffrey.processimageservice.enums.ProcessStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

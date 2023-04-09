@@ -2,7 +2,7 @@ package com.jeffrey.processimageservice.aop.impl.demo;
 
 import com.jeffrey.processimageservice.entities.DemoRequestParams;
 import com.jeffrey.processimageservice.entities.UpdatePublicAccountParams;
-import com.jeffrey.processimageservice.entities.enums.AccountStatus;
+import com.jeffrey.processimageservice.enums.AccountStatus;
 import com.jeffrey.processimageservice.entities.response.GenericResponse;
 import com.jeffrey.processimageservice.exception.exception.clitent.AccountException;
 import com.jeffrey.processimageservice.service.PublicAccountService;
