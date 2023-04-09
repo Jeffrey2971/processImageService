@@ -1,6 +1,6 @@
 package com.jeffrey.processimageservice.utils;
 
-import com.jeffrey.processimageservice.entities.enums.SupportUploadImageType;
+import com.jeffrey.processimageservice.enums.SupportUploadImageType;
 import org.apache.tika.Tika;
 
 import java.io.IOException;
