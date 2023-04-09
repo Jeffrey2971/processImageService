@@ -101,7 +101,6 @@ public class TranslateServiceImpl implements TranslateService {
             return response.getBody();
         }
 
-        log.warn(response.getBody().toString());
 
         throw new ProcessImageFailedException("处理图片过程中出现异常");
 
