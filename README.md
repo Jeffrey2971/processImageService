@@ -1,4 +1,4 @@
 - 项目简单架构图
 
-[watermark.jpg](document/watermark.jpg)
+[watermark.jpg](https://gitee.com/Jeffrey2971/processImageService/raw/master/document/watermark.jpg)
 
