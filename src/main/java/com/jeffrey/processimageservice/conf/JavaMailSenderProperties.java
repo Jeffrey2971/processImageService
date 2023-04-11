@@ -6,17 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.List;
 
 /**
- *     host: smtp.office365.com
- *     port: 587
- *     # 需要先创建双从认证授权码后再创建应用密码
- *     username: ServiceSafetyReport@outlook.com
- *     password: nrcjjxetwdoismsc
- *     properties:
- *       # mail.smtp.auth: true
- *       # mail.smtp.ssl.enable: true
- *       mail.smtp.starttls.enable: true
- *       mail.smtp.starttls.required: true
- *
  * @author jeffrey
  * @since JDK 1.8
  */
