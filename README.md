@@ -14,4 +14,8 @@
 
 ![简单架构](document/watermark.jpg)
 
+- 后续架构重构
+
+![分布式](document/watermark-cloud.jpg)
+
 - 此外，由于后续的文档更新以及接入参数的调整，目前版本的 SDK 已经不受支持，等待有缘小伙伴贡献 SDK 部分代码
