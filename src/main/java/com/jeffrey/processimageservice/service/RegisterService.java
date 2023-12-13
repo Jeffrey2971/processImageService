@@ -8,7 +8,7 @@ import com.jeffrey.processimageservice.exception.exception.clitent.RegisterExcep
 /**
  * @author jeffrey
  */
-public interface RegisterControllerService {
+public interface RegisterService {
 
     /**
      * 根据 username 查询该账号是否存在（username 和 email 任意一个相同都视为存在），

@@ -74,7 +74,6 @@ public class RequestParams implements Cloneable {
     @Override
     public RequestParams clone() {
         try {
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
             return (RequestParams) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();

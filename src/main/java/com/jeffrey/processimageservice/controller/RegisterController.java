@@ -3,7 +3,7 @@ package com.jeffrey.processimageservice.controller;
 import com.jeffrey.processimageservice.entities.register.RegisterParams;
 import com.jeffrey.processimageservice.enums.LoginStatus;
 import com.jeffrey.processimageservice.exception.exception.clitent.RegisterException;
-import com.jeffrey.processimageservice.service.RegisterControllerService;
+import com.jeffrey.processimageservice.service.RegisterService;
 import com.jeffrey.processimageservice.security.Decrypt;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +22,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Slf4j
 public class RegisterController {
 
-    private final RegisterControllerService registerControllerService;
+    private final RegisterService registerService;
     private final Decrypt decrypt;
 
     @Autowired
-    public RegisterController(RegisterControllerService registerControllerService, Decrypt decrypt) {
-        this.registerControllerService = registerControllerService;
+    public RegisterController(RegisterService registerService, Decrypt decrypt) {
+        this.registerService = registerService;
         this.decrypt = decrypt;
     }
 
@@ -35,13 +35,13 @@ public class RegisterController {
     @ResponseBody
     public LoginStatus register(RegisterParams registerParams) {
 
-        if (!registerControllerService.paramsCheck(registerParams)) {
+        if (!registerService.paramsCheck(registerParams)) {
             throw new RegisterException("注册失败，非法参数");
         }
 
         try {
-            Integer aid = registerControllerService.register(registerParams);
-            registerControllerService.creationKey(aid);
+            Integer aid = registerService.register(registerParams);
+            registerService.creationKey(aid);
             return LoginStatus.SC_REGISTER_SUCCESS;
         } catch (RegisterException e) {
             e.printStackTrace();
@@ -58,9 +58,9 @@ public class RegisterController {
 
         switch (action) {
             case "username":
-                return registerControllerService.usernameCanUse(value);
+                return registerService.usernameCanUse(value);
             case "email":
-                return registerControllerService.emailCanUse(value);
+                return registerService.emailCanUse(value);
             default:
                 return null;
         }

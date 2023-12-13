@@ -6,7 +6,7 @@ import com.jeffrey.processimageservice.entities.register.RegisterParamsWrapper;
 import com.jeffrey.processimageservice.enums.LoginStatus;
 import com.jeffrey.processimageservice.exception.exception.clitent.RegisterException;
 import com.jeffrey.processimageservice.mapper.RegisterControllerServiceMapper;
-import com.jeffrey.processimageservice.service.RegisterControllerService;
+import com.jeffrey.processimageservice.service.RegisterService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,7 +24,7 @@ import java.util.stream.Stream;
  */
 
 @Service
-public class RegisterControllerServiceImpl implements RegisterControllerService {
+public class RegisterServiceImpl implements RegisterService {
 
     private static final String CHAR_LOWER = "abcdefghijklmnopqrstuvwxyz";
     private static final String CHAR_UPPER = CHAR_LOWER.toUpperCase();
@@ -47,7 +47,7 @@ public class RegisterControllerServiceImpl implements RegisterControllerService 
 
 
     @Autowired
-    public RegisterControllerServiceImpl(BCryptPasswordEncoder encoder, RegisterControllerServiceMapper registerControllerServiceMapper, InitAccountParamProperties initAccountParamProperties) {
+    public RegisterServiceImpl(BCryptPasswordEncoder encoder, RegisterControllerServiceMapper registerControllerServiceMapper, InitAccountParamProperties initAccountParamProperties) {
         this.encoder = encoder;
         this.registerControllerServiceMapper = registerControllerServiceMapper;
         this.initAccountParamProperties = initAccountParamProperties;

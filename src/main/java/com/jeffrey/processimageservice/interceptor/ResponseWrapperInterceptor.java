@@ -16,11 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 
 @Component
 @Slf4j
-public class ResponseDynamicDomainInterceptor implements HandlerInterceptor {
+public class ResponseWrapperInterceptor implements HandlerInterceptor {
     private final Info info;
 
     @Autowired
-    public ResponseDynamicDomainInterceptor(Info info) {
+    public ResponseWrapperInterceptor(Info info) {
         this.info = info;
     }
 
