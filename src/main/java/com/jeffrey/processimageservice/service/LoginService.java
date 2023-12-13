@@ -8,7 +8,9 @@ import com.jeffrey.processimageservice.entities.sign.AccountInfo;
 import com.jeffrey.processimageservice.entities.sign.EncryptedInfo;
 import com.jeffrey.processimageservice.vo.PageInnerData;
 
-public interface LoginControllerService {
+public interface LoginService {
+
+    boolean hasOpenIdInSession();
 
     boolean loginSuccess(String pwd1, String pwd2);
     EncryptedInfo prepareData(String username);

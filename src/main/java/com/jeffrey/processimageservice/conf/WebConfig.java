@@ -1,11 +1,9 @@
 package com.jeffrey.processimageservice.conf;
 
 import com.jeffrey.processimageservice.ProcessImageServiceApplication;
-import com.jeffrey.processimageservice.filter.RequestFilter;
 import com.jeffrey.processimageservice.interceptor.*;
 import com.jeffrey.processimageservice.resolver.DecryptHandlerMethodArgumentResolver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -35,16 +33,16 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final UserRegisterInterceptor userRegisterInterceptor;
 
-    private final ResponseDynamicDomainInterceptor responseDynamicDomainInterceptor;
+    private final ResponseWrapperInterceptor responseWrapperInterceptor;
     private final LoginInterceptor loginInterceptor;
 
     @Autowired
-    public WebConfig(SignatureVerificationInterceptor signatureVerificationInterceptor, DecryptHandlerMethodArgumentResolver decryptHandlerMethodArgumentResolver, CheckRequestParamsInterceptor checkRequestParamsInterceptor, UserRegisterInterceptor userRegisterInterceptor, ResponseDynamicDomainInterceptor responseDynamicDomainInterceptor, LoginInterceptor loginInterceptor) {
+    public WebConfig(SignatureVerificationInterceptor signatureVerificationInterceptor, DecryptHandlerMethodArgumentResolver decryptHandlerMethodArgumentResolver, CheckRequestParamsInterceptor checkRequestParamsInterceptor, UserRegisterInterceptor userRegisterInterceptor, ResponseWrapperInterceptor responseWrapperInterceptor, LoginInterceptor loginInterceptor) {
         this.signatureVerificationInterceptor = signatureVerificationInterceptor;
         this.decryptHandlerMethodArgumentResolver = decryptHandlerMethodArgumentResolver;
         this.checkRequestParamsInterceptor = checkRequestParamsInterceptor;
         this.userRegisterInterceptor = userRegisterInterceptor;
-        this.responseDynamicDomainInterceptor = responseDynamicDomainInterceptor;
+        this.responseWrapperInterceptor = responseWrapperInterceptor;
         this.loginInterceptor = loginInterceptor;
     }
 
@@ -64,11 +62,20 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor).addPathPatterns("/user/**").excludePathPatterns("/user/login", "/user/register/**", "/user/forgot/**", "/user/send/**", "/user/reset/**");
+        registry.addInterceptor(loginInterceptor)
+                .addPathPatterns("/user/**", "/order/**")
+                .excludePathPatterns(
+                        "/user/login",
+                        "/user/status",
+                        "/user/register/**",
+                        "/user/forgot/**",
+                        "/user/send/**",
+                        "/user/reset/**"
+                );
         registry.addInterceptor(signatureVerificationInterceptor).addPathPatterns("/access/**").excludePathPatterns("/access/demo-preview/**", "/register/**");
         registry.addInterceptor(checkRequestParamsInterceptor).addPathPatterns("/access/**").excludePathPatterns("/access/demo-preview/**", "/register/**");
         registry.addInterceptor(userRegisterInterceptor).addPathPatterns("/register/**").excludePathPatterns("/access/demo-preview/**", "/access/**", "/register/async-check/**");
-        registry.addInterceptor(responseDynamicDomainInterceptor);
+        registry.addInterceptor(responseWrapperInterceptor);
     }
 
     @Override

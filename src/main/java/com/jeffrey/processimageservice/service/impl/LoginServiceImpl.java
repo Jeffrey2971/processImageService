@@ -10,7 +10,7 @@ import com.jeffrey.processimageservice.enums.ProcessStatusEnum;
 import com.jeffrey.processimageservice.entities.sign.AccountInfo;
 import com.jeffrey.processimageservice.entities.sign.EncryptedInfo;
 import com.jeffrey.processimageservice.mapper.LoginControllerServiceImplMapper;
-import com.jeffrey.processimageservice.service.LoginControllerService;
+import com.jeffrey.processimageservice.service.LoginService;
 import com.jeffrey.processimageservice.utils.GenerateRandomStringUtil;
 import com.jeffrey.processimageservice.vo.PageInnerData;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
-public class LoginControllerServiceImpl implements LoginControllerService {
+public class LoginServiceImpl implements LoginService {
     private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     private final LoginControllerServiceImplMapper loginControllerServiceImplMapper;
     private final BCryptPasswordEncoder encoder;
@@ -49,7 +49,7 @@ public class LoginControllerServiceImpl implements LoginControllerService {
 
 
     @Autowired
-    public LoginControllerServiceImpl(LoginControllerServiceImplMapper loginControllerServiceImplMapper, BCryptPasswordEncoder encoder, JavaMailSender myJavaMailSender, MimeMessageHelper mimeMessageHelper, RedisTemplate<String, Object> redisTemplate, Info info) {
+    public LoginServiceImpl(LoginControllerServiceImplMapper loginControllerServiceImplMapper, BCryptPasswordEncoder encoder, JavaMailSender myJavaMailSender, MimeMessageHelper mimeMessageHelper, RedisTemplate<String, Object> redisTemplate, Info info) {
         this.loginControllerServiceImplMapper = loginControllerServiceImplMapper;
         this.encoder = encoder;
         this.myJavaMailSender = myJavaMailSender;
@@ -58,6 +58,13 @@ public class LoginControllerServiceImpl implements LoginControllerService {
         this.info = info;
     }
 
+
+    @Override
+    public boolean hasOpenIdInSession() {
+        return StpUtil.isLogin()
+                && StpUtil.getSession().has("openid")
+                && StringUtils.isNotBlank((String) StpUtil.getSession().get("openid"));
+    }
 
     @Override
     public boolean loginSuccess(String pwd1, String pwd2) {

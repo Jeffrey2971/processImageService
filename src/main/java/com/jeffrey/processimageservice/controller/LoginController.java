@@ -13,10 +13,11 @@ import com.jeffrey.processimageservice.entities.sign.AccountInfo;
 import com.jeffrey.processimageservice.entities.sign.EncryptedInfo;
 import com.jeffrey.processimageservice.exception.exception.clitent.AccountPasswordResetException;
 import com.jeffrey.processimageservice.security.Decrypt;
-import com.jeffrey.processimageservice.service.LoginControllerService;
-import com.jeffrey.processimageservice.service.RegisterControllerService;
+import com.jeffrey.processimageservice.service.LoginService;
+import com.jeffrey.processimageservice.service.RegisterService;
 import com.jeffrey.processimageservice.vo.Page;
 import com.jeffrey.processimageservice.vo.PageInnerData;
+import com.jeffrey.processimageservice.vo.R;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -37,14 +38,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class LoginController {
 
-    private final LoginControllerService loginControllerService;
-    private final RegisterControllerService registerControllerService;
+    private final LoginService loginService;
+    private final RegisterService registerService;
     private final Info info;
     private final Decrypt decrypt;
 
-    public LoginController(LoginControllerService loginControllerService, RegisterControllerService registerControllerService, Info info, Decrypt decrypt) {
-        this.loginControllerService = loginControllerService;
-        this.registerControllerService = registerControllerService;
+    public LoginController(LoginService loginService, RegisterService registerService, Info info, Decrypt decrypt) {
+        this.loginService = loginService;
+        this.registerService = registerService;
         this.info = info;
         this.decrypt = decrypt;
     }
@@ -59,6 +60,13 @@ public class LoginController {
         return "login";
     }
 
+    @GetMapping("/status")
+    @ResponseBody
+    public R statusCheck(){
+        boolean isLogin = StpUtil.isLogin();
+        return new R().setCode(isLogin ? 0 : 401).setMessage(isLogin ? "yep" : "no");
+    }
+
     /**
      * 由 login 视图发起的请求，用于登陆校验，如校验通过则将该用户的相关信息存入 Session 会话中
      *
@@ -70,13 +78,13 @@ public class LoginController {
     public ResponseObject login(GenericLoginParams genericLoginParams) {
         if (!StringUtils.isBlank(genericLoginParams.getUsername()) && !StringUtils.isBlank(genericLoginParams.getPassword())) {
 
-            if (registerControllerService.usernameIsLegal(genericLoginParams.getUsername()) && registerControllerService.passwordIsLegal(genericLoginParams.getPassword())) {
+            if (registerService.usernameIsLegal(genericLoginParams.getUsername()) && registerService.passwordIsLegal(genericLoginParams.getPassword())) {
 
-                AccountInfo accountInfo = loginControllerService.getAccountInfoByUsername(genericLoginParams.getUsername());
+                AccountInfo accountInfo = loginService.getAccountInfoByUsername(genericLoginParams.getUsername());
 
-                if (accountInfo != null && loginControllerService.loginSuccess(genericLoginParams.getPassword(), accountInfo.getPassword())) {
+                if (accountInfo != null && loginService.loginSuccess(genericLoginParams.getPassword(), accountInfo.getPassword())) {
 
-                    EncryptedInfo encryptedInfo = loginControllerService.prepareData(genericLoginParams.getUsername());
+                    EncryptedInfo encryptedInfo = loginService.prepareData(genericLoginParams.getUsername());
 
                     StpUtil.login(accountInfo.getId(), true);
 
@@ -152,18 +160,18 @@ public class LoginController {
             return ProcessStatusEnum.PARAM_NOT_SAFE;
         }
 
-        AccountInfo accountInfoByEmail = loginControllerService.getAccountInfoByEmail(mail);
+        AccountInfo accountInfoByEmail = loginService.getAccountInfoByEmail(mail);
 
         if (accountInfoByEmail == null || StringUtils.isBlank(accountInfoByEmail.getUsername())) {
             return ProcessStatusEnum.MAIL_NOT_EXISTS;
         }
 
-        CreateMail createMail = loginControllerService.prepareEmailBody(
+        CreateMail createMail = loginService.prepareEmailBody(
                 accountInfoByEmail.getUsername(),
                 mail
         );
 
-        boolean isSend = loginControllerService.sendResetMail(createMail);
+        boolean isSend = loginService.sendResetMail(createMail);
 
         if (isSend) {
             return ProcessStatusEnum.OK;
@@ -195,19 +203,19 @@ public class LoginController {
             return ProcessStatusEnum.PARAM_NOT_SAFE;
         }
 
-        AccountInfo accountInfoByEmail = loginControllerService.getAccountInfoByEmail(mail);
+        AccountInfo accountInfoByEmail = loginService.getAccountInfoByEmail(mail);
 
         if (accountInfoByEmail == null || StringUtils.isBlank(accountInfoByEmail.getUsername())) {
             return ProcessStatusEnum.MAIL_NOT_EXISTS;
         }
 
-        if (!loginControllerService.checkVerificationCode(mail, code)) {
+        if (!loginService.checkVerificationCode(mail, code)) {
             return ProcessStatusEnum.VERIFICATION_FAILED;
         }
 
-        CreateMail createMail = loginControllerService.prepareResetMailBody(accountInfoByEmail.getUsername(), mail);
+        CreateMail createMail = loginService.prepareResetMailBody(accountInfoByEmail.getUsername(), mail);
 
-        boolean isSend = loginControllerService.sendResetMail(createMail);
+        boolean isSend = loginService.sendResetMail(createMail);
 
         if (!isSend) {
             return ProcessStatusEnum.SERVER_ERROR;
@@ -223,7 +231,7 @@ public class LoginController {
             throw new AccountPasswordResetException("FAILED::非法 token");
         }
 
-        ProcessStatusEnum processStatusEnum = loginControllerService.checkToken(uniqueToken);
+        ProcessStatusEnum processStatusEnum = loginService.checkToken(uniqueToken);
 
         if (!processStatusEnum.equals(ProcessStatusEnum.OK)) {
             throw new AccountPasswordResetException("FAILED::非法 token");
@@ -239,7 +247,7 @@ public class LoginController {
     @PostMapping("/reset")
     @ResponseBody
     public ProcessStatusEnum reset(ResetParams resetParams) {
-        ProcessStatusEnum processStatusEnum = loginControllerService.resetPasswordAtForget(resetParams);
+        ProcessStatusEnum processStatusEnum = loginService.resetPasswordAtForget(resetParams);
         if (ProcessStatusEnum.SAME.equals(processStatusEnum)) {
             return ProcessStatusEnum.SAME;
         }
@@ -300,10 +308,10 @@ public class LoginController {
 
         Page responsePage = new Page();
 
-        PageInfo<PageInnerData> pageInfo = loginControllerService.getPage(page, limit);
+        PageInfo<PageInnerData> pageInfo = loginService.getPage(page, limit);
         AtomicInteger i = new AtomicInteger();
         if (pageInfo != null) {
-            Long allCount = loginControllerService.getAllCount();
+            Long allCount = loginService.getAllCount();
             responsePage.setCount(allCount);
             responsePage.setMsg("SUCCESS::调用成功");
             responsePage.setCode(0);
@@ -335,7 +343,7 @@ public class LoginController {
     @ResponseBody
     public ProcessStatusEnum resetPassword(ResetParams resetParams, HttpServletResponse httpServletResponse) {
 
-        ProcessStatusEnum processStatusEnum = loginControllerService.resetPasswordAtLogin(resetParams);
+        ProcessStatusEnum processStatusEnum = loginService.resetPasswordAtLogin(resetParams);
 
         if (ProcessStatusEnum.CURRENT_PASSWORD_INVALID.equals(processStatusEnum)) {
             // 密码不正确导致重置密码不成功
@@ -353,7 +361,7 @@ public class LoginController {
 
         if (ProcessStatusEnum.OK.equals(processStatusEnum)) {
             // 重置密码成功，进行响应后关闭会话，这里要考虑到关闭会话后响应将无效
-            loginControllerService.sessionLogout();
+            loginService.sessionLogout();
             httpServletResponse.setHeader("X-Logout", "true");
             return ProcessStatusEnum.OK;
         }
