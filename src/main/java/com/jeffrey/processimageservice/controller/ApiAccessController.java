@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Controller
 @RequestMapping("/access")
-public class ImageApiAccessController {
+public class ApiAccessController {
 
     private final ProcessService processService;
     private final PublicAccountService publicAccountService;
@@ -32,7 +32,7 @@ public class ImageApiAccessController {
 
 
     @Autowired
-    public ImageApiAccessController(ProcessService processService, PublicAccountService publicAccountService, ThreadLocal<RequestParamsWrapper> requestParamsWrapperThreadLocal) {
+    public ApiAccessController(ProcessService processService, PublicAccountService publicAccountService, ThreadLocal<RequestParamsWrapper> requestParamsWrapperThreadLocal) {
         this.processService = processService;
         this.publicAccountService = publicAccountService;
         this.requestParamsWrapperThreadLocal = requestParamsWrapperThreadLocal;
