@@ -1,0 +1,11 @@
+{
+  "httpCode": 401,
+  "httpMsg": "FAILED::签名错误",
+  "returnType": "json",
+  "msgInnerReferer": "ExceptionHandler[SignatureFailedException.class]",
+  "location": "116.205.143.148",
+  "data": {
+    "processStatus": 52001,
+    "processMsg": "UNHANDLED::因其他问题导致未处理"
+  }
+}
