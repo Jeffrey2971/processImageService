@@ -182,11 +182,8 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
 
             // 要去除的水印坐标
             ArrayList<Point> points = new ArrayList<>();
-
             if (imageData.getData() != null) {
-
                 List<TranslationData.DataInfo.SegmentedData> content = imageData.getData().getContent();
-
                 Object excludeKeywords = metaData.getExcludeKeywords();
                 Object markName = metaData.getWatermarkName();
 
@@ -194,9 +191,7 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
 
                     String src = segmentedData.getSrc();
 
-                    // ---------------- 在这里判断是否排除或指定水印 ---------------- //
-
-
+                    // ---------------- 在这里判断坐标 ---------------- //
                     if (markName instanceof List) {
                         ArrayList<GenericMark> markNameList = (ArrayList<GenericMark>) markName;
                         float similarity = Float.parseFloat(info.getEditDistanceSimilar().replace("%", ""));
@@ -271,20 +266,16 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
 
                 deepCopy.add(new Point(rectangle.getX(), rectangle.getY(), rectangle.getW(), rectangle.getH(), null, null));
 
-                rectangle.setX(keys.get(0).startsWith("+") ?
-                        rectangle.getX() + offsetMaps.get(keys.get(0)) :
+                rectangle.setX(keys.get(0).startsWith("+") ? rectangle.getX() + offsetMaps.get(keys.get(0)) :
                         rectangle.getX() - offsetMaps.get(keys.get(0)));
 
-                rectangle.setY(keys.get(1).startsWith("-") ?
-                        rectangle.getY() - offsetMaps.get(keys.get(1)) :
+                rectangle.setY(keys.get(1).startsWith("-") ? rectangle.getY() - offsetMaps.get(keys.get(1)) :
                         rectangle.getY() + offsetMaps.get(keys.get(1)));
 
-                rectangle.setW(keys.get(2).startsWith("+") ?
-                        rectangle.getW() + offsetMaps.get(keys.get(2)) :
+                rectangle.setW(keys.get(2).startsWith("+") ? rectangle.getW() + offsetMaps.get(keys.get(2)) :
                         rectangle.getW() - offsetMaps.get(keys.get(2)));
 
-                rectangle.setH(keys.get(3).startsWith("-") ?
-                        rectangle.getH() - offsetMaps.get(keys.get(3)) :
+                rectangle.setH(keys.get(3).startsWith("-") ? rectangle.getH() - offsetMaps.get(keys.get(3)) :
                         rectangle.getH() + offsetMaps.get(keys.get(3)));
 
             }
@@ -302,10 +293,12 @@ public class ProcessServiceImpl implements ProcessService, Serializable {
 
         command.append("/usr/local/ffmpeg ").append("-i ").append(originImage).append(" -strict ").append("-3 ").append("-vf ").append("\" ");
         for (Point point : rectangles) {
+
             Integer x = point.getX();
             Integer y = point.getY();
             Integer w = point.getW();
             Integer h = point.getH();
+
             index++;
             command.append("delogo=").append("x=").append(x).append(":").append("y=").append(y).append(":").append("w=").append(w).append(":").append("h=").append(h);
 
