@@ -6,15 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>欢迎您，[[${username}]]</title>
 
-<!--    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>-->
-<!--    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>-->
-<!--    <script th:src="@{/js/bootstrap.min.js}"></script>-->
-<!--    <link rel="stylesheet" th:href="@{/css/main.css}">-->
-
-    <link rel="stylesheet" href="https://www.processimage.cn/watermark/css/bootstrap.min.css"/>
-    <script src="https://www.processimage.cn/watermark/js/jquery-3.3.1.min.js"></script>
-    <script src="https://www.processimage.cn/watermark/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://www.processimage.cn/watermark/css/main.css"/>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 
     <script th:inline="javascript">
         $(function () {
@@ -43,12 +38,11 @@
         <a class="brand pull-left" th:href="@{__${dynamicDomain}__/access}">processImage.cn</a>
         <ul class="nav navbar-nav user_menu">
             <li><a th:href="@{/img/me.jpg}">联系</a></li>
-            <li><a href="javascript:alert('充值请联系作者')">充值</a></li>
+            <li><a th:href="@{/order/topay}" target="_blank">充值</a></li>
             <li><a href="javascript:alert('您没有收到任何消息')">站内信</a></li>
             <li><a th:href="@{/user/getApiDetails}" target="_blank">调用详情</a></li>
             <li><a th:href="@{/access/upload}" target="_blank">API 测试页</a></li>
             <li><a th:href="@{/ApiDocument.html}" target="_blank">API 接入文档</a></li>
-            <li><a th:href="@{/APIPrice.html}" target="_blank">API 接入价格</a></li>
 
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">SDK 方案
@@ -67,7 +61,7 @@
                 </a>
 
                 <ul class="dropdown-menu">
-                    <li><a href="javascript:alert('充值请联系作者')">充值</a></li>
+                    <li><a th:href="@{/order/topay}">充值</a></li>
 
                     <li class="divider"></li>
                     <li><a th:href="@{/user/change}">修改密码</a></li>
