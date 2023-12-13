@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+    <script th:src="@{/layui/layui.js}"></script>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/apiPrice.css}">
+    <title>APIPrice</title>
+</head>
+<body class='typora-export'><div class='typora-export-content'><div id='write'class=''><h3 id='processimagecn-api-接入报价'><span>Processimage.cn API接入报价</span></h3><h3 id='按需购买'><span>按需购买</span></h3><h4 id='①-优势-1'><span>①优势</span></h4><ul><li><span>购买后永久可用，相对于包月购买可更灵活的使用，适用于不确定何时调用本服务的场景</span></li></ul><h4 id='②-售价---水印识别和水印去除-1'><span>②售价-水印识别和水印去除</span></h4><ul><li><p><span>服务包含识别出图片中的水印信息、水印位置、水印去除</span></p><figure><table><thead><tr><th><span>调用次数</span></th><th><span>价格</span></th><th><span>每次调用优惠后消费</span></th></tr></thead><tbody><tr id="ocr-remove-01"><td><span>100</span></td><td><span>¥15</span></td><td><span>¥0.15</span></td></tr><tr id="ocr-remove-02"><td><span>200</span></td><td><span>¥27.6</span></td><td><span>¥0.138</span></td></tr><tr id="ocr-remove-03"><td><span>500</span></td><td><span>¥63.75</span></td><td><span>¥0.1275</span></td></tr><tr id="ocr-remove-04"><td><span>1200</span></td><td><span>¥140.4</span></td><td><span>¥0.117</span></td></tr><tr id="ocr-remove-05"><td><span>2500</span></td><td><span>¥287.5</span></td><td><span>¥0.115</span></td></tr><tr id="ocr-remove-06"><td><span>5000</span></td><td><span>¥540</span></td><td><span>¥0.108</span></td></tr><tr id="ocr-remove-07"><td><span>8000</span></td><td><span>¥864</span></td><td><span>¥0.108</span></td></tr><tr id="ocr-remove-08"><td><span>10000</span></td><td><span>¥1050</span></td><td><span>¥0.105</span></td></tr></tbody></table></figure></li></ul><h4 id='③-售价---水印识别-1'><span>③售价-水印识别</span></h4><ul><li><p><span>服务包含识别出图片中水印的位置、水印的内容</span></p><figure><table><thead><tr><th><span>调用次数</span></th><th><span>价格</span></th><th><span>每次调用优惠后消费</span></th></tr></thead><tbody><tr id="ocr-only-01"><td><span>100</span></td><td><span>¥12.5</span></td><td><span>¥0.125</span></td></tr><tr id="ocr-only-02"><td><span>200</span></td><td><span>¥23.6</span></td><td><span>¥0.118</span></td></tr><tr id="ocr-only-03"><td><span>500</span></td><td><span>¥54.25</span></td><td><span>¥0.109</span></td></tr><tr id="ocr-only-04"><td><span>1200</span></td><td><span>¥124.8</span></td><td><span>¥0.104</span></td></tr><tr id="ocr-only-05"><td><span>2500</span></td><td><span>¥256.25</span></td><td><span>¥0.1025</span></td></tr><tr id="ocr-only-06"><td><span>5000</span></td><td><span>¥484</span></td><td><span>¥0.0968</span></td></tr><tr id="ocr-only-07"><td><span>8000</span></td><td><span>¥768</span></td><td><span>¥0.096</span></td></tr><tr id="ocr-only-08"><td><span>10000</span></td><td><span>¥935</span></td><td><span>¥0.0935</span></td></tr></tbody></table></figure></li></ul><h3 id='包月购买'><span>包月购买</span></h3><h4 id='①-优势-2'><span>①优势</span></h4><ul><li><span>购买后1个月内有效，相对于按需购买价格更实惠，适用于短期内用大量调用需求的场景</span></li></ul><h4 id='②-售价---水印识别和水印去除-2'><span>②售价-水印识别和水印去除</span></h4><ul><li><p><span>服务包含识别出图片中的水印信息、水印位置、水印去除</span></p><figure><table><thead><tr><th><span>调用次数</span></th><th><span>价格</span></th><th><span>平均每次调用消费</span></th></tr></thead><tbody><tr id="ocr-remove-month-01"><td><span>100</span></td><td><span>¥12</span></td><td><span>¥0.12</span></td></tr><tr id="ocr-remove-month-02"><td><span>200</span></td><td><span>¥22.8</span></td><td><span>¥0.114</span></td></tr><tr id="ocr-remove-month-03"><td><span>500</span></td><td><span>¥54</span></td><td><span>¥0.108</span></td></tr><tr id="ocr-remove-month-04"><td><span>1200</span></td><td><span>¥124.8</span></td><td><span>¥0.104</span></td></tr><tr id="ocr-remove-month-05"><td><span>2500</span></td><td><span>¥250</span></td><td><span>¥0.1</span></td></tr><tr id="ocr-remove-month-06"><td><span>5000</span></td><td><span>¥480</span></td><td><span>¥0.096</span></td></tr><tr id="ocr-remove-month-07"><td><span>8000</span></td><td><span>¥768</span></td><td><span>¥0.096</span></td></tr><tr id="ocr-remove-month-08"><td><span>10000</span></td><td><span>¥960</span></td><td><span>¥0.096</span></td></tr></tbody></table></figure></li></ul><h4 id='③-售价---水印识别-2'><span>③售价-水印识别</span></h4><ul><li><p><span>服务包含识别出图片中水印的位置、水印的内容</span></p><figure><table><thead><tr><th><span>调用次数</span></th><th><span>价格</span></th><th><span>平均每次调用消费</span></th></tr></thead><tbody><tr id="ocr-only-month-01"><td><span>100</span></td><td><span>¥10</span></td><td><span>¥0.1</span></td></tr><tr id="ocr-only-month-02"><td><span>200</span></td><td><span>¥19</span></td><td><span>¥0.095</span></td></tr><tr id="ocr-only-month-03"><td><span>500</span></td><td><span>¥45</span></td><td><span>¥0.09</span></td></tr><tr id="ocr-only-month-04"><td><span>1200</span></td><td><span>¥100</span></td><td><span>¥0.0833</span></td></tr><tr id="ocr-only-month-05"><td><span>2500</span></td><td><span>¥200</span></td><td><span>¥0.08</span></td></tr><tr id="ocr-only-month-06"><td><span>5000</span></td><td><span>¥380</span></td><td><span>¥0.076</span></td></tr><tr id="ocr-only-month-07"><td><span>8000</span></td><td><span>¥600</span></td><td><span>¥0.075</span></td></tr><tr id="ocr-only-month-08"><td><span>10000</span></td><td><span>¥750</span></td><td><span>¥0.075</span></td></tr></tbody></table></figure></li></ul><p>&nbsp;</p></div></div>
+</body>
+</html>
+
+<script>
+    // inject
+    var layer = layui.layer;
+
+    function isMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    function isWeiXin() {
+        const ua = window.navigator.userAgent.toLowerCase();
+        return ua.match(/MicroMessenger/i) == 'micromessenger';
+    }
+
+    function pay(tr) {
+        const id = tr.getAttribute('id')
+        const contents = tr.innerText.split('\t')
+
+        if (confirm('确定购买以下套餐吗：调用次数：' + contents[0] + '次，价格：' + contents[1])) {
+            layer.msg('等待微信支付响应...', {icon: 16, shade: 0.01, scrollbar: false, offset: 'auto', time: 0});
+            let type = isWeiXin() && isMobileDevice() ? 'jsapi' : 'native';
+            window.location.href = 'process-order/' + id + '/' + type
+        }
+    }
+
+    // 找到所有的 tr 并在尾部添加支付按钮
+    const trs = document.getElementsByTagName('tr')
+    for (let i = 0; i <= trs.length - 1; i++) {
+        // 头标签无需插入支付按钮，需添加 span 到 th 中
+        if (trs[i].parentNode.tagName === 'THEAD') {
+            const payTh = document.createElement('th')
+            const spanInTd = document.createElement('span')
+            spanInTd.innerText = '请选择支付'
+            payTh.appendChild(spanInTd)
+            trs[i].appendChild(payTh)
+            continue
+        }
+
+        const payTd = document.createElement('td')
+        const link = document.createElement('a')
+
+        link.innerText = '支付'
+        link.href = 'javascript:void(0)'
+        link.addEventListener('click', () => pay(trs[i]))
+
+        payTd.appendChild(link)
+
+        trs[i].appendChild(payTd)
+
+    }
+
+</script>
