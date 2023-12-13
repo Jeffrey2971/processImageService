@@ -44,7 +44,8 @@ import java.util.concurrent.ThreadPoolExecutor;
         TranslateProperties.class,
         MyThreadPoolTaskExecutorProperties.class,
         InitAccountParamProperties.class,
-        JavaMailSenderProperties.class
+        JavaMailSenderProperties.class,
+        WeChatProperties.class
 })
 public class ProcessImageServiceAutoConfiguration {
 
