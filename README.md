@@ -1,6 +1,7 @@
 ### 对标佐糖 API
 
-
+- TODO & BUG
+  - https://gitee.com/Jeffrey2971/processImageService/blob/master/document/TODO&BUG.MD
 
 - 项目上线地址
     - https://www.processimage.cn/watermark/
