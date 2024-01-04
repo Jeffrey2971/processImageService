@@ -1,3 +1,61 @@
+### 2924-1-5 TODO
+#### ① 数据表更新
+- 修改了 account 表，移除 call_limit 字段，保留 call_successful 字段，新增 long_term_usage_count、limited_term_usage_count、limited_term_expire_days 字段
+  - long_term_usage_count 长期可调用次数
+  - limited_term_usage_count 限期可调用次数
+  - limited_term_expire_days 限期调用次数剩余时间，单位为天
+- 新增 order_info 表
+  - 存储本地订单信息
+- 新增 product 表
+  - 存储套餐相关信息
+
+#### ② 表更新后相关映射的关系
+- src/main/resources/mapper 下的相关 mapper
+- src/main/java/com/jeffrey/processimageservice/mapper 下相关接口
+
+#### ③ AOP 订单校验、处理、更新
+- 使用自定义 @Around 对处理订单前的校验，订单处理、订单状态更新
+
+### 2024-1-3 TODO
+#### ① 支付成功后前端调起的 /order/process/{orderNo} 功能
+#### ② 数据库表结构变更
+- 套餐有多种，按需购买、限期购买等。需要对数据库进行重新设计
+  - ~~移除 account 表中 call_limit 字段，保留 call_successful 字段~~
+  - ~~初步表设计，重新按照不同套餐建表 on_demand_package / monthly_package~~
+    ``` sql
+    CREATE TABLE on_demand_package (
+    id INT AUTO_INCREMENT PRIMARY KEY, # 主键，唯一标识每个购买记录的ID。
+    user_id VARCHAR(255) NOT NULL, # 用户ID，关联到用户表。
+    package_id VARCHAR(255) NOT NULL, # 套餐ID，关联到套餐表。
+    purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, # 购买日期，默认为当前时间戳。
+    call_count INT NOT NULL, # 调用次数。
+    total_price DECIMAL(10, 2) NOT NULL, # 总价格。
+    UNIQUE KEY user_package_unique (user_id, package_id), # 用户ID和套餐ID的联合唯一索引，确保用户不会重复购买相同套餐。
+    INDEX user_id_index (user_id),
+    INDEX package_id_index (package_id)
+    );
+    ```
+    ```sql
+    CREATE TABLE monthly_package (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL,
+    package_id VARCHAR(255) NOT NULL,
+    purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expiration_date TIMESTAMP, # 套餐的过期日期
+    call_count INT NOT NULL,
+    total_price DECIMAL(10, 2) NOT NULL,
+    UNIQUE KEY user_package_unique (user_id, package_id),
+    INDEX user_id_index (user_id),
+    INDEX package_id_index (package_id)
+    );
+    ```
+  
+- 需要考虑数据表字段修改后和代码中字段对应问题
+  - 实体类、sql、mapper 等
+- 需要考虑调用时不同套餐扣除次数的问题
+  - 优先扣除限期套餐次数
+- 需要考虑购买完成后套餐叠加的功能
+  - 限期套餐重复购买叠加日期以及次数
 ### 2024-1-2 TODO
 
 #### ① 支付页面订单超时后仍重复发起请求造成页面无限弹窗
@@ -10,12 +68,6 @@
 ### 2023-12-28 TODO
 #### ① 支付页面订单超时后显示购买完成的问题
 - ~~已解决，前后端状态码没对上~~
-
-### 2023-12-13 TODO
-#### ① 支付成功后前端调起的 /order/process/{orderNo} 功能
-- 套餐有多种，包括识别水印去除、识别水印、永久次数购买、包月购买等。需要对数据库进行重新设计
-- 需要考虑调用时不同套餐扣除次数的问题
-- 需要考虑购买完成后套餐叠加的功能
 
 #### ② 前端 ui 重新设计
 - 统一前端技术栈，目前采用了 jquery、axios、bootstrap、vue、jweixin、jsencrypt
