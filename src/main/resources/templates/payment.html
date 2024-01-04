@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>在线支付</title>
+
+    <script th:src="@{/layui/layui.js}"></script>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
+    <script th:src="@{/js/qrcode.js}"></script>
+    <script th:src="@{/js/jweixin-1.6.0.js}"></script>
+
+    <script type="text/javascript" th:inline="javascript">
+
+        var paymentData = [[${r}]]
+        var config = [[${config}]]
+        var url = [[${url}]]
+        var domain = [[${dynamicDomain}]]
+        var callback = [[${callback}]]
+
+        var $ = layui.$;
+        var layer = layui.layer;
+    </script>
+
+    <script>
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        function isWeiXin() {
+            const ua = window.navigator.userAgent.toLowerCase();
+            return ua.match(/MicroMessenger/i) == 'micromessenger';
+        }
+
+        function redirect() {
+            window.location.replace(
+                'https://open.weixin.qq.com/connect/oauth2/authorize' +
+                '?appid=wx3304ba44a60dedd7' +
+                '&redirect_uri=https://www.processimage.cn/watermark/order/callback/' +
+                '&response_type=code' +
+                '&scope=snsapi_base' +
+                '&state=' + encodeURIComponent(location.href.split('#')[0]) +
+                '#wechat_redirect'
+            );
+        }
+
+        function hasOpenId(callback) {
+            $.ajax({
+                url: 'https://www.processimage.cn/watermark/order/hasid',
+                type: 'GET',
+                success: function (data) {
+                    callback(data.data.hasId);
+                },
+                error: function (res) {
+                    console.warn(res);
+                    callback(false);
+                }
+            });
+        }
+
+        function process() {
+
+            const waitTips = layer.msg('订单处理中，请稍后...', {
+                icon: 16,
+                shade: 0.01,
+                scrollbar: false,
+                offset: 'auto',
+                time: 0
+            });
+
+            $.ajax({
+                url: domain + '/order/process/' + paymentData.data.orderNo,
+                type: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    layer.close(waitTips);
+                    if (data.code === 0 || data.message === '完成') {
+                        layer.alert('购买成功，点击确定关闭当前页面', {icon: 1, shadeClose: false, title: '购买操作完成', closeBtn: 0
+                        }, function () {
+                            window.close()
+                        });
+                    } else if (data.code === -1) {
+                        layer.msg(data.message)
+                    }
+                },
+
+                error: function () {
+                    layer.close(waitTips)
+                    layer.alert('抱歉，处理订单过程中出现了错误，请点击右下角联系客服解决', {
+                        icon: 1,
+                        shadeClose: false,
+                        closeBtn: 0,
+                        title: '出错了'
+                    });
+                }
+            });
+        }
+
+        function status(callback) {
+
+            $.ajax({
+                    url: domain + "/user/status",
+                    type: "get",
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        callback(data.code === 0 && data.message === 'yep');
+                    },
+                    error: function (data) {
+                        console.warn(data);
+                        callback(false);
+                    }
+                }
+            );
+        }
+
+        function onBridgeReady(appid, timestamp, nonceStr, prepayId, paySign, orderNo) {
+            console.log("开始搭桥")
+            WeixinJSBridge.invoke('getBrandWCPayRequest', {
+                    "appId": appid,
+                    "timeStamp": timestamp,
+                    "nonceStr": nonceStr,
+                    "package": "prepay_id=" + prepayId,
+                    "signType": "RSA",
+                    "paySign": paySign
+                },
+                function (res) {
+
+                    if (res.err_msg == "get_brand_wcpay_request:ok") {
+                        console.log("支付成功");
+                        // 调用 process 时服务器会再次校验单号
+                        process();
+                    } else if (res.err_msg == "get_brand_wcpay_request:cancel") {
+                        console.log("用户取消支付");
+
+                        layer.alert('用户取消支付', {
+                            icon: 0,
+                            shadeClose: false,
+                            closeBtn: 0,
+                            title: ''
+                        });
+
+                        window.close()
+
+                    } else if (res.err_msg == "get_brand_wcpay_request:fail") {
+                        console.warn("支付失败");
+
+                        layer.alert('支付失败，如有疑问请点击右下角联系客服', {
+                            icon: 0,
+                            shadeClose: false,
+                            closeBtn: 0,
+                            title: ''
+                        });
+                    }
+                });
+        }
+    </script>
+    <script>
+
+        $(function () {
+
+            if (paymentData.code === 401 || paymentData.message === 'FAILED::MISSING OPENID') {
+                layer.msg('等待微信授权，请稍后', {icon: 16, shade: 0.01, scrollbar: false, offset: 'auto', time: 0});
+                redirect()
+                return;
+            }
+
+            if (isMobileDevice() && !isWeiXin()) {
+                layer.alert('由于微信限制，请在微信内打开本网页再进行支付或在 PC 端网页进行支付', {
+                    icon: 0,
+                    shadeClose: false,
+                    closeBtn: 0,
+                    title: ''
+                });
+                return;
+            }
+
+            if (paymentData.data.type === 'native') {
+                var timer;
+                const payWin = layer.open({
+                    type: 1,
+                    move: false,
+                    area: ['480px', '400px'],
+                    resize: false,
+                    shadeClose: false,
+                    closeBtn: 0,
+                    title: 'PC 支付 - 请使用微信扫码支付',
+                    content: `<br><div id="qrcode" style="display: flex; justify-content: center; align-items: center;"></div>`,
+                    success: function () {
+                        $('#qrcode').qrcode({render: "canvas", width: 300, height: 300, text: paymentData.data.codeUrl});
+
+                        // TODO 开启轮训查询
+                        timer = setInterval(function () {
+
+                            status(function (callback) {
+
+                                if (!callback) {
+                                    clearInterval(timer);
+                                    const notLogin = layer.alert('登陆状态异常，请重新登录', {
+                                        icon: 0,
+                                        title: '提示',
+                                        shadeClose: false,
+                                        closeBtn: 0
+                                    }, function () {
+                                        layer.close(notLogin);
+                                        layer.close(payWin)
+                                        window.location.reload();
+                                    });
+                                }
+
+                                $.ajax({
+                                    url: domain + '/order/query-order-status/' + paymentData.data.orderNo,
+                                    type: 'GET',
+                                    success: function (status) {
+                                        if (status.message === '支付成功') {
+                                            // 成功
+                                            clearInterval(timer);
+                                            layer.close(payWin)
+
+                                            process()
+
+                                        } else if (status.message === '订单已取消') {
+                                            clearInterval(timer);
+                                            const cancelTips = layer.alert('订单已取消，如有需要请重新下单', {
+                                                icon: 0,
+                                                title: '提示', shadeClose: false,
+                                                closeBtn: 0
+                                            }, function () {
+                                                layer.close(cancelTips);
+                                                layer.close(payWin)
+                                                window.close()
+                                            });
+                                        } else if (status.message === '订单已超时') {
+                                            clearInterval(timer);
+                                            const timeoutTips = layer.alert('订单已超时，如有需要请重新下单', {
+                                                icon: 0,
+                                                title: '提示', shadeClose: false,
+                                                closeBtn: 0
+                                            }, function () {
+                                                layer.close(timeoutTips);
+                                                layer.close(payWin)
+                                                window.close()
+                                            });
+                                        } else if (status.message === '支付中') {
+                                            // 支付中
+
+                                        } else if (status.message === '订单不存在') {
+                                            clearInterval(timer);
+                                            const timeoutTips = layer.alert('订单不存在，如有需要请重新下单', {
+                                                icon: 0,
+                                                title: '提示', shadeClose: false,
+                                                closeBtn: 0
+                                            }, function () {
+                                                layer.close(timeoutTips);
+                                                layer.close(payWin)
+                                                window.close()
+                                            });
+                                        }else{
+                                            console.log(status);
+
+                                        }
+                                    },
+                                });
+                            });
+                        }, 3000);
+                    },
+                })
+            } else if (callback || paymentData.data.type === 'jsapi') {
+
+                hasOpenId(function(has) {
+                    if (!has) {
+                        redirect()
+                    }
+                });
+
+                layer.msg('等待微信授权，请稍后', {icon: 16, shade: 0.01, scrollbar: false, offset: 'auto', time: 0});
+
+                if (typeof WeixinJSBridge == "undefined") {
+                    if (document.addEventListener) {
+                        document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                    } else if (document.attachEvent) {
+                        document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                        document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                    }
+                } else {
+                    onBridgeReady(
+                        paymentData.data.r.appId,
+                        paymentData.data.r.timeStamp,
+                        paymentData.data.r.nonceStr,
+                        paymentData.data.r.prepayId,
+                        paymentData.data.r.paySign,
+                        paymentData.data.r.orderNo
+                    );
+                }
+
+
+            } else {
+                layer.alert('未知的订单类型：' + paymentData.data.type, {
+                    icon: 0,
+                    shadeClose: false,
+                    closeBtn: 0,
+                    title: ''
+                });
+                window.close()
+            }
+
+
+        });
+
+    </script>
+</head>
+<body>
+
+</body>
+
+</html>
