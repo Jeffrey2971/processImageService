@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+
+    mapper 标签：该标签表示根标签
+        namespace 属性：表示命名空间，该属性必须有值，且唯一。命名规范建议使用 DAO 接口的全限定类名，其作用就是参与 SQL 识别
+
+    mapper 标签中可定义 <insert>、<update>、<select>、<delete> 标签，不同的 SQL 语句需要定义在不同类型的标签内，
+        例如 insert 标签只能定义 insert 语句，select 标签只能定义 select 语句
+
+-->
+
+<mapper namespace="com.jeffrey.processimageservice.mapper.ProductServiceImplMapper">
+
+
+    <select id="queryProductByProductPID" resultType="com.jeffrey.processimageservice.entities.ProductInfo">
+        SELECT `id`, `pid`, `title`, `price`, `total`, `create_time`, `update_time` FROM product WHERE `pid` = #{pid}
+    </select>
+</mapper>
