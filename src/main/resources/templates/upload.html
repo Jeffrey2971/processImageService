@@ -1,132 +1,124 @@
-<!DOCTYPE html>
-<html lang="zh">
+<!doctype html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" name="referrer" content="origin">
-    <title>文件上传</title>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
 
+<link href='https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext' rel='stylesheet' type='text/css' />
+    <link rel='stylesheet' type='text/css' th:href="@{/css/upload/style-head.css}"/>
+    <link rel='stylesheet' type='text/css' href='' id='mode'>
+    <title>demo</title>
+    <script th:inline="javascript">
+
+        var isLogin = /*[[${isLogin}]]*/ false;
+
+    </script>
 </head>
-<style>
-    .input-style {
-        width: 100%;
-        padding: 0;
-        border: 0;
-        outline: none
-    }
-</style>
-<body>
-<h2 align="center">本页为 API 接口调用测试页面，在线演示或接入文档位于底部</h2>
-
 <form th:action="@{/access}" method="post" enctype="multipart/form-data">
-    <table align="center" border="1">
+<body class='typora-export typora-export-show-outline typora-export-collapse-outline'><div class='typora-export-content'>
+<div class="typora-export-sidebar"><div class="outline-content"><li class="outline-item-wrapper outline-h3 outline-item-open"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#api-接入测试">API 接入测试</a></div><ul class="outline-children"><li class="outline-item-wrapper outline-h4 outline-item-single"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#填写协议信息">填写协议信息</a></div><ul class="outline-children"></ul></li><li class="outline-item-wrapper outline-h4 outline-item-single"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#填写基本信息">填写基本信息</a></div><ul class="outline-children"></ul></li><li class="outline-item-wrapper outline-h4 outline-item-single"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#选择图片">选择图片</a></div><ul class="outline-children"></ul></li><li class="outline-item-wrapper outline-h4 outline-item-single"><div class="outline-item"><span class="outline-expander"></span><input type="hidden" name="ref" value="demoPage"/><a class="outline-label" href="#点击提交请求">点击提交请求</a></div><ul class="outline-children"></ul></li></ul></li><li class="outline-item-wrapper outline-h3 outline-item-open"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#sign-生成工具">Sign 生成工具</a></div><ul class="outline-children"><li class="outline-item-wrapper outline-h4 outline-item-single"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#生成签名">生成签名</a></div><ul class="outline-children"></ul></li></ul></li><li class="outline-item-wrapper outline-h3 outline-item-single"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#sdk--demo">SDK &amp; DEMO</a></div><ul class="outline-children"></ul></li></div></div><div id='write'  class=''><h3 id='api-接入测试'><span>API 接入测试</span></h3><h4 id='填写协议信息'><span>填写协议信息</span></h4><ul><li><span>签名规则为 </span><code>md5(publicKey + md5(image) + salt + privateSecret)</code></li><li><span>公钥（publicKey）以及私钥（privateSecret）请 </span><a href='https://www.processimage.cn/watermark/user/main'><span>点击此处获取</span></a></li><li><span>签名信息（sign）在 API 调用时，请参照 API 文档计算出 sign 后在 Header 中指定</span></li><li><a href='https://www.processimage.cn/watermark/ApiDocument.html'><span>API 接入文档</span></a></li><li><a href='#sign-生成工具'><span>sign 在线生成工具</span></a></li></ul><figure><table><thead><tr><th><span>参数</span></th><th><span>描述</span></th><th><span>是否必须</span></th><th><span>值</span></th></tr></thead><tbody><tr><td><span>salt</span></td><td><span>随机数</span></td><td><span>是</span></td><td><input class="text-input" type="text" name="salt" id="salt"/></td></tr><tr><td><span>sign</span></td><td><span>签名</span></td><td><span>是</span></td><td><input class="text-input" type="text" id="sign" name="x-access-demo-api-sign"/></td></tr><tr><td><span>publicKey</span></td><td><span>公钥</span></td><td><span>是</span></td><td><input class="text-input" type="text" name="publicKey" th:value="${publicKey}" /></td></tr></tbody></table></figure><p>&nbsp;</p><h4 id='填写基本信息'><span>填写基本信息</span></h4><ul><li><span>以下参数不是必须的，在接入时根据需要配置</span></li></ul><figure><table><thead><tr><th><span>参数</span></th><th><span>描述</span></th><th><span>是否必须</span></th><th><span>值</span></th></tr></thead><tbody><tr><td><span>sync</span></td><td><span>描述较长，详情见文档</span></td><td><span>否</span></td><td><input class="text-input" type="text" name="sync"/></td></tr><tr><td><span>show</span></td><td><span>描述较长，详情见文档</span></td><td><span>否</span></td><td><input class="text-input" type="text" name="show"/></td></tr><tr><td><span>offset</span></td><td><span>描述较长，详情见文档</span></td><td><span>否</span></td><td><input class="text-input" type="text" name="offset"/></td></tr><tr><td><span>ocrOnly</span></td><td><span>描述较长，详情见文档</span></td><td><span>否</span></td><td><input class="text-input" type="text" name="ocrOnly"/></td></tr><tr><td><span>callback</span></td><td><span>描述较长，详情见文档</span></td><td><span>否</span></td><td><input class="text-input" type="text" name="callback"/></td></tr><tr><td><span>rectangles</span></td><td><span>描述较长，详情见文档</span></td><td><span>否</span></td><td><input class="text-input" type="text" name="rectangles"/></td></tr><tr><td><span>watermarkNames</span></td><td><span>描述较长，详情见文档</span></td><td><span>否</span></td><td><input class="text-input" type="text" name="watermarkName"/></td></tr><tr><td><span>excludeKeywords</span></td><td><span>描述较长，详情见文档</span></td><td><span>否</span></td><td><input class="text-input" type="text" name="excludeKeywords"/></td></tr></tbody></table></figure><p>&nbsp;</p><h4 id='选择图片'><span>选择图片</span></h4><ul><li><span>目前不支持 URL 和 Base64 方式接入</span></li><li><span>文件上传的优先级为 </span><code>File &gt; URL &gt; Base64</code></li><li><span>当前测试页中</span><strong><span>，</span></strong><span>不建议使用超过 512 kb 的 Base64 编码，避免页面卡顿</span></li></ul><figure><table><thead><tr><th><span>参数</span></th><th><span>描述</span></th><th><span>值</span></th></tr></thead><tbody><tr><td><span>File</span></td><td><span>图片</span></td><td><input class="file-input" type="file" name="uploadFile"/></td></tr><tr><td><del><span>URL</span></del></td><td><del><span>图片 URL</span></del></td><td><span>不可用</span></td></tr><tr><td><del><span>Base64</span></del></td><td><del><span>图片 Base64</span></del></td><td><span>不可用</span></td></tr></tbody></table></figure><p>&nbsp;</p><h4 id='点击提交请求'><span><input type="submit" value="点击提交请求"></span></h4><hr /><p>&nbsp;</p><h3 id='sign-生成工具'><span>Sign 生成工具</span></h3><ul><li><span>sign 生成工具可为你快速生成签名</span></li><li><span>随机数 salt 可点击刷新并填充到协议信息 salt 框内</span></li><li><strong><span>请注意，账户登录时，你的公钥和私钥会被自动填充到下方对应的输入框中，请注意私钥泄露</span></strong></li></ul><figure><table><thead><tr><th><span>所需参数</span></th><th><span>描述</span></th><th>&nbsp;</th></tr></thead><tbody><tr><td><span>image</span></td><td><span>图片数据，需手动上传</span></td><td><input class="file-input" type="file" id="tools-file" value="选择图片"/></td></tr><tr><td><span>salt</span></td><td><span>随机数，范围是 [10^7, 10^8-1] ，长度为 8 位，首位不为 0</span></td><td><div onclick="flushSalt()"><input class="text-input"  type="text" id="tools-salt"  /></div></td></tr><tr><td><span>publicKey</span></td><td><span>账户公钥，登陆状态下自动获取</span></td><td><input class="text-input" type="text" id="tools-publicKey" th:value="${publicKey}"/></td></tr><tr><td><span>privateSecret</span></td><td><span>账户私钥，登陆状态下自动获取</span></td><td><input class="text-input" type="text" id="tools-privateSecret" th:value="${privateKey}"/></td></tr></tbody></table></figure><p>&nbsp;</p><h4 id='生成签名'><button id="generateSign"><span>生成签名</span></button></h4><hr /><p>&nbsp;</p><h3 id='sdk--demo'><span>SDK &amp; DEMO</span></h3><figure><table><thead><tr><th><span>语言</span></th><th><span>sdk &amp; demo 下载</span></th></tr></thead><tbody><tr><td><span>Java</span></td><td><a href='https://www.processimage.cn/watermark/SDK/Java/java-sdk-maven.zip'><span>java-sdk-maven.zip</span></a></td></tr><tr><td><span>Python</span></td><td><a href='https://www.processimage.cn/watermark/SDK/Python/PythonSDK.html'><span>python-demo</span></a></td></tr></tbody></table></figure><hr /><p>&nbsp;</p><p><span>page provided by jeffrey, concat wechat Jeffrey0203- or email </span><a href='mailto:jeffrey2971@outlook.com' target='_blank' class='url'>jeffrey2971@outlook.com</a></p></div></div>
 
-        <tr>
-            <th colspan="2">
-                <span style="color: seagreen">填写协议信息</span>
-                <br>
-                <span style="color: red">签名规则为 md5(publicKey + md5(image) + salt + privateSecret)</span>
+<script>(function (){var t=document.body.parentElement,e=[],n=null,i=document.body.classList.contains("typora-export-collapse-outline"),r=function(t,e,n){document.addEventListener(t,function(t){if(!t.defaultPrevented)for(var i=t.target;i&&i!=this;i=i.parentNode)if(i.matches(e)){!1===n.call(i,t)&&(t.preventDefault(),t.stopPropagation());break}},!1)};function o(){return t.scrollTop}r("click",".outline-expander",function(t){var e=this.closest(".outline-item-wrapper").classList;return e.contains("outline-item-open")?e.remove("outline-item-open"):e.add("outline-item-open"),c(),!1}),r("click",".outline-item",function(t){var e=this.querySelector(".outline-label");if(location.hash="#"+e.getAttribute("href"),i){var n=this.closest(".outline-item-wrapper").classList;n.contains("outline-item-open")||n.add("outline-item-open"),l(),n.add("outline-item-active")}});var a,s,u=function(){var t=o();n=null;for(var i=0;i<e.length&&e[i][1]-t<60;i++)n=e[i]},l=function(){document.querySelectorAll(".outline-item-active").forEach(t=>t.classList.remove("outline-item-active")),document.querySelectorAll(".outline-item-single.outline-item-open").forEach(t=>t.classList.remove("outline-item-open"))},c=function(){if(n){l();var t=document.querySelector('.outline-label[href="#'+(CSS.escape?CSS.escape(n[0]):n[0])+'"]');if(t)if(i){var e=t.closest(".outline-item-open>ul>.outline-item-wrapper");if(e)e.classList.add("outline-item-active");else{for(var r=(t=t.closest(".outline-item-wrapper")).parentElement.closest(".outline-item-wrapper");r;)r=(t=r).parentElement.closest(".outline-item-wrapper");t.classList.add("outline-item-active")}}else t.closest(".outline-item-wrapper").classList.add("outline-item-active")}};window.addEventListener("scroll",function(t){a&&clearTimeout(a),a=setTimeout(function(){u(),c()},300)});var f=function(){s=setTimeout(function(){!function(){e=[];var t=o();document.querySelector("#write").querySelectorAll("h1, h2, h3, h4, h5, h6").forEach(n=>{var i=n.getAttribute("id");e.push([i,t+n.getBoundingClientRect().y])})}(),u(),c()},300)};window.addEventListener("resize",function(t){s&&clearTimeout(s),f()}),f()})();</script></body>
 
-                <br/>
-                <span style="color: red">该参数在 API 调用时，请参照 API 文档计算出 sign 后在 Header 中指定</span>
+<script>
 
-                <br>
-                <span style="color: red">公钥（publicKey）以及私钥（privateKey）请 <a th:href="@{/user/main}">点击此处获取</a></span>
-            </th>
-        </tr>
-        <tr>
-            <td>publicKey</td>
-            <td>
-                <input type="text" class="input-style" name="publicKey">
-            </td>
-        </tr>
-        <tr>
-            <td>salt</td>
-            <td>
-                <input type="text" class="input-style" name="salt">
-            </td>
-        </tr>
-        <tr>
-            <td>sign</td>
-            <td>
-                <input type="text" class="input-style" name="sign">
-            </td>
-        </tr>
-        <tr>
-            <th colspan="2">
-                <span style="color: seagreen">填写基本信息</span>
-                <br/>
-                <span style="color: red">优先级提示：矩形变量 > 水印名称 > 排除关键字 > 默认</span>
-            </th>
-        </tr>
-        <tr>
-            <td>水印名称（非必需，不提供则默认去除所有图中文字）</td>
-            <td><input class="input-style" type="text" name="watermarkName"></td>
-        </tr>
-        <tr>
-            <td>矩形坐标（非必需，如不提供默认为图中所有文字的矩形）</td>
-            <td>
-                <input class="input-style" type="text" name="rectangles">
-            </td>
-        </tr>
-        <tr>
-            <td>排除水印关键字（非必需，如不提供则默认去除所有）</td>
-            <td>
-                <input class="input-style" type="text" name="excludeKeywords">
-            </td>
-        </tr>
-        <tr>
-            <td>是否异步（非必需，默认为 false 不进行异步响应）</td>
-            <td><input class="input-style" type="text" name="sync"></td>
-        </tr>
-        <tr>
-            <td>回调接口（同步为 true 时必须）</td>
-            <td><input class="input-style" type="text" name="callback"></td>
-        </tr>
-        <tr>
-            <td>偏移量（非必需，如不提供则按照图中文字的矩形值为准）</td>
-            <td><input class="input-style" type="text" name="offset"></td>
-        </tr>
-        <tr>
-            <th colspan="2">
-                <span style="color: seagreen">选择文件上传方式</span>
-                <br>
-                <span style="color: red">优先级提示：File > URL > Base64</span>
-                <br>
-                <span style="color: red">当前测试页中，不建议使用超过 512 kb 的 Base64 编码，避免页面卡顿</span>
+    var prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
+    var mode = document.getElementById("mode");
 
-            </th>
-        </tr>
-        <tr>
-        <tr>
-            <td>File</td>
-            <td><input class="input-style" type="file" name="uploadFile" id="uploadFile"></td>
-        </tr>
-        <tr>
-            <td>URL</td>
-            <td>
-                <input class="input-style" type="text" name="imageUrl" id="upload-url" readonly="readonly" disabled="disabled" placeholder="暂时禁用">
-            </td>
-        </tr>
-        <tr>
-            <td>Base64</td>
-            <td>
-                <textarea class="input-style" name="imageBase64" id="upload-base64" readonly="readonly" disabled="disabled" placeholder="暂时禁用"></textarea>
-            </td>
-        </tr>
-        <tr>
-            <td>上传文件</td>
-            <td><input class="input-style" type="submit" value="上传"></td>
-        </tr>
+    function handleThemeChange(event) {
+        if (event.matches) {
+            // 用户切换到深色主题
+            console.log('用户切换到深色主题');
+            // 切换到深色样式表
+            mode.href='/watermark/css/upload/style-dark.css'
+        } else {
+            // 用户切换到浅色主题
+            console.log('用户切换到浅色主题');
+            // 切换到浅色样式表
+            mode.href='/watermark/css/upload/style-light.css'
+        }
+    }
 
-    </table>
+    // 添加主题变化的监听器
+    prefersDarkMode.addEventListener('change', handleThemeChange);
 
+    // 初始时执行一次以处理当前主题
+    handleThemeChange(prefersDarkMode);
+
+    var inputs = document.getElementsByClassName("text-input")
+    for (let i = 0; i < inputs.length; i++) {
+        inputs[i].placeholder = '点击输入'
+    }
+    var salt = document.getElementById("tools-salt")
+
+    function flushSalt(){
+        salt.value = `${Math.floor(Math.random() * (Math.pow(10, 8) - Math.pow(10, 7)) + Math.pow(10, 7))}`.padStart(8, '0');
+        document.getElementById("salt").value = salt.value
+    }
+
+    flushSalt()
+
+
+    // 获取文件输入框、公钥输入框和私钥输入框的引用
+    const fileInput = document.getElementById('tools-file');
+    const publicKeyInput = document.getElementById('tools-publicKey');
+    const privateKeyInput = document.getElementById('tools-privateSecret');
+
+    // 监听按钮点击事件
+    const signButton = document.getElementById('generateSign');
+    signButton.addEventListener('click', function (event) {
+        // 获取文件对象
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert('请先选择一张图片');
+            event.preventDefault()
+            return false;
+        }
+
+        // 使用 FileReader 读取文件内容
+        readFileAsync(file)
+            .then(fileContent => {
+                // 计算文件内容的 MD5
+                const imageMd5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(fileContent)).toString(CryptoJS.enc.Hex);
+
+                // 拼接参数并计算签名
+                const signatureParams = {
+                    publicKey: publicKeyInput.value,
+                    salt: document.getElementById('tools-salt').value,
+                    privateSecret: privateKeyInput.value
+                };
+
+                const signature = CryptoJS.MD5(signatureParams.publicKey + imageMd5 + signatureParams.salt + signatureParams.privateSecret).toString(CryptoJS.enc.Hex);
+
+                document.getElementById("sign").value = signature
+
+                alert('sign 已填充到协议信息 sign 框内：' + signature);
+            })
+            .catch(error => {
+                console.log(error);
+                alert(error.message || '发生错误');
+            });
+
+        // 阻止默认表单提交行为
+        event.preventDefault();
+        return false;
+    });
+
+    // 通过 FileReader 读取文件内容的异步函数
+    function readFileAsync(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsBinaryString(file);
+        });
+    }
+
+    if (isLogin) {
+        alert('请注意，当前账户已登陆，部分私密信息渲染在当前页面，请防止泄露')
+    }
+
+</script>
 </form>
-<br><br>
-<div id="api" align="center">
-    <a href="#" th:href="@{/ApiDocument.html}"><span><b>API Document</b></span></a>
-    <br><br>
-    <a href="#" th:href="@{/SDK/Python/PythonSDK.html}"><span><b>Python SDK</b></span></a>
-    <br><br>
-    <a href="#" th:href="@{/SDK/Java/java-sdk-maven.zip}"><span><b>Java SDK</b></span></a>
-</div>
-</body>
 </html>
