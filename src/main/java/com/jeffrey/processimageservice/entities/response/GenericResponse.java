@@ -30,13 +30,13 @@ public class GenericResponse implements Serializable {
     private String httpMsg;
     private String returnType;
     private Integer remainingUsage;
+    private Integer longTermUsageCount;
+    private Integer limitedTermUsageCount;
+    private Integer limitedTermExpireDays;
     private Integer allUsedCount;
     private String msgInnerReferer;
     private String location;
     private Data data;
 
-    /**
-     *
-     */
     private EncryptedInfo encryptedInfo;
 }
