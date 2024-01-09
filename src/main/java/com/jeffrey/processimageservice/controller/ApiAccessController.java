@@ -1,5 +1,6 @@
 package com.jeffrey.processimageservice.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.jeffrey.processimageservice.aop.annotation.demo.CacheAspect;
 import com.jeffrey.processimageservice.aop.annotation.demo.InitPublicAccountUserAspect;
 import com.jeffrey.processimageservice.aop.annotation.demo.UpdatePublicAccountUserData;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author jeffrey
@@ -44,8 +46,18 @@ public class ApiAccessController {
     }
 
     @GetMapping("/upload")
-    public String jumpUploadPage(){
-        return "upload";
+    public ModelAndView jumpUploadPage(){
+        ModelAndView mav = new ModelAndView("upload");
+        if (StpUtil.isLogin()) {
+            mav.addObject("publicKey", StpUtil.getSession().get("publicKey"));
+            mav.addObject("privateKey", StpUtil.getSession().get("privateKey"));
+            mav.addObject("isLogin", true);
+        }else{
+            mav.addObject("publicKey", "");
+            mav.addObject("privateKey", "");
+            mav.addObject("isLogin", false);
+        }
+        return mav;
     }
 
     @GetMapping("/demo")
