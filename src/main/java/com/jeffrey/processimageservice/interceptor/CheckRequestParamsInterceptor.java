@@ -302,18 +302,18 @@ public class CheckRequestParamsInterceptor implements HandlerInterceptor {
             }
 
             // 重写 showOnly
-            if (showOnly == null) {
+            if (showOnly == null || !(showOnly instanceof String && StringUtils.hasText(((String) showOnly)))) {
                 params.setShowOnly(false);
-            } else if (showOnly instanceof String && ("true".equalsIgnoreCase((String) showOnly) || "false".equalsIgnoreCase((String) showOnly))) {
+            } else if ("true".equalsIgnoreCase((String) showOnly) || "false".equalsIgnoreCase((String) showOnly)) {
                 params.setShowOnly(Boolean.parseBoolean((String) showOnly));
             } else {
                 throw new ArgumentsOverwriteException("参数 show 只能为 true 或 false");
             }
 
             // 重写 ocrOnly
-            if (ocrOnly == null) {
+            if (ocrOnly == null || !(ocrOnly instanceof String && StringUtils.hasText((String) ocrOnly))) {
                 params.setOcrOnly(false);
-            } else if (ocrOnly instanceof String && ("true".equalsIgnoreCase((String) ocrOnly) || "false".equalsIgnoreCase((String) ocrOnly))) {
+            } else if ("true".equalsIgnoreCase((String) ocrOnly) || "false".equalsIgnoreCase((String) ocrOnly)) {
                 params.setOcrOnly(Boolean.parseBoolean((String) ocrOnly));
             } else {
                 throw new ArgumentsOverwriteException("参数 showOnly 只能为 true 或 false");
