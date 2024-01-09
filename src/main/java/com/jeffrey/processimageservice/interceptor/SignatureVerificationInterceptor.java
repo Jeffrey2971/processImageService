@@ -46,10 +46,8 @@ public class SignatureVerificationInterceptor implements HandlerInterceptor {
         String sign = request.getHeader("x-access-api-sign");
 
         if ("demoPage".equals(request.getParameter("ref"))) {
-            sign = request.getParameter("x-access-api-sign");
+            sign = request.getParameter("x-access-demo-api-sign");
         }
-
-
 
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 
