@@ -96,9 +96,15 @@ public class LoginController {
                     ).set(
                             "username", genericLoginParams.getUsername()
                     ).set(
-                            "apiCanUseCount", accountInfo.getApiCanUseCount()
+                            "apiCanUseCount", accountInfo.getLongTermUsageCount() + accountInfo.getLimitedTermUsageCount()
                     ).set(
-                            "apiUsedCount", accountInfo.getApiUsedCount()
+                            "longTermUsageCount", accountInfo.getLongTermUsageCount()
+                    ).set(
+                            "limitedTermUsageCount", accountInfo.getLimitedTermUsageCount()
+                    ).set(
+                            "limitedTermExpireDays", accountInfo.getLimitedTermExpireDays()
+                    ).set(
+                            "apiUsedCount", accountInfo.getCallSuccessful()
                     ).set(
                             "accountId", accountInfo.getId()
                     );
@@ -383,6 +389,9 @@ public class LoginController {
         mav.addObject("username", StpUtil.getSession().get("username"));
         mav.addObject("apiCanUseCount", StpUtil.getSession().get("apiCanUseCount"));
         mav.addObject("apiUsedCount", StpUtil.getSession().get("apiUsedCount"));
+        mav.addObject("limitedTermUsageCount", StpUtil.getSession().get("limitedTermUsageCount"));
+        mav.addObject("longTermUsageCount", StpUtil.getSession().get("longTermUsageCount"));
+        mav.addObject("limitedTermExpireDays", StpUtil.getSession().get("limitedTermExpireDays"));
 
         mav.setViewName("main");
 
