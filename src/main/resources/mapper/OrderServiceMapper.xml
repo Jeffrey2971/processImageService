@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+
+    mapper 标签：该标签表示根标签
+        namespace 属性：表示命名空间，该属性必须有值，且唯一。命名规范建议使用 DAO 接口的全限定类名，其作用就是参与 SQL 识别
+
+    mapper 标签中可定义 <insert>、<update>、<select>、<delete> 标签，不同的 SQL 语句需要定义在不同类型的标签内，
+        例如 insert 标签只能定义 insert 语句，select 标签只能定义 select 语句
+
+-->
+
+<mapper namespace="com.jeffrey.processimageservice.mapper.OrderServiceImplMapper">
+
+    <insert id="saveOrder1">
+        INSERT INTO `order_info` (uid, pid, title, order_no, order_status, order_type)
+        VALUES (#{uid}, #{pid}, #{title}, #{orderNo}, #{orderStatus}, #{orderType})
+    </insert>
+
+    <insert id="saveOrder2">
+        INSERT INTO `order_info` (uid, pid, title, order_no, order_status, order_type)
+        VALUES (#{userId}, #{productPid}, #{title}, #{orderNo}, #{orderStatus}, #{orderType})
+    </insert>
+    <update id="updateLocalOrderStatus">
+        UPDATE `order_info`
+        SET `order_status` = #{arg0}, `update_time` = #{arg1}
+        WHERE `uid` = #{arg2}
+          AND `order_no` = #{arg3}
+    </update>
+
+
+    <select id="queryLocalOrder" resultType="com.jeffrey.processimageservice.entities.OrderInfo">
+        SELECT `id`,
+               `uid` as userId,
+               `pid` as productPid,
+               `title`,
+               `order_no` as orderNo,
+               `order_type` as orderType,
+               `order_status` as orderStatus,
+               `create_time` as createTime,
+               `update_time` as updateTime
+        FROM order_info
+        WHERE `uid` = #{arg0} and `order_no` = #{arg1}
+    </select>
+
+</mapper>
