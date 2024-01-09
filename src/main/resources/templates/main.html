@@ -11,6 +11,18 @@
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <link rel="stylesheet" th:href="@{/css/main.css}">
 
+    <script>
+
+        window.addEventListener('storage', function (event) {
+            if (event.key === 'operationCompleted' && event.newValue === 'true') {
+                alert('您已完成支付，点击确定刷新页面')
+                localStorage.removeItem('operationCompleted');
+                location.reload()
+            }
+        })
+
+    </script>
+
     <script th:inline="javascript">
         $(function () {
             const dynamicDomain = [[${dynamicDomain}]];
@@ -45,8 +57,7 @@
             <li><a th:href="@{/ApiDocument.html}" target="_blank">API 接入文档</a></li>
 
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">SDK 方案
-                    <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">SDK 方案<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     <li><a th:href="@{/SDK/Java/java-sdk-maven.zip}">JavaSDK</a></li>
                     <li class="divider"></li>
@@ -75,7 +86,43 @@
     </div>
 </div>
 
-<div class="table-box"><table><tr><th>账号名称：</th><td>[[${username}]]</td></tr><tr><th>账号公钥：</th><td>[[${publicKey}]]</td></tr><tr><th>账号私钥：</th><td>[[${privateKey}]]</td></tr><tr><th>账号可调用次数：</th><td>[[${apiCanUseCount}]]</td></tr><tr><th>账号已调用次数：</th><td>[[${apiUsedCount}]]</td></tr></table></div>
+<div class="table-box">
+    <table>
+        <tr>
+            <th>账号名称：</th>
+            <td>[[${username}]]</td>
+        </tr>
+        <tr>
+            <th>账号公钥：</th>
+            <td>[[${publicKey}]]</td>
+        </tr>
+        <tr>
+            <th>账号私钥：</th>
+            <td>[[${privateKey}]]</td>
+        </tr>
+        <tr>
+            <th>账号可调用次数（包括限时套餐次数）：</th>
+            <td>[[${apiCanUseCount}]]</td>
+        </tr>
+        <tr>
+            <th>账号已调用次数：</th>
+            <td>[[${apiUsedCount}]]</td>
+        </tr>
+        <tr>
+            <th>按需套餐剩余次数</th>
+            <td>[[${longTermUsageCount}]]</td>
+        </tr>
+        <tr>
+            <th>限期套餐剩余次数</th>
+            <td>[[${limitedTermUsageCount}]]</td>
+        </tr>
+        <tr>
+            <th>限期套餐剩余天数</th>
+            <td>[[${limitedTermExpireDays}]]</td>
+        </tr>
+
+    </table>
+</div>
 
 </body>
 </html>
