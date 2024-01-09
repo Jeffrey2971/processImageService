@@ -1,7 +1,7 @@
 package com.jeffrey.processimageservice.aop.impl.api;
 
 import com.jeffrey.processimageservice.enums.AccountStatus;
-import com.jeffrey.processimageservice.enums.ResponseStatus;
+
 import com.jeffrey.processimageservice.entities.sign.EncryptedInfo;
 import com.jeffrey.processimageservice.service.AccountService;
 import com.jeffrey.processimageservice.strategy.StrategyFactory;
@@ -18,9 +18,9 @@ import org.aspectj.lang.annotation.Around;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -35,25 +35,10 @@ public class UpdateAccountUsedAop {
 
     private final AccountService accountService;
     private final ThreadLocal<EncryptedInfo> encryptedInfoThreadLocal;
-    private static final SimpleDateFormat SDF;
     private static final ReentrantLock REENTRANT_LOCK;
-    private static final ArrayList<Integer> RELEASE_HTTP_STATUS_CODE;
-    private static final ArrayList<Integer> RELEASE_PROCESS_STATUS_CODE;
 
     static {
-
-        RELEASE_HTTP_STATUS_CODE = new ArrayList<>();
-        RELEASE_PROCESS_STATUS_CODE = new ArrayList<>();
-
         REENTRANT_LOCK = new ReentrantLock();
-        SDF = new SimpleDateFormat("yyyy-MM-dd hh-mm-ss");
-
-        // 不扣除使用次数的状态码集合
-        RELEASE_HTTP_STATUS_CODE.add(ResponseStatus.SC_NOT_MODIFIED.getValue());
-        RELEASE_HTTP_STATUS_CODE.add(ResponseStatus.SC_OK.getValue());
-
-        RELEASE_PROCESS_STATUS_CODE.add(ResponseStatus.SC_PROCESS_SUCCESS.getValue());
-        RELEASE_PROCESS_STATUS_CODE.add(ResponseStatus.SC_PROCESS_WHITE_IMAGE.getValue());
     }
 
     @Autowired
@@ -77,25 +62,49 @@ public class UpdateAccountUsedAop {
 
             AccountInfo accountInfo = accountService.getAccountInfoById(encryptedInfo.getId());
 
-            if (accountInfo.getApiCanUseCount() <= AccountStatus.ZERO_USED.getValue()) {
+            // 判断账户是否有长期和限期次数
+            if (accountInfo.getLongTermUsageCount() <= AccountStatus.ZERO_USED.getValue()
+                    && (accountInfo.getLimitedTermUsageCount() <= AccountStatus.ZERO_USED.getValue()
+                    || accountInfo.getLimitedTermExpireDays() <= 0)
+            ) {
                 throw new AccountException("账户可用次数不足");
             }
 
             // 在调用连接点方法之前不修改账户信息
             GenericResponse genericResponse = (GenericResponse) pjp.proceed();
 
-            boolean shouldNotModifyCounts = StrategyFactory.shouldNotModifyCounts(genericResponse);
+            boolean modify = !StrategyFactory.shouldNotModifyCounts(genericResponse);
+            boolean priorityDeduction = accountInfo.getLimitedTermUsageCount() > 0 && accountInfo.getLimitedTermExpireDays() > 0;
 
-            accountInfo.setApiCanUseCount(shouldNotModifyCounts ? accountInfo.getApiCanUseCount() : accountInfo.getApiCanUseCount() - 1);
-            accountInfo.setApiUsedCount(shouldNotModifyCounts ? accountInfo.getApiUsedCount() : accountInfo.getApiUsedCount() + 1);
+            if (modify) {
+                // 需扣除次数
 
-            accountInfo.setLastModifyTime(SDF.format(new Date(System.currentTimeMillis())));
-            accountService.updateAccountInfo(accountInfo);
+                if (priorityDeduction) {
+                    // 优先扣除限期套餐次数
+                    accountInfo.setLimitedTermUsageCount(accountInfo.getLimitedTermUsageCount() - 1);
+                } else {
+                    // 扣除长期套餐可用次数
+                    accountInfo.setLongTermUsageCount(accountInfo.getLongTermUsageCount() - 1);
+                }
 
-            genericResponse.setRemainingUsage(accountInfo.getApiCanUseCount());
-            genericResponse.setAllUsedCount(accountInfo.getApiUsedCount());
+                accountInfo.setCallSuccessful(accountInfo.getCallSuccessful() + 1);
+                accountInfo.setLastModify(LocalDateTime.now());
+
+                accountService.updateAccountInfo(accountInfo);
+            }
+
+
+            // 剩余次数为限期套餐次数 + 长期套餐次数
+            genericResponse.setRemainingUsage(accountInfo.getLongTermUsageCount() + accountInfo.getLimitedTermUsageCount());
+            genericResponse.setAllUsedCount(accountInfo.getCallSuccessful());
+            genericResponse.setLongTermUsageCount(accountInfo.getLongTermUsageCount());
+            genericResponse.setLimitedTermUsageCount(accountInfo.getLimitedTermUsageCount());
+            genericResponse.setLimitedTermExpireDays(accountInfo.getLimitedTermExpireDays());
+
             encryptedInfo.setPrivateSecret(null);
             encryptedInfo.setPublicKey(null);
+            encryptedInfo.setId(null);
+
             genericResponse.setEncryptedInfo(encryptedInfo);
 
             return genericResponse;
