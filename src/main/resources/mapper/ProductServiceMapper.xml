@@ -18,6 +18,6 @@
 
 
     <select id="queryProductByProductPID" resultType="com.jeffrey.processimageservice.entities.ProductInfo">
-        SELECT `id`, `pid`, `title`, `price`, `total`, `create_time`, `update_time` FROM product WHERE `pid` = #{pid}
+        SELECT `id`, `pid`, `type`, `title`, `price`, `total`, `create_time`, `update_time` FROM product WHERE `pid` = #{pid}
     </select>
 </mapper>
