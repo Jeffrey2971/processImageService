@@ -119,6 +119,18 @@ public class ExceptionHandlers {
         return new GenericResponse(400, "FAILED::" + e.getLocalizedMessage(), "json", null, null,  "ExceptionHandler[ImageTypeNotSupportedException.class]", ipAddress, new Data(52001, null, "UNHANDLED::因其他问题导致未处理", null, null));
     }
 
+    @ExceptionHandler(ProductNotFountException.class)
+    public GenericResponse productNotFountException(ProductNotFountException e, HttpServletRequest request) {
+        String ipAddress = GetRequestAddressUtil.getIPAddress(request);
+        return new GenericResponse(400, "FAILED::" + e.getLocalizedMessage(), "json", null, null,  "ExceptionHandler[" + e.getClass().getSimpleName() + ".class]", ipAddress, new Data(52001, null, "UNHANDLED::因其他问题导致未处理", null, null));
+    }
+
+    @ExceptionHandler(InvalidPaymentTypeException.class)
+    public GenericResponse invalidPaymentTypeException(InvalidPaymentTypeException e, HttpServletRequest request) {
+        String ipAddress = GetRequestAddressUtil.getIPAddress(request);
+        return new GenericResponse(400, "FAILED::" + e.getLocalizedMessage(), "json", null, null,  "ExceptionHandler[" + e.getClass().getSimpleName() + ".class]", ipAddress, new Data(52001, null, "UNHANDLED::因其他问题导致未处理", null, null));
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public GenericResponse baseException(Exception e, HttpServletRequest request) {
