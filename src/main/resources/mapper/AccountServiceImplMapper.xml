@@ -7,11 +7,32 @@
 <mapper namespace="com.jeffrey.processimageservice.mapper.AccountServiceImplMapper">
 
     <select id="getAccountInfoById" resultType="com.jeffrey.processimageservice.entities.sign.AccountInfo">
-        SELECT id, username, password, email, api_can_use_count as apiCanUseCount, api_used_count as apiUsedCount, last_modify as lastModifyTime FROM account WHERE id = #{id}
+        SELECT `id`,
+               `username`,
+               `password`,
+               `email`,
+               `long_term_usage_count`  as longTermUsageCount,
+               `limited_term_usage_count` as limitedTermUsageCount,
+               `limited_term_expire_days` as limitedTermExpireDays,
+               `call_successful`          as callSuccessful,
+               `last_modify`              as lastModify
+        FROM `account`
+        WHERE `id` = #{id}
     </select>
 
     <update id="updateAccountInfoById">
-        UPDATE account SET `api_can_use_count` = #{apiCanUseCount}, `api_used_count` = #{apiUsedCount}, last_modify = #{lastModifyTime} WHERE `id` = #{id}
+        UPDATE account
+        <set>
+            <if test="username != null">username = #{username},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="longTermUsageCount != null">long_term_usage_count = #{longTermUsageCount},</if>
+            <if test="limitedTermUsageCount != null">limited_term_usage_count = #{limitedTermUsageCount},</if>
+            <if test="limitedTermExpireDays != null">limited_term_expire_days = #{limitedTermExpireDays},</if>
+            <if test="callSuccessful != null">call_successful = #{callSuccessful},</if>
+            <if test="lastModify != null">last_modify = #{lastModify}</if>
+        </set>
+        WHERE `id` = #{id}
     </update>
 
 </mapper>
