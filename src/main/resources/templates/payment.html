@@ -73,6 +73,7 @@
                 type: 'get',
                 dataType: 'json',
                 success: function (data) {
+                    localStorage.setItem('operationCompleted', 'true');
                     layer.close(waitTips);
                     if (data.code === 0 || data.message === '完成') {
                         layer.alert('购买成功，点击确定关闭当前页面', {icon: 1, shadeClose: false, title: '购买操作完成', closeBtn: 0
