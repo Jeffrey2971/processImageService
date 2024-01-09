@@ -1,6 +1,7 @@
 package com.jeffrey.processimageservice.utils;
 
 import com.google.gson.Gson;
+import com.jeffrey.processimageservice.entities.OrderInfo;
 import com.jeffrey.processimageservice.enums.OrderStatus;
 import com.jeffrey.processimageservice.exception.exception.InvalidBillDateException;
 import com.jeffrey.processimageservice.exception.exception.OrderTypeException;
@@ -22,13 +23,13 @@ import java.util.regex.Pattern;
 public class PayUtil {
     private static final OkHttpClient AUTHORIZATION_CLIENT;
     private static final String DOMAIN = "https://www.processimage.cn";
-//    private static final String DOMAIN = "http://localhost:8085";
     private static final String NATIVE_PAY = DOMAIN + "/server/api/wx-pay/native/%s/%s";
     private static final String JSAPI_PRE_PAY = DOMAIN + "/server/api/wx-pay/jsapi/%s/%s/%s";
     private static final String JSAPI_PAY = DOMAIN + "/server/api/wx-pay/jsapiPaymentSign/%s";
     private static final String CANCEL_ORDER = DOMAIN + "/server/api/wx-pay/cancel/%s";
     private static final String REFUND_ORDER = DOMAIN + "/server/api/wx-pay/refunds/%s/%s";
-    private static final String QUERY_ORDER = DOMAIN + "/server/api/order-info/query-order-status/%s/%s";
+    private static final String QUERY_ORDER_STATUS = DOMAIN + "/server/api/order-info/query-order-status/%s/%s";
+    private static final String QUERY_ORDER_INFO = DOMAIN + "/server/api/order-info/query-order-info/%s/%s";
     private static final String QUERY_PRODUCT_LIST = DOMAIN + "/server/api/product/list";
     private static final String QUERY_ORDER_LIST = DOMAIN + "/server/api/order-info/list";
     private static final String UPDATE_ORDER_STATUS = DOMAIN + "/server/api/order-info/update-order-status/%s";
@@ -70,7 +71,7 @@ public class PayUtil {
                 .post(RequestBody.create(MediaType.parse("application/json;charset=utf-8"), new byte[0]))
                 .url(String.format(NATIVE_PAY, productId, userIdentifier))
                 .build();
-        return handleResponse(request);
+        return genericHandleResponse(request);
     }
 
     /**
@@ -86,7 +87,7 @@ public class PayUtil {
                 .post(RequestBody.create(MediaType.parse("application/json;charset=utf-8"), new byte[0]))
                 .url(String.format(JSAPI_PRE_PAY, productId, userIdentifier, openId))
                 .build();
-        return handleResponse(request);
+        return genericHandleResponse(request);
     }
 
     public static R jsapiPay(String prepayId){
@@ -94,7 +95,7 @@ public class PayUtil {
                 .url(String.format(JSAPI_PAY, prepayId))
                 .get()
                 .build();
-        return handleResponse(request);
+        return genericHandleResponse(request);
     }
 
     /**
@@ -107,7 +108,7 @@ public class PayUtil {
                 .post(RequestBody.create(MediaType.parse("application/json;charset=utf-8"), new byte[0]))
                 .url(String.format(CANCEL_ORDER, orderNo))
                 .build();
-        return handleResponse(request);
+        return genericHandleResponse(request);
     }
 
     /**
@@ -121,7 +122,7 @@ public class PayUtil {
                 .post(RequestBody.create(MediaType.parse("application/json;charset=utf-8"), new byte[0]))
                 .url(String.format(REFUND_ORDER, orderNo, reason))
                 .build();
-        return handleResponse(request);
+        return genericHandleResponse(request);
     }
 
 
@@ -141,7 +142,7 @@ public class PayUtil {
                 .get()
                 .url(String.format(DOWNLOAD_BILL, billDate, type))
                 .build();
-        return handleResponse(request);
+        return genericHandleResponse(request);
     }
 
     /**
@@ -153,7 +154,7 @@ public class PayUtil {
                 .get()
                 .url(QUERY_ORDER_LIST)
                 .build();
-        return handleResponse(request);
+        return genericHandleResponse(request);
     }
 
     /**
@@ -168,7 +169,7 @@ public class PayUtil {
                 .patch(RequestBody.create(MediaType.parse("text/plain;charset=utf-8"), orderStatus.name()))
                 .url(String.format(UPDATE_ORDER_STATUS, orderNo))
                 .build();
-        return handleResponse(request);
+        return genericHandleResponse(request);
     }
 
     /**
@@ -180,7 +181,15 @@ public class PayUtil {
     public static R queryOrderStatus(String orderNo, String userIdentifier) {
         Request request = new Request.Builder()
                 .get()
-                .url(String.format(QUERY_ORDER, orderNo, userIdentifier))
+                .url(String.format(QUERY_ORDER_STATUS, orderNo, userIdentifier))
+                .build();
+        return genericHandleResponse(request);
+    }
+
+    public static OrderInfo queryOrderInfo(String orderNo, String userIdentifier) {
+        Request request = new Request.Builder()
+                .get()
+                .url(String.format(QUERY_ORDER_INFO, orderNo, userIdentifier))
                 .build();
         return handleResponse(request);
     }
@@ -194,7 +203,7 @@ public class PayUtil {
                 .get()
                 .url(String.format(QUERY_PRODUCT_LIST))
                 .build();
-        return handleResponse(request);
+        return genericHandleResponse(request);
     }
 
     public static R checkOrder(String orderStatus) throws OrderTypeException{
@@ -229,7 +238,7 @@ public class PayUtil {
     }
 
     // ####################### private ####################### //
-    private static R handleResponse(Request request) {
+    private static R genericHandleResponse(Request request) {
         try (Response response = AUTHORIZATION_CLIENT.newCall(request).execute()) {
             if (response.isSuccessful() && response.body() != null) {
 
@@ -241,12 +250,21 @@ public class PayUtil {
         }
     }
 
+    private static OrderInfo handleResponse(Request request) {
+        try (Response response = AUTHORIZATION_CLIENT.newCall(request).execute()) {
+            if (response.isSuccessful() && response.body() != null) {
+                String resp = response.body().string();
+                return new Gson().fromJson(resp, OrderInfo.class);
+            }
+            throw new RuntimeException("请求失败");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static boolean isValidDate(String dateStr) {
         Pattern pattern = Pattern.compile(BILL_DATE_PATTERN);
         Matcher matcher = pattern.matcher(dateStr);
         return matcher.matches();
-    }
-    public static void main(String[] args) {
-        System.out.println(PayUtil.updateOrderStatus("ORDER_20231110093936848", OrderStatus.REFUND_PROCESSING));
     }
 }
