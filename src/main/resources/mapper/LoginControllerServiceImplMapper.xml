@@ -19,23 +19,34 @@
 
 
     <select id="selectAccountInfoByUsername" resultType="com.jeffrey.processimageservice.entities.sign.AccountInfo">
-        SELECT `id`, `password`, `email`, `api_can_use_count` as apiCanUseCount, `api_used_count` as apiUsedCount
+        SELECT `id`,
+               `password`,
+               `email`,
+               `long_term_usage_count`  as longTermUsageCount,
+               `limited_term_usage_count` as limitedTermUsageCount,
+               `limited_term_expire_days` as limitedTermExpireDays,
+               `call_successful`        as callSuccessful
         FROM `account`
         WHERE `username` = #{username}
     </select>
 
-    <select id="queryAuthorizationInformationDataByUserName" resultType="com.jeffrey.processimageservice.entities.sign.EncryptedInfo">
+    <select id="queryAuthorizationInformationDataByUserName"
+            resultType="com.jeffrey.processimageservice.entities.sign.EncryptedInfo">
         select `id`, `public_key` as publicKey, `private_secret` as privateSecret
         from authorized_accounts_list as t1
         WHERE t1.id = (SELECT t2.id FROM `account` as t2 WHERE t2.username = #{username})
     </select>
 
     <select id="getPage" resultType="com.jeffrey.processimageservice.vo.PageInnerData">
-        SELECT `status`, `message`, `sign`, `create_time` as finishedTime, `aid` as accountId FROM `process_status` WHERE `aid` = #{aid}
+        SELECT `status`, `message`, `sign`, `create_time` as finishedTime, `aid` as accountId
+        FROM `process_status`
+        WHERE `aid` = #{aid}
     </select>
 
     <select id="getAllCount" resultType="java.lang.Long">
-        SELECT count(*) FROM process_status WHERE `aid` = #{aid}
+        SELECT count(*)
+        FROM process_status
+        WHERE `aid` = #{aid}
     </select>
     <select id="selectAccountInfoByEmail"
             resultType="com.jeffrey.processimageservice.entities.sign.AccountInfo">
