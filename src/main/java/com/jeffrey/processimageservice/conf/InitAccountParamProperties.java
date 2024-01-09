@@ -11,6 +11,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "account")
 @Data
 public class InitAccountParamProperties {
-    private Integer apiCanUseCount;
-    private Integer apiUsedCount;
+    private Integer longTermUsageCount;
+    private Integer limitedTermUsageCount;
+    private Integer limitedTermExpireDays;
+    private Integer callSuccessful;
 }
