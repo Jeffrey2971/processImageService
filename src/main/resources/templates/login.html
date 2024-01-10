@@ -25,25 +25,21 @@
                 <h1>注册</h1>
                 <div class="txtb">
                     <input type="text" v-model="signData.username" @blur="usernameAsyncCheck"
-                           @focus="cleanUsernameTips">
-                    <span data-placeholder="请输入用户名称" v-if="!signData.username"></span>
+                           @focus="cleanUsernameTips" placeholder="请输入用户名">
                     <span v-show="showUsernameTips" :class="userNameTipsStyle" v-html="usernameTips"></span>
                 </div>
                 <div class="txtb">
-                    <input v-model="signData.email" type="email" @blur="emailCheck" @focus="cleanEmailTips">
-                    <span data-placeholder="请输入邮箱地址" v-if="!signData.email"></span>
+                    <input v-model="signData.email" type="email" @blur="emailCheck" @focus="cleanEmailTips" placeholder="请输入邮箱">
                     <span v-show="showEmailTips" :class="emailTipsStyle" v-html="emailTips"></span>
                 </div>
                 <div class="txtb">
                     <input v-model="signData.password1" type="password" @blur="passwordCheck"
-                           @focus="cleanPasswordTips">
-                    <span data-placeholder="请输入用户密码" v-if="!signData.password1"></span>
+                           @focus="cleanPasswordTips" placeholder="请输入密码">
                     <span v-show="showPasswordTips" :class="passWordTipsStyle" v-html="passwordTips"></span>
                 </div>
                 <div class="txtb">
                     <input type="password" v-model="signData.password2" @blur="passwordEnsureCheck"
-                           @focus="cleanEnsurePasswordTips">
-                    <span data-placeholder="请确认你输入的用户密码" v-if="!signData.password2"></span>
+                           @focus="cleanEnsurePasswordTips" placeholder="请确认密码">
                     <span v-show="showEnsurePasswordTips" :class="ensurePassWordTipsStyle"
                           v-html="ensurePasswordTips"></span>
                 </div>
@@ -55,13 +51,11 @@
                 <h1>登录</h1>
                 <div class="txtb">
                     <input type="text" v-model="loginData.username" @blur="loginUsernameCheck"
-                           @focus="cleanLoginUsernameTips">
-                    <span data-placeholder="在这里输入用户名" v-if="!loginData.username"></span>
+                           @focus="cleanLoginUsernameTips" placeholder="请输入用户名">
                     <span v-show="showLoginUsernameTips" :class="loginUsernameTipsStyle" v-html="loginUsernameTips"></span>
                 </div>
                 <div class="txtb">
-                    <input type="password" v-model="loginData.password" @blur="loginPasswordCheck" @focus="cleanLoginPasswordTips">
-                    <span data-placeholder="在这里输入用户名密码" v-if="!loginData.password"></span>
+                    <input type="password" v-model="loginData.password" @blur="loginPasswordCheck" @focus="cleanLoginPasswordTips" placeholder="请输入密码">
                     <span v-show="showLoginPasswordTips" :class="loginPasswordTipsStyle" v-html="loginPasswordTips"></span>
                 </div>
 
