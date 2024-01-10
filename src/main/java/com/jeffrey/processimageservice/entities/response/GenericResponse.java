@@ -4,6 +4,7 @@ import com.jeffrey.processimageservice.entities.sign.EncryptedInfo;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @author jeffrey
@@ -15,12 +16,12 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class GenericResponse implements Serializable {
 
-    public GenericResponse(Integer httpCode, String httpMsg, String returnType, Integer remainingUsage, Integer allUsedCount, String msgInnerReferer, String location, Data data) {
+    public GenericResponse(Integer httpCode, String httpMsg, String returnType, Integer remainingUsage, Integer callSuccessful, String msgInnerReferer, String location, Data data) {
         this.httpCode = httpCode;
         this.httpMsg = httpMsg;
         this.returnType = returnType;
         this.remainingUsage = remainingUsage;
-        this.allUsedCount = allUsedCount;
+        this.callSuccessful = callSuccessful;
         this.msgInnerReferer = msgInnerReferer;
         this.location = location;
         this.data = data;
@@ -32,8 +33,8 @@ public class GenericResponse implements Serializable {
     private Integer remainingUsage;
     private Integer longTermUsageCount;
     private Integer limitedTermUsageCount;
-    private Integer limitedTermExpireDays;
-    private Integer allUsedCount;
+    private LocalDateTime limitedTermExpireTimes;
+    private Integer callSuccessful;
     private String msgInnerReferer;
     private String location;
     private Data data;

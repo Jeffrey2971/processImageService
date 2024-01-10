@@ -21,8 +21,8 @@ public class AccountInfo {
     private String email;
     private Integer longTermUsageCount;
     private Integer limitedTermUsageCount;
-    private Integer limitedTermExpireDays;
     private Integer callSuccessful;
+    private LocalDateTime limitedTermExpireTimes;
     private LocalDateTime lastModify;
 
     public AccountInfo(Integer longTermUsageCount, LocalDateTime lastModify) {
@@ -30,9 +30,7 @@ public class AccountInfo {
         this.lastModify = lastModify;
     }
 
-    public AccountInfo(Integer limitedTermUsageCount, Integer limitedTermExpireDays, LocalDateTime lastModify) {
-        this.limitedTermUsageCount = limitedTermUsageCount;
-        this.limitedTermExpireDays = limitedTermExpireDays;
-        this.lastModify = lastModify;
+    public AccountInfo(LocalDateTime limitedTermExpireTimes) {
+        this.limitedTermExpireTimes = limitedTermExpireTimes;
     }
 }

@@ -145,7 +145,9 @@ public class OrderServiceImpl implements OrderService {
             Integer total = productInfo.getTotal();
             accountInfo = accountService.getAccountInfoById(StpUtil.getLoginIdAsInt());
             accountInfo.setLimitedTermUsageCount(accountInfo.getLimitedTermUsageCount() + total);
-            accountInfo.setLimitedTermExpireDays(accountInfo.getLimitedTermExpireDays() + 30);
+            accountInfo.setLimitedTermExpireTimes(accountInfo.getLimitedTermExpireTimes() != null
+                    ? accountInfo.getLimitedTermExpireTimes().plusDays(30) : LocalDateTime.now().plusDays(30)
+            );
             accountInfo.setLastModify(LocalDateTime.now());
 
             accountService.updateAccountInfo(accountInfo);

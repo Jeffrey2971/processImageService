@@ -13,6 +13,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class InitAccountParamProperties {
     private Integer longTermUsageCount;
     private Integer limitedTermUsageCount;
-    private Integer limitedTermExpireDays;
+    private Integer limitedTermExpireTimes;
     private Integer callSuccessful;
 }

@@ -24,7 +24,7 @@
                `email`,
                `long_term_usage_count`  as longTermUsageCount,
                `limited_term_usage_count` as limitedTermUsageCount,
-               `limited_term_expire_days` as limitedTermExpireDays,
+               `limited_term_expire_times` as limitedTermExpireTimes,
                `call_successful`        as callSuccessful
         FROM `account`
         WHERE `username` = #{username}

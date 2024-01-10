@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -63,9 +62,10 @@ public class UpdateAccountUsedAop {
             AccountInfo accountInfo = accountService.getAccountInfoById(encryptedInfo.getId());
 
             // 判断账户是否有长期和限期次数
+            LocalDateTime expireTimes = accountInfo.getLimitedTermExpireTimes();
             if (accountInfo.getLongTermUsageCount() <= AccountStatus.ZERO_USED.getValue()
                     && (accountInfo.getLimitedTermUsageCount() <= AccountStatus.ZERO_USED.getValue()
-                    || accountInfo.getLimitedTermExpireDays() <= 0)
+                    || LocalDateTime.now().isAfter(expireTimes))
             ) {
                 throw new AccountException("账户可用次数不足");
             }
@@ -74,7 +74,8 @@ public class UpdateAccountUsedAop {
             GenericResponse genericResponse = (GenericResponse) pjp.proceed();
 
             boolean modify = !StrategyFactory.shouldNotModifyCounts(genericResponse);
-            boolean priorityDeduction = accountInfo.getLimitedTermUsageCount() > 0 && accountInfo.getLimitedTermExpireDays() > 0;
+            boolean priorityDeduction = accountInfo.getLimitedTermUsageCount() > 0
+                    && LocalDateTime.now().isBefore(expireTimes);
 
             if (modify) {
                 // 需扣除次数
@@ -96,10 +97,10 @@ public class UpdateAccountUsedAop {
 
             // 剩余次数为限期套餐次数 + 长期套餐次数
             genericResponse.setRemainingUsage(accountInfo.getLongTermUsageCount() + accountInfo.getLimitedTermUsageCount());
-            genericResponse.setAllUsedCount(accountInfo.getCallSuccessful());
+            genericResponse.setCallSuccessful(accountInfo.getCallSuccessful());
             genericResponse.setLongTermUsageCount(accountInfo.getLongTermUsageCount());
             genericResponse.setLimitedTermUsageCount(accountInfo.getLimitedTermUsageCount());
-            genericResponse.setLimitedTermExpireDays(accountInfo.getLimitedTermExpireDays());
+            genericResponse.setLimitedTermExpireTimes(accountInfo.getLimitedTermExpireTimes());
 
             encryptedInfo.setPrivateSecret(null);
             encryptedInfo.setPublicKey(null);

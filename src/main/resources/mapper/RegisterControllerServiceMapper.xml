@@ -24,13 +24,13 @@
     </select>
 
     <insert id="register" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO `account` (`username`, `password`, `email`, `long_term_usage_count`,`limited_term_usage_count`, `limited_term_expire_days`, `call_successful`, `last_modify`)
+        INSERT INTO `account` (`username`, `password`, `email`, `long_term_usage_count`,`limited_term_usage_count`, `limited_term_expire_times`, `call_successful`, `last_modify`)
         VALUES (#{registerParams.username},
                 #{registerParams.password},
                 #{registerParams.email},
                 #{initAccountParams.longTermUsageCount},
                 #{initAccountParams.limitedTermUsageCount},
-                #{initAccountParams.limitedTermExpireDays},
+                #{initAccountParams.limitedTermExpireTimes},
                 #{initAccountParams.callSuccessful},
                 #{creationTime});
     </insert>

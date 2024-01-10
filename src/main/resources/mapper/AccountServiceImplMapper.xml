@@ -13,7 +13,7 @@
                `email`,
                `long_term_usage_count`  as longTermUsageCount,
                `limited_term_usage_count` as limitedTermUsageCount,
-               `limited_term_expire_days` as limitedTermExpireDays,
+               `limited_term_expire_times` as limitedTermExpireTimes,
                `call_successful`          as callSuccessful,
                `last_modify`              as lastModify
         FROM `account`
@@ -28,7 +28,7 @@
             <if test="email != null">email = #{email},</if>
             <if test="longTermUsageCount != null">long_term_usage_count = #{longTermUsageCount},</if>
             <if test="limitedTermUsageCount != null">limited_term_usage_count = #{limitedTermUsageCount},</if>
-            <if test="limitedTermExpireDays != null">limited_term_expire_days = #{limitedTermExpireDays},</if>
+            <if test="limitedTermExpireTimes != null">limited_term_expire_times = #{limitedTermExpireTimes},</if>
             <if test="callSuccessful != null">call_successful = #{callSuccessful},</if>
             <if test="lastModify != null">last_modify = #{lastModify}</if>
         </set>
