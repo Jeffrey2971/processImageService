@@ -59,9 +59,9 @@
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">SDK 方案<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    <li><a th:href="@{/SDK/Java/java-sdk-maven.zip}">JavaSDK</a></li>
+                    <li><a th:href="@{/sdk/java/java-sdk-maven.zip}">JavaSDK</a></li>
                     <li class="divider"></li>
-                    <li><a th:href="@{/SDK/Python/pythonSDK.html}">PythonSDK</a></li>
+                    <li><a th:href="@{/sdk/python/python-demo.html}">PythonDemo</a></li>
                 </ul>
             </li>
 
@@ -117,8 +117,8 @@
             <td>[[${limitedTermUsageCount}]]</td>
         </tr>
         <tr>
-            <th>限期套餐剩余天数</th>
-            <td>[[${limitedTermExpireDays}]]</td>
+            <th>限期套餐到期时间</th>
+            <td>[[${limitedTermExpireTimes}]]</td>
         </tr>
 
     </table>
