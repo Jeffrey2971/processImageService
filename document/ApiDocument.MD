@@ -102,24 +102,24 @@
 
 ### 四、响应数据列表
 
-| 字段                  | 含义                                                         |
-| --------------------- | ------------------------------------------------------------ |
-| httpCode              | 本次请求状态，具体参照响应码列表                             |
-| httpMsg               | 本次请求状态信息                                             |
-| returnType            | 本次响应返回的数据类型                                       |
-| remainingUsage        | 当前用户剩余可使用次数                                       |
-| allUsedCount          | 账户总调用次数                                               |
-| longTermUsageCount    | 账户长期可调用次数                                           |
-| limitedTermUsageCount | 账户限期可调用次数                                           |
-| limitedTermExpireDays | 账户限期次数到期天数                                         |
-| location              | 客户端请求发起 IP 地址                                       |
-| msgInnerReferer       | 内部消息来源，成功时为空，失败时可根据该信息进行定位         |
-| data                  | 为一个对象，封装了本次请求的具体响应数据，包括去水印后的数据。在处理异步请求时返回的 data 对象不包含处理数据 |
-| processStatus         | 本次处理状态码，具体参照响应码列表                           |
-| processMsg            | 本次处理状态信息                                             |
+| 字段                  | 含义                                                                                                      |
+| --------------------- |---------------------------------------------------------------------------------------------------------|
+| httpCode              | 本次请求状态，具体参照响应码列表                                                                                        |
+| httpMsg               | 本次请求状态信息                                                                                                |
+| returnType            | 本次响应返回的数据类型                                                                                             |
+| remainingUsage        | 当前用户剩余可使用次数                                                                                             |
+| allUsedCount          | 账户总调用次数                                                                                                 |
+| longTermUsageCount    | 账户长期可调用次数                                                                                               |
+| limitedTermUsageCount | 账户限期可调用次数                                                                                               |
+| limitedTermExpireTimes | 账户限期次数到期时间                                                                                              |
+| location              | 客户端请求发起 IP 地址                                                                                           |
+| msgInnerReferer       | 内部消息来源，成功时为空，失败时可根据该信息进行定位                                                                              |
+| data                  | 为一个对象，封装了本次请求的具体响应数据，包括去水印后的数据。在处理异步请求时返回的 data 对象不包含处理数据                                               |
+| processStatus         | 本次处理状态码，具体参照响应码列表                                                                                       |
+| processMsg            | 本次处理状态信息                                                                                                |
 | processLocation       | 本次处理的矩形坐标，为一个 json list，list 中的每一项依次代表着 left、top、width、height，lineCount 为自动合并了多少行，watermark 为四个坐标轴框选的文字 |
-| processCount          | 对本次请求上传图片的处理次数                                 |
-| url                   | 本次去水印后图片的 URL 地址，注意：响应的数据在服务器端仅保留 5 小时，平滑期为 5 分钟，超时自动销毁，在缓存期间内重复调用不扣除账户使用次数 |
+| processCount          | 对本次请求上传图片的处理次数                                                                                          |
+| url                   | 本次去水印后图片的 URL 地址，注意：响应的数据在服务器端仅保留 5 小时，平滑期为 5 分钟，超时自动销毁，在缓存期间内重复调用不扣除账户使用次数                             |
 
 
 
@@ -137,7 +137,7 @@
     "remainingUsage": 411,
     "longTermUsageCount": 20,
     "limitedTermUsageCount": 391,
-    "limitedTermExpireDays": 120,
+    "limitedTermExpireTimes": "2024-01-10T17:49:45",
     "allUsedCount": 9,
     "data": {
       "processStatus": 0,
@@ -184,7 +184,7 @@
     "remainingUsage": 411,
     "longTermUsageCount": 20,
     "limitedTermUsageCount": 391,
-    "limitedTermExpireDays": 120,
+    "limitedTermExpireTimes": "2024-01-10T17:49:45",
     "allUsedCount": 9,
     "data": {
       "processStatus": 52000,
@@ -210,7 +210,7 @@
     "remainingUsage": 411,
     "longTermUsageCount": 20,
     "limitedTermUsageCount": 391,
-    "limitedTermExpireDays": 120,
+    "limitedTermExpireTimes": "2024-01-10T17:49:45",
     "allUsedCount": 9,
     "data": {
       "processStatus": 0,
@@ -250,8 +250,11 @@
     "httpCode": 304,
     "httpMsg": "CACHE::本次响应为缓存数据，未作任何修改",
     "returnType": "json",
-    "remainingUsage": 76,
-    "allUsedCount": 24,
+    "remainingUsage": 411,
+    "longTermUsageCount": 20,
+    "limitedTermUsageCount": 391,
+    "limitedTermExpireTimes": "2024-01-10T17:49:45",
+    "allUsedCount": 9,
     "data": {
       "processStatus": 0,
       "processCount": 1,
@@ -295,7 +298,7 @@
 
   
 
-### 六、SDK
+### 六、SDK && DEMO
 
 - [JavaSDK](https://www.processimage.cn/watermark/SDK/Java/java-sdk-maven.zip)
 
