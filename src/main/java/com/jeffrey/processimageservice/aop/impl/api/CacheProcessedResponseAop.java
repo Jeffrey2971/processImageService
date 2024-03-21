@@ -82,7 +82,7 @@ public class CacheProcessedResponseAop {
             genericResponse.setHttpCode(ResponseStatus.SC_NOT_MODIFIED.getValue());
             genericResponse.setHttpMsg("本次响应为缓存数据，未作任何修改");
             genericResponse.setRemainingUsage(-1);
-            genericResponse.setAllUsedCount(-1);
+            genericResponse.setCallSuccessful(-1);
 
             return pjp.proceed(new Object[]{requestParamsWrapper, isAsyncTask, encryptedInfo, genericResponse});
 
