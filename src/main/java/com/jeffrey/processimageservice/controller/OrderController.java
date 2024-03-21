@@ -1,6 +1,8 @@
 package com.jeffrey.processimageservice.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.jeffrey.processimageservice.enums.Product;
+import com.jeffrey.processimageservice.enums.WxPaymentType;
 import com.jeffrey.processimageservice.service.OrderService;
 import com.jeffrey.processimageservice.utils.PayUtil;
 import com.jeffrey.processimageservice.vo.R;
@@ -45,12 +47,27 @@ public class OrderController {
     }
 
 
-    @GetMapping("/process-order/{id}/{type}")
-    public ModelAndView processOrder(@PathVariable String id, @PathVariable String type) {
+    @GetMapping("/process-order/{productPID}/{paymentType}")
+    public ModelAndView processOrder(@PathVariable String productPID, @PathVariable String paymentType) {
 
+        Product product;
+        WxPaymentType wxPaymentType;
         ModelAndView mav = new ModelAndView();
 
-        R r = orderService.createAndPrepayOrder(id, type);
+        try {
+            product = Product.valueOf(productPID.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("商品不存在");
+        }
+
+        try {
+            wxPaymentType = WxPaymentType.valueOf(paymentType.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("意外的付款方式");
+        }
+
+
+        R r = orderService.createAndPrepayOrder(product, wxPaymentType);
 
         if (r.getCode() == 0) {
             mav.addObject("callback", true);
