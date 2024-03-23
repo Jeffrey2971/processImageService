@@ -87,7 +87,7 @@ public class UpdateOrderAOP {
         session.set("apiUsedCount", accountInfo.getCallSuccessful());
         session.set("limitedTermUsageCount", accountInfo.getLimitedTermUsageCount());
         session.set("longTermUsageCount", accountInfo.getLongTermUsageCount());
-        session.set("limitedTermExpireTimes", accountInfo.getLimitedTermExpireTimes());
+        session.set("limitedTermExpireTimes", accountInfo.getLimitedTermExpireTimes() != null ? accountInfo.getLimitedTermExpireTimes() : "");
 
 
         return r;
