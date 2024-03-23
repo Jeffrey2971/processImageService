@@ -3,6 +3,7 @@ package com.jeffrey.processimageservice.conf;
 import com.jeffrey.processimageservice.entities.*;
 import com.jeffrey.processimageservice.entities.sign.EncryptedInfo;
 import com.jeffrey.processimageservice.filter.RequestFilter;
+import com.jeffrey.processimageservice.filter.ResponseFilter;
 import com.jeffrey.processimageservice.security.Decrypt;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,6 +24,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -50,14 +54,32 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class ProcessImageServiceAutoConfiguration {
 
     @Bean
+    public Docket docket(){
+
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(new ApiInfoBuilder().title("watermark 接口文档").build());
+    }
+    @Bean(name = "requestFilterRegistration")
     public FilterRegistrationBean<RequestFilter> filterRegistrationConf(RequestFilter requestFilter){
         FilterRegistrationBean<RequestFilter> requestFilterFilterRegistrationBean = new FilterRegistrationBean<>();
         requestFilterFilterRegistrationBean.setFilter(requestFilter);
         requestFilterFilterRegistrationBean.addUrlPatterns("/*");
         requestFilterFilterRegistrationBean.setName("requestFilter");
-        requestFilterFilterRegistrationBean.setOrder(1);
+        requestFilterFilterRegistrationBean.setOrder(10);
         return requestFilterFilterRegistrationBean;
     }
+
+    @Bean(name = "responseFilterRegistration")
+    public FilterRegistrationBean<ResponseFilter> filterRegistrationConf(ResponseFilter responseFilter){
+        FilterRegistrationBean<ResponseFilter> responseFilterFilterRegistrationBean = new FilterRegistrationBean<>();
+        responseFilterFilterRegistrationBean.setFilter(responseFilter);
+        responseFilterFilterRegistrationBean.addUrlPatterns("/*");
+        responseFilterFilterRegistrationBean.setName("responseFilter");
+        responseFilterFilterRegistrationBean.setOrder(11);
+        return responseFilterFilterRegistrationBean;
+    }
+
+
 
     @Bean(name = "myJavaMailSender")
     public JavaMailSender javaMailSender(JavaMailSenderProperties javaMailSenderProperties){
