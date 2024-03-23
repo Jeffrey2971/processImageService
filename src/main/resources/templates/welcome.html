@@ -1,266 +1,266 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8" name="referrer" content="origin">
+    <meta charset="UTF-8" name="referrer" content="origin">
 
-  <title>多功能图像水印处理[墨香绘华] API</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      /*padding: 0;*/
-    }
-    html {
-      height: 100%;
-    }
-    body {
-      font-family: sans-serif;
-      background-color: #f5f5f5;
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-    }
+    <title>多功能图像水印处理[墨香绘华] API</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            /*padding: 0;*/
+        }
+        html {
+            height: 100%;
+        }
+        body {
+            font-family: sans-serif;
+            background-color: #f5f5f5;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
 
-    header {
-      background-color: #fff;
-      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    header img {
-      height: 50px;
-    }
-    header nav ul {
-      list-style: none;
-      display: flex;
-    }
-    header nav ul li {
-      margin-left: 20px;
-    }
-    header nav ul li a {
-      color: #333;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    header nav ul li a:hover {
-      color: #666;
-    }
-    main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 40px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      flex: 1;
-    }
-    main section {
-      width: 50%;
-      padding-right: 20px;
-    }
-    main h1 {
-      font-size: 36px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    main p {
-      font-size: 18px;
-      line-height: 1.5;
-      color: #666;
-      margin-bottom: 30px;
-    }
-    main ul {
-      list-style: none;
-      margin-bottom: 30px;
-    }
-    main ul li {
-      font-size: 18px;
-      line-height: 1.5;
-      color: #666;
-      margin-bottom: 10px;
-    }
-    main ul li:before {
-      content: "•";
-      color: #ccc;
-      display: inline-block;
-      width: 1em;
-      margin-left: -1em;
-    }
-    main form {
-      width: 50%;
-      background-color: #fff;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-    }
-    main form h2 {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    main form table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-    main form table th {
-      font-size: 18px;
-      font-weight: bold;
-      color: #333;
-      padding: 10px;
-      text-align: left;
-      border-bottom: 2px solid #ccc;
-    }
-    main form table td {
-      font-size: 16px;
-      color: #666;
-      padding: 10px;
-      border-bottom: 1px solid #ccc;
-    }
-    main form table td input,
-    main form table td textarea {
-      width: 100%;
-      padding: 5px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      font-size: 16px;
-      color: #666;
-      outline: none;
-    }
-    main form table td input[type="file"] {
-      border: none;
-    }
-    main form table td input[type="submit"] {
-      background-color: #333;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      font-size: 18px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    main form table td input[type="submit"]:hover {
-      background-color: #555;
-    }
-    main form table td span {
-      font-size: 14px;
-      color: #999;
-      margin-top: 5px;
-      display: block;
-    }
-    main form table td a {
-      color: #333;
-      text-decoration: none;
-      font-size: 14px;
-      margin-left: 5px;
-      border-bottom: 1px dashed #333;
-    }
-    main form table td a:hover {
-      color: #666;
-      border-bottom: 1px dashed #666;
-    }
-    footer {
-      background-color: #333;
-      color: #fff;
-      padding: 10px;
-      text-align: center;
-      font-size: 14px;
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-    }
-    footer a {
-      color: #fff;
-      text-decoration: none;
-      border-bottom: 1px dashed #fff;
-    }
-    footer a:hover {
-      border-bottom: 1px dashed #ccc;
-    }
-    .dropdown {
-      position: relative;
-    }
+        header {
+            background-color: #fff;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header img {
+            height: 50px;
+        }
+        header nav ul {
+            list-style: none;
+            display: flex;
+        }
+        header nav ul li {
+            margin-left: 20px;
+        }
+        header nav ul li a {
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        header nav ul li a:hover {
+            color: #666;
+        }
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex: 1;
+        }
+        main section {
+            width: 50%;
+            padding-right: 20px;
+        }
+        main h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        main p {
+            font-size: 18px;
+            line-height: 1.5;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        main ul {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        main ul li {
+            font-size: 18px;
+            line-height: 1.5;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        main ul li:before {
+            content: "•";
+            color: #ccc;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+        main form {
+            width: 50%;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        main form h2 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        main form table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        main form table th {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            padding: 10px;
+            text-align: left;
+            border-bottom: 2px solid #ccc;
+        }
+        main form table td {
+            font-size: 16px;
+            color: #666;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        main form table td input,
+        main form table td textarea {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 16px;
+            color: #666;
+            outline: none;
+        }
+        main form table td input[type="file"] {
+            border: none;
+        }
+        main form table td input[type="submit"] {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        main form table td input[type="submit"]:hover {
+            background-color: #555;
+        }
+        main form table td span {
+            font-size: 14px;
+            color: #999;
+            margin-top: 5px;
+            display: block;
+        }
+        main form table td a {
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            margin-left: 5px;
+            border-bottom: 1px dashed #333;
+        }
+        main form table td a:hover {
+            color: #666;
+            border-bottom: 1px dashed #666;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        footer a {
+            color: #fff;
+            text-decoration: none;
+            border-bottom: 1px dashed #fff;
+        }
+        footer a:hover {
+            border-bottom: 1px dashed #ccc;
+        }
+        .dropdown {
+            position: relative;
+        }
 
-    .dropdown-menu {
-      display: none;
-      position: absolute;
-      z-index: 999;
-      min-width: 160px;
-      background-color: #fff;
-      padding: 5px 0;
-      margin: 2px 0 0;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-    }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            z-index: 999;
+            min-width: 160px;
+            background-color: #fff;
+            padding: 5px 0;
+            margin: 2px 0 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+        }
 
-    .dropdown-menu li {
-      padding: 0;
-      margin: 0;
-    }
+        .dropdown-menu li {
+            padding: 0;
+            margin: 0;
+        }
 
-    .dropdown-menu li a {
-      display: block;
-      padding: 5px 15px;
-      color: #333;
-      text-decoration: none;
-    }
+        .dropdown-menu li a {
+            display: block;
+            padding: 5px 15px;
+            color: #333;
+            text-decoration: none;
+        }
 
-    .dropdown-menu li a:hover {
-      background-color: #f5f5f5;
-    }
+        .dropdown-menu li a:hover {
+            background-color: #f5f5f5;
+        }
 
-    .dropdown:hover .dropdown-menu {
-      display: block;
-    }
-  </style>
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+    </style>
 </head>
 
 <body>
 <header>
-  <span>processimage.cn</span>
-  <nav>
-    <ul>
-      <li><a href="#" th:href="@{/access/demo(openid=${param.openid})}">在线体验</a></li>
-      <li><a href="#" th:href="@{/ApiDocument.html}">API 文档</a></li>
-      <li><a href="#" th:href="@{/access/upload}">API 调用测试</a></li>
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle">SDK & Demo<span class="caret"></span></a>
-        <ul class="dropdown-menu">
-          <li><a th:href="@{/sdk/java/java-sdk-maven.zip}">Java</a></li>
-          <li><a th:href="@{/sdk/python/python-demo.html}">Python Demo</a></li>
+    <span>processimage.cn</span>
+    <nav>
+        <ul>
+            <li><a href="#" th:href="@{/access/demo(openid=${param.openid})}">在线体验</a></li>
+            <li><a href="#" th:href="@{/ApiDocument.html}">API 文档</a></li>
+            <li><a href="#" th:href="@{/access/upload}">API 调用测试</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle">SDK & Demo<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a th:href="@{/sdk/java/java-sdk-maven.zip}">Java</a></li>
+                    <li><a th:href="@{/sdk/python/python-demo.html}">Python Demo</a></li>
+                </ul>
+            </li>
+            <li><a href="#" th:href="@{/user/main}">登陆 / 注册</a></li>
+            <li><a href="#" th:href="@{/img/me.jpg}">联系</a></li>
         </ul>
-      </li>
-      <li><a href="#" th:href="@{/user/main}">登陆 / 注册</a></li>
-      <li><a href="#" th:href="@{/img/me.jpg}">联系</a></li>
-    </ul>
-  </nav>
+    </nav>
 </header>
 
 
 <main>
-  <section>
-    <h1><span style="opacity:50%">墨香绘华</span>多功能图像水印处理</h1>
-    <p>我们提供一种简单、快速、可扩展的图像处理服务，可以帮助您轻松地将识别出图片中水印的位置以及内容并删除水印。我们的 API 适用于各种应用场景，包括电商、社交、广告、印刷等。</p>
-    <ul>
-      <li><b>高效快速：</b>API 支持同步和异步提交任务，并在处理完成之后通过给定的回调接口进行响应，大大提高了您的工作效率。</li>
-      <li><b>多种格式：</b>支持处理各种格式的图像，包括 PNG、BMP、JPEG</li>
-      <li><b>简单易用：</b>提供了简单易用的接口以及多种 SDK 方案，只需要按照文档提供参数即可。</li>
-      <li><b>多种功能：</b>能够智能识别出图中水印所在的位置，并根据您的需求将它们去除，支持提供水印矩形坐标组、去除指定文字水印，排除包含指定文字的水印、自动识别水印位置并可通过 offset 偏移坐标进行精确水印去除、如果仅需要识别水印信息而不进行去除也可通过设置对应参数实现</li>
-    </ul>
-  </section>
+    <section>
+        <h1><span style="opacity:50%">墨香绘华</span>多功能图像水印处理</h1>
+        <p>我们提供一种简单、快速、可扩展的图像处理服务，可以帮助您轻松地将识别出图片中水印的位置以及内容并删除水印。我们的 API 适用于各种应用场景，包括电商、社交、广告、印刷等。</p>
+        <ul>
+            <li><b>高效快速：</b>API 支持同步和异步提交任务，并在处理完成之后通过给定的回调接口进行响应，大大提高了您的工作效率。</li>
+            <li><b>多种格式：</b>支持处理各种格式的图像，包括 PNG、BMP、JPEG</li>
+            <li><b>简单易用：</b>提供了简单易用的接口以及多种 SDK 方案，只需要按照文档提供参数即可。</li>
+            <li><b>多种功能：</b>能够智能识别出图中水印所在的位置，并根据您的需求将它们去除，支持提供水印矩形坐标组、去除指定文字水印，排除包含指定文字的水印、自动识别水印位置并可通过 offset 偏移坐标进行精确水印去除、如果仅需要识别水印信息而不进行去除也可通过设置对应参数实现</li>
+        </ul>
+    </section>
 
 </main>
 
 <footer>
-  <p><a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备2022155244号-1</a></p>
-  <p><a href="#" th:href="@{/privacyPolicy.html}">隐私政策</a> | <a href="#" th:href="@{/termsOfService.html}">服务条款</a></p>
+    <p><a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备2022155244号-1</a></p>
+    <p><a href="#" th:href="@{/privacyPolicy.html}">隐私政策</a> | <a href="#" th:href="@{/termsOfService.html}">服务条款</a></p>
 </footer>
 </body>
 </html>

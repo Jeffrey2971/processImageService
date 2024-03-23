@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
 
 <link href='https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext' rel='stylesheet' type='text/css' />
@@ -76,13 +75,10 @@
             return false;
         }
 
-        // 使用 FileReader 读取文件内容
         readFileAsync(file)
             .then(fileContent => {
-                // 计算文件内容的 MD5
                 const imageMd5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(fileContent)).toString(CryptoJS.enc.Hex);
 
-                // 拼接参数并计算签名
                 const signatureParams = {
                     publicKey: publicKeyInput.value,
                     salt: document.getElementById('tools-salt').value,
@@ -105,7 +101,6 @@
         return false;
     });
 
-    // 通过 FileReader 读取文件内容的异步函数
     function readFileAsync(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();

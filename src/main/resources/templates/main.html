@@ -3,23 +3,76 @@
 <head>
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>欢迎您，[[${username}]]</title>
-
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <script th:src="@{/layui/layui.js}"></script>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
     <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
-    <script th:src="@{/js/bootstrap.min.js}"></script>
     <link rel="stylesheet" th:href="@{/css/main.css}">
+    <style>
+        /* 调整导航条样式 */
+        .layui-nav {
+            text-align: right;
+        }
+
+        /* 将导航条的文本右对齐 */
+        .layui-nav-item {
+            float: none;
+            display: inline-block;
+        }
+
+        /* 设置每一项为内联块级元素，取消浮动 */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        iframe {
+            max-width: 100%;
+            max-height: 100%;
+            border: none; /* 移除 iframe 边框 */
+        }
+    </style>
 
     <script>
 
-        window.addEventListener('storage', function (event) {
-            if (event.key === 'operationCompleted' && event.newValue === 'true') {
-                alert('您已完成支付，点击确定刷新页面')
-                localStorage.removeItem('operationCompleted');
-                location.reload()
-            }
-        })
+        window.onload = function () {
+            window.parent.document.body.addEventListener('scroll', function (event){event.preventDefault()})
+
+            window.localStorage.setItem('operationCompleted', 'no');
+            window.addEventListener('storage', function (event) {
+                if (event.storageArea === localStorage && event.key === 'operationCompleted') {
+
+                    if (event.newValue === 'yep') {
+                        localStorage.setItem('operationCompleted', 'no')
+
+                        layer.alert('您已完成作支付，点击确定刷新页面', {
+                            icon: 1,
+                            shadeClose: false,
+                            closeBtn: 0,
+                            title: '支付完成'
+                        }, function () {
+                            window.location.reload();
+                        });
+                    }
+                }
+            });
+
+            // var container = document.getElementById('container')
+            //
+            // var iframeDocument = container.contentDocument || container.contentWindow.document;
+            // window.addEventListener('message', function (event) {
+            //     // 进行滚动操作
+            //     var scrollTarget = event.data.scrollTarget;
+            //     var targetElement = iframeDocument.querySelector(scrollTarget);
+            //     if (targetElement) {
+            //         targetElement.scrollIntoView({behavior: 'smooth'});
+            //     }
+            // });
+
+
+        };
+
 
     </script>
 
@@ -31,7 +84,7 @@
                     console.log(response);
                     if (response.code === 200) {
                         alert("账户已退出，点击确定/关闭返回登陆页")
-                        window.location.reload()
+                        window.location.href = dynamicDomain;
                     } else {
                         alert("退出登陆失败");
                     }
@@ -42,51 +95,81 @@
     </script>
 </head>
 <body>
+<ul class="layui-nav">
+    <li class="layui-nav-item"><a th:href="@{__${dynamicDomain}__/access}">processImage.cn</a></li>
+    <li class="layui-nav-item layui-this">
+        <a href="">基本信息</a>
+    </li>
+    <li class="layui-nav-item">
+        <a th:href="@{/ApiDocument.html}" class="change_src">接入文档</a>
+    </li>
+    <li class="layui-nav-item">
+        <a th:href="@{/order/topay}" class="change_src">账户充值</a>
+    </li>
+    <li class="layui-nav-item">
+        <a th:href="@{/user/getApiDetails}" class="change_src">调用详情</a>
+    </li>
+    <li class="layui-nav-item">
+        <a th:href="@{/access/upload}" class="change_src">接入测试</a>
+    </li>
+    <li class="layui-nav-item">
+        <a th:href="@{/img/me.jpg}" class="change_src">联系客服</a>
+    </li>
 
-<div class="navbar-inner">
-    <div class="container-fluid">
-        <!--        <div class="logo-manage"><img src=""></div>-->
-        <!--<a class="brand pull-left" th:href="@{[[${dynamicDomain}]]}/login" href="https://www.processimage.cn:4433/login">processImage.cn</a>-->
-        <a class="brand pull-left" th:href="@{__${dynamicDomain}__/access}">processImage.cn</a>
-        <ul class="nav navbar-nav user_menu">
-            <li><a th:href="@{/img/me.jpg}">联系</a></li>
-            <li><a th:href="@{/order/topay}" target="_blank">充值</a></li>
-            <li><a href="javascript:alert('您没有收到任何消息')">站内信</a></li>
-            <li><a th:href="@{/user/getApiDetails}" target="_blank">调用详情</a></li>
-            <li><a th:href="@{/access/upload}" target="_blank">API 测试页</a></li>
-            <li><a th:href="@{/ApiDocument.html}" target="_blank">API 接入文档</a></li>
+    <li class="layui-nav-item">
+        <a href="javascript:">SDK & DEMO</a>
+        <dl class="layui-nav-child">
+            <dd><a th:href="@{/sdk/java/java-sdk-maven.zip}" style="text-align: center">java-sdk</a></dd>
+            <dd><a th:href="@{/sdk/python/python-demo.html}" style="text-align: center"  class="change_src">python-demo</a></dd>
+        </dl>
+    </li>
+    <li class="layui-nav-item">
+        <a href="#">站内信<span class="layui-badge">0</span></a>
+    </li>
+    <li class="layui-nav-item" lay-unselect>
+        <a href="javascript:;">
+            <img th:src="@{/img/user_avatar.png}" class="layui-nav-img">
+        </a>
+        <dl class="layui-nav-child">
+            <dd><a href="#" style="text-align: center">[[${username}]]</a></dd>
+            <hr>
+            <dd><a th:href="@{/user/change}"  class="change_src">修改密码</a></dd>
+            <dd style="text-align: center;"><a id="logout" href="#">退出登陆</a></dd>
+        </dl>
+    </li>
+</ul>
 
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">SDK 方案<b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                    <li><a th:href="@{/sdk/java/java-sdk-maven.zip}">JavaSDK</a></li>
-                    <li class="divider"></li>
-                    <li><a th:href="@{/sdk/python/python-demo.html}">PythonDemo</a></li>
-                </ul>
-            </li>
+<iframe id="container" width="100%" height="100%" frameborder="0" th:src="@{/ApiDocument.html}" hidden="hidden"></iframe>
 
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img
-                        th:src="@{/img/user_avatar.png}" alt="" class="user_avatar">[[${username}]]
-                    <b class="caret"></b>
-                </a>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var links = document.getElementsByClassName("change_src")
+        var container = document.getElementById("container")
+        var basic = document.getElementById("basic")
 
-                <ul class="dropdown-menu">
-                    <li><a th:href="@{/order/topay}">充值</a></li>
+        for (let i = 0; i < links.length; i++) {
+            links[i].addEventListener('click', function (e) {
+                if (this.innerText === '联系客服') {
+                    return
+                }
+                e.preventDefault();
+                if (this.innerText === '基本信息') {
+                    // 隐藏 iframe
+                    container.hidden = true;
+                    basic.hidden = false;
+                } else {
+                    // 显示 iframe，并更新 src
+                    container.hidden = false;
+                    container.src = this.href;
+                    basic.hidden = true;
+                }
+                container.src = this.href;
+            });
+        }
+    });
+</script>
 
-                    <li class="divider"></li>
-                    <li><a th:href="@{/user/change}">修改密码</a></li>
-
-                    <li class="divider"></li>
-                    <li><a href="#" id="logout">退出</a></li>
-                </ul>
-            </li>
-
-        </ul>
-    </div>
-</div>
-
-<div class="table-box">
+<div class="table-box" id="basic">
     <table>
         <tr>
             <th>账号名称：</th>
