@@ -13,18 +13,10 @@ import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 @Configuration
 public class MySecurityConfig extends WebSecurityConfigurerAdapter {
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.authorizeRequests().anyRequest().permitAll().and().logout()
-//                .permitAll().and().csrf().disable();
-////        http.authorizeRequests().anyRequest().authenticated().and().formLogin().loginPage()
-////                .antMatcher("/register/**")
-////                .csrf().csrfTokenRepository(csrfTokenRepository());
-//    }
-
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.headers().frameOptions().disable();
         http.authorizeRequests().anyRequest().permitAll()
                 .and().csrf().disable();
     }
