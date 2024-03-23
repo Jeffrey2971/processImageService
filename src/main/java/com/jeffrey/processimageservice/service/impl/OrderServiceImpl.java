@@ -11,10 +11,12 @@ import com.jeffrey.processimageservice.entities.OrderInfo;
 import com.jeffrey.processimageservice.entities.ProductInfo;
 import com.jeffrey.processimageservice.entities.sign.AccountInfo;
 import com.jeffrey.processimageservice.enums.OrderStatus;
+import com.jeffrey.processimageservice.enums.Product;
 import com.jeffrey.processimageservice.enums.ProductType;
+import com.jeffrey.processimageservice.enums.WxPaymentType;
 import com.jeffrey.processimageservice.exception.ProductTypeException;
 import com.jeffrey.processimageservice.exception.exception.CreateOrderException;
-import com.jeffrey.processimageservice.exception.exception.clitent.InvalidPaymentTypeException;
+import com.jeffrey.processimageservice.exception.exception.UnexpectedPaymentMethodException;
 import com.jeffrey.processimageservice.exception.exception.clitent.ProductNotFountException;
 import com.jeffrey.processimageservice.mapper.OrderServiceImplMapper;
 import com.jeffrey.processimageservice.service.AccountService;
@@ -164,37 +166,37 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public R createAndPrepayOrder(String id, String type) {
+    public R createAndPrepayOrder(Product productPID, WxPaymentType type) {
 
-        if ("native".equalsIgnoreCase(type)) {
-            R r = PayUtil.nativePay(id, this.getUserIdentifier());
-            this.createAndRecordOrder(id, type, r);
-            if (r.getCode() != 0) {
-                throw new CreateOrderException("创建订单失败");
-            }
-            return r;
-        }
+        switch (type) {
+            case NATIVE:
+                return PayUtil.nativePay(productPID.getType(), getUserIdentifier());
+            case JSAPI:
+                // 查看会话中是否有 openid 如果没有通知客户端先进行重定向获取
+                boolean hasId = hasOpenIdInSession();
+                if (!hasId) {
+                    // 正常的响应不抛异常
+                    return new R().setCode(401).setMessage("FAILED::MISSING OPENID");
+                }
 
-        if ("jsapi".equalsIgnoreCase(type)) {
-            // 查看会话中是否有 openid 如果没有通知客户端先进行重定向获取
-            boolean hasId = hasOpenIdInSession();
-            if (!hasId) {
-                // 正常的响应不抛异常
-                return new R().setCode(401).setMessage("FAILED::MISSING OPENID");
-            } else {
-                R prepay = PayUtil.jsapiPrePay(id, getUserIdentifier(), getOpenId());
+                R prepay = PayUtil.jsapiPrePay(productPID.getType(), getUserIdentifier(), getOpenId());
+
                 String prepayId = (String) prepay.getData().get("prepayId");
                 String orderNo = (String) prepay.getData().get("orderNo");
+
                 if (prepay.getCode() != 0 || StringUtils.isBlank(prepayId)) {
                     throw new CreateOrderException("创建订单失败");
-                } else {
-                    R r = PayUtil.jsapiPay(prepayId).data("orderNo", orderNo);
-                    this.createAndRecordOrder(id, type, r);
-                    return r;
                 }
-            }
+
+                R r = PayUtil.realJsapiPay(prepayId).data("orderNo", orderNo);
+
+                createAndRecordOrder(productPID, type, r);
+
+                return r;
+
+            default:
+                throw new UnexpectedPaymentMethodException("意外的付款方式");
         }
-        throw new InvalidPaymentTypeException("支付方式不受支持");
     }
 
     @Override
@@ -203,14 +205,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     //
-    private void createAndRecordOrder(String id, String type, R r) {
+    private void createAndRecordOrder(Product productPID, WxPaymentType wxPaymentType, R r) {
 
         Map<String, Object> data = r.getData();
         String orderNo = (String) data.get("orderNo");
         String createTime = (String) data.get("createTime");
 
         // 查询缓存订单
-        OrderInfo orderInfo = orderServiceMapper.queryLocalOrder(this.getUserIdentifier(), orderNo);
+        OrderInfo orderInfo = orderServiceMapper.queryLocalOrder(getUserIdentifier(), orderNo);
 
         // 判断是否存在缓存订单，需符合订单不为空、订单商品 pid 一致、下单类型一致
         if (orderInfo != null) {
@@ -219,10 +221,9 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 查询商品是否存在
-        ProductInfo productInfo = productService.queryProductByProductPID(id);
+        ProductInfo productInfo = productService.queryProductByProductPID(productPID.getType());
         if (productInfo == null) {
-            log.warn("商品不存在：{}", id);
-            throw new ProductNotFountException("商品不存在：" + id);
+            throw new ProductNotFountException("商品不存在：" + productPID.getType());
         }
 
         // 创建订单
@@ -232,7 +233,7 @@ public class OrderServiceImpl implements OrderService {
         orderInfo.setTitle(productInfo.getTitle());
         orderInfo.setOrderNo((orderNo));
         orderInfo.setOrderStatus(OrderStatus.NOTPAY.getType());
-        orderInfo.setOrderType(type);
+        orderInfo.setOrderType(wxPaymentType.getType());
         orderInfo.setCreateTime(createTime);
 
         // 缓存订单
