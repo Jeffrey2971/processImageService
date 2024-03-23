@@ -9,7 +9,8 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import java.io.File;
 import java.util.Objects;
@@ -18,10 +19,11 @@ import java.util.Objects;
  * @author jeffrey
  */
 @SpringBootApplication
-//@EnableWebSecurity
+@EnableWebSecurity
 @EnableAsync
 @EnableCaching
 @EnableScheduling
+@EnableSwagger2
 @Slf4j
 @EnableAspectJAutoProxy(exposeProxy = true)
 @MapperScan("com.jeffrey.processimageservice.mapper")
