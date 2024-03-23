@@ -70,7 +70,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/user/register/**",
                         "/user/forgot/**",
                         "/user/send/**",
-                        "/user/reset/**"
+                        "/user/reset/**",
+                        "/order/topay/**"
                 );
         registry.addInterceptor(signatureVerificationInterceptor).addPathPatterns("/access/**").excludePathPatterns("/access/demo-preview/**", "/register/**");
         registry.addInterceptor(checkRequestParamsInterceptor).addPathPatterns("/access/**").excludePathPatterns("/access/demo-preview/**", "/register/**");
