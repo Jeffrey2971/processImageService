@@ -3,6 +3,7 @@ package com.jeffrey.processimageservice.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jeffrey.processimageservice.conf.BCryptPasswordEncoder;
 import com.jeffrey.processimageservice.entities.CreateMail;
 import com.jeffrey.processimageservice.entities.Info;
 import com.jeffrey.processimageservice.entities.ResetParams;
@@ -19,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;

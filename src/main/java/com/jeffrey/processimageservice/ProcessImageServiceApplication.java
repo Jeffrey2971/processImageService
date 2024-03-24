@@ -10,7 +10,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import java.io.File;
 import java.util.Objects;
@@ -19,7 +18,6 @@ import java.util.Objects;
  * @author jeffrey
  */
 @SpringBootApplication
-@EnableWebSecurity
 @EnableAsync
 @EnableCaching
 @EnableScheduling

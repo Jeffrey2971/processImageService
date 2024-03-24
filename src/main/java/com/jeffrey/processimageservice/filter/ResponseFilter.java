@@ -1,7 +1,6 @@
 package com.jeffrey.processimageservice.filter;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -23,7 +22,7 @@ public class ResponseFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        httpServletResponse.setHeader("X-Frame-Options", XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN.name());
+        httpServletResponse.setHeader("X-Frame-Options", "SAMEORIGIN");
         chain.doFilter(request, response);
 
     }

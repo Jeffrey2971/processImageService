@@ -1,5 +1,6 @@
 package com.jeffrey.processimageservice.service.impl;
 
+import com.jeffrey.processimageservice.conf.BCryptPasswordEncoder;
 import com.jeffrey.processimageservice.conf.InitAccountParamProperties;
 import com.jeffrey.processimageservice.entities.register.RegisterParams;
 import com.jeffrey.processimageservice.entities.register.RegisterParamsWrapper;
@@ -9,7 +10,6 @@ import com.jeffrey.processimageservice.mapper.RegisterControllerServiceMapper;
 import com.jeffrey.processimageservice.service.RegisterService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
