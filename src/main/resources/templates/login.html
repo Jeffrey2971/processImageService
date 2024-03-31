@@ -179,7 +179,7 @@
                 const val = this.loginData.password
                 if (val) {
                     if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,16}$/.test(val)) {
-                        this.loginPasswordTips = '密码必须包含大小写字母和数字的组合，可以使用特殊字符，长度在 8-10 之间 ×'
+                        this.loginPasswordTips = '密码必须包含大小写字母和数字的组合，可以使用特殊字符，长度在 8-10 之间 &#10060;'
                         this.loginPasswordTipsStyle = 'text-danger'; // 设置为红色
                         this.showLoginPasswordTips = true
                         return false;
@@ -220,7 +220,7 @@
                     }
 
                     if (response.data.code === 403) {
-                        this.loginPasswordTips = '账号或密码错误，请重新输入 ×';
+                        this.loginPasswordTips = '账号或密码错误，请重新输入 &#10060;';
                         this.loginPasswordTipsStyle = 'text-danger';
                         this.showLoginPasswordTips = true;
                         return false;
@@ -294,12 +294,12 @@
                         .then(response => {
                             // 处理响应数据
                             if (response.data === 'SC_REGISTER_USERNAME_EXISTS') {
-                                this.usernameTips = '用户名已存在 ×'
+                                this.usernameTips = '用户名已存在 &#10060;'
                                 this.userNameTipsStyle = 'text-danger'; // 设置为红色
                                 this.showUsernameTips = true
                                 return false;
                             } else if (response.data === 'OK') {
-                                this.usernameTips = '账户可用 √'
+                                this.usernameTips = '账户可用 &#10003;'
                                 this.userNameTipsStyle = 'text-success'; // 设置为绿色
                                 this.showUsernameTips = true;
                             }
@@ -319,7 +319,7 @@
                 const val = this.signData.password1;
                 if (val) {
                     if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,16}$/.test(val)) {
-                        this.passwordTips = '密码必须包含大小写字母和数字的组合，可以使用特殊字符，长度在 8-10 之间 ×';
+                        this.passwordTips = '密码必须包含大小写字母和数字的组合，可以使用特殊字符，长度在 8-10 之间 &#10060;';
                         this.passWordTipsStyle = 'text-danger'; // 设置为红色
                         this.showPasswordTips = true
                         return false;
@@ -332,7 +332,7 @@
 
             passwordEnsureCheck() {
                 if (this.signData.password1 !== this.signData.password2) {
-                    this.ensurePasswordTips = '密码不一致，请重新输入 ×'
+                    this.ensurePasswordTips = '密码不一致，请重新输入 &#10060;'
                     this.ensurePassWordTipsStyle = 'text-danger'; // 设置为红色
                     this.showEnsurePasswordTips = true
                     return false;
@@ -344,7 +344,7 @@
                 const val = this.signData.email;
                 if (val) {
                     if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(val)) {
-                        this.emailTips = '输入的邮箱地址不符合规则 ×'
+                        this.emailTips = '输入的邮箱地址不符合规则 &#10060;'
                         this.emailTipsStyle = 'text-danger'; // 设置为红色
                         this.showEmailTips = true
                         return false;
@@ -360,12 +360,12 @@
                             // 处理响应数据
                             console.log(response)
                             if (response.data === 'SC_REGISTER_EMAIL_EXISTS') {
-                                this.emailTips = '邮箱地址已被注册 ×'
+                                this.emailTips = '邮箱地址已被注册 &#10060;'
                                 this.emailTipsStyle = 'text-danger'; // 设置为红色
                                 this.showEmailTips = true
                                 return false;
                             } else if (response.data === 'OK') {
-                                this.emailTips = '邮箱可用 √'
+                                this.emailTips = '邮箱可用 &#10003;'
                                 this.emailTipsStyle = 'text-success'; // 设置为绿色
                                 this.showEmailTips = true;
                             }
