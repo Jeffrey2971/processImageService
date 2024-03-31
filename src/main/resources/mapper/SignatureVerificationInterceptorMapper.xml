@@ -6,8 +6,8 @@
 
 <mapper namespace="com.jeffrey.processimageservice.mapper.SignatureVerificationInterceptorMapper">
 
-    <select id="getPrivateSecret" resultType="com.jeffrey.processimageservice.entities.sign.EncryptedInfo">
-        SELECT id, public_key as publicKey, private_secret as privateSecret FROM `authorized_accounts_list` WHERE `public_key` = #{publicKey}
+    <select id="getAppSecret" resultType="com.jeffrey.processimageservice.entities.sign.EncryptedInfo">
+        SELECT id, app_id as appId, app_secret as appSecret FROM `authorized_accounts_list` WHERE `app_id` = #{appId}
     </select>
 
 </mapper>

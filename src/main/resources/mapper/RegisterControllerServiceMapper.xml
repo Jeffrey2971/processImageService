@@ -7,7 +7,7 @@
 <mapper namespace="com.jeffrey.processimageservice.mapper.RegisterControllerServiceMapper">
 
     <insert id="creationKey">
-        INSERT INTO `authorized_accounts_list` (id, public_key, private_secret)
+        INSERT INTO `authorized_accounts_list` (id, app_id, app_secret)
         VALUES (#{arg0}, #{arg1}, #{arg2})
     </insert>
 

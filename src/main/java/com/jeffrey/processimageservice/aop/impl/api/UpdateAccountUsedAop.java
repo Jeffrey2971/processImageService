@@ -102,8 +102,8 @@ public class UpdateAccountUsedAop {
             genericResponse.setLimitedTermUsageCount(accountInfo.getLimitedTermUsageCount());
             genericResponse.setLimitedTermExpireTimes(accountInfo.getLimitedTermExpireTimes());
 
-            encryptedInfo.setPrivateSecret(null);
-            encryptedInfo.setPublicKey(null);
+            encryptedInfo.setAppSecret(null);
+            encryptedInfo.setAppId(null);
             encryptedInfo.setId(null);
 
             genericResponse.setEncryptedInfo(encryptedInfo);

@@ -29,16 +29,16 @@ public class SignatureVerificationInterceptorServiceImpl implements SignatureVer
     @Override
     public EncryptedInfo signature(SignatureParams signatureParams) {
 
-        String publicKey = signatureParams.getPublicKey();
+        String appId = signatureParams.getAppId();
         Integer salt = signatureParams.getSalt();
         byte[] imageBytes = signatureParams.getImageBytes();
 
         if (
-                StringUtils.hasText(publicKey) && publicKey.length() == 16 &&
+                StringUtils.hasText(appId) && appId.length() == 16 &&
                         String.valueOf(salt).length() == 8 &&
                         imageBytes != null && imageBytes.length > 0
         ) {
-            EncryptedInfo encryptedInfo = signatureVerificationInterceptorMapper.getPrivateSecret(signatureParams.getPublicKey());
+            EncryptedInfo encryptedInfo = signatureVerificationInterceptorMapper.getAppSecret(signatureParams.getAppId());
 
             if (encryptedInfo != null) {
 
@@ -46,7 +46,7 @@ public class SignatureVerificationInterceptorServiceImpl implements SignatureVer
 
                 encryptedInfo.setImageUniqueIdentification(imageMd5);
 
-                String sign = DigestUtils.md5DigestAsHex((signatureParams.getPublicKey() + imageMd5 + signatureParams.getSalt() + encryptedInfo.getPrivateSecret()).getBytes());
+                String sign = DigestUtils.md5DigestAsHex((signatureParams.getAppId() + imageMd5 + signatureParams.getSalt() + encryptedInfo.getAppSecret()).getBytes());
 
                 encryptedInfo.setSign(sign);
 

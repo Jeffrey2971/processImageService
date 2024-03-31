@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RegisterControllerServiceMapper {
-    void creationKey(int id, String publicKey, String privateKey);
+    void creationKey(int id, String appId, String appSecret);
 
     void register(RegisterParamsWrapper registerParamsWrapper);
 

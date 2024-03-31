@@ -49,12 +49,12 @@ public class ApiAccessController {
     public ModelAndView jumpUploadPage(){
         ModelAndView mav = new ModelAndView("upload");
         if (StpUtil.isLogin()) {
-            mav.addObject("publicKey", StpUtil.getSession().get("publicKey"));
-            mav.addObject("privateKey", StpUtil.getSession().get("privateKey"));
+            mav.addObject("appId", StpUtil.getSession().get("appId"));
+            mav.addObject("appSecret", StpUtil.getSession().get("appSecret"));
             mav.addObject("isLogin", true);
         }else{
-            mav.addObject("publicKey", "");
-            mav.addObject("privateKey", "");
+            mav.addObject("appId", "");
+            mav.addObject("appSecret", "");
             mav.addObject("isLogin", false);
         }
         return mav;

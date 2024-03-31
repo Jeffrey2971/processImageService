@@ -90,9 +90,9 @@ public class LoginController {
 
 
                     StpUtil.getSession().set(
-                            "publicKey", encryptedInfo.getPublicKey()
+                            "appId", encryptedInfo.getAppId()
                     ).set(
-                            "privateKey", encryptedInfo.getPrivateSecret()
+                            "appSecret", encryptedInfo.getAppSecret()
                     ).set(
                             "username", genericLoginParams.getUsername()
                     ).set(
@@ -384,8 +384,8 @@ public class LoginController {
     @GetMapping("/main")
     public ModelAndView main(ModelAndView mav) {
 
-        mav.addObject("publicKey", StpUtil.getSession().get("publicKey"));
-        mav.addObject("privateKey", StpUtil.getSession().get("privateKey"));
+        mav.addObject("appId", StpUtil.getSession().get("appId"));
+        mav.addObject("appSecret", StpUtil.getSession().get("appSecret"));
         mav.addObject("username", StpUtil.getSession().get("username"));
         mav.addObject("apiCanUseCount", StpUtil.getSession().get("apiCanUseCount"));
         mav.addObject("apiUsedCount", StpUtil.getSession().get("apiUsedCount"));

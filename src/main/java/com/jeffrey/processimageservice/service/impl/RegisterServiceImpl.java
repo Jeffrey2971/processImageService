@@ -31,9 +31,9 @@ public class RegisterServiceImpl implements RegisterService {
     private static final String NUMBER = "0123456789";
     private static final String SPECIAL_CHARS = "!@#$%^&*_=+-/";
 
-    private static final String DATA_FOR_RANDOM_PUBLIC_KEY = CHAR_LOWER + CHAR_UPPER + NUMBER;
+    private static final String DATA_FOR_RANDOM_APP_ID = CHAR_LOWER + CHAR_UPPER + NUMBER;
 
-    private static final String DATA_FOR_RANDOM_PRIVATE_KEY = CHAR_LOWER + CHAR_UPPER + NUMBER + SPECIAL_CHARS;
+    private static final String DATA_FOR_RANDOM_APP_SECRET = CHAR_LOWER + CHAR_UPPER + NUMBER + SPECIAL_CHARS;
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private final BCryptPasswordEncoder encoder;
@@ -130,10 +130,10 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public void creationKey(int aid) {
 
-        String creationPublicKey = generateRandomString(16, DATA_FOR_RANDOM_PUBLIC_KEY);
-        String creationPrivateKey = generateRandomString(32, DATA_FOR_RANDOM_PRIVATE_KEY);
+        String appId = generateRandomString(16, DATA_FOR_RANDOM_APP_ID);
+        String appSecret = generateRandomString(32, DATA_FOR_RANDOM_APP_SECRET);
 
-        registerControllerServiceMapper.creationKey(aid, creationPublicKey, creationPrivateKey);
+        registerControllerServiceMapper.creationKey(aid, appId, appSecret);
 
     }
 

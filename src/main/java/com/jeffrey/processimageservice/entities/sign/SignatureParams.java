@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignatureParams {
-    private String publicKey;
+    private String appId;
     private Integer salt;
     private byte[] imageBytes;
 }

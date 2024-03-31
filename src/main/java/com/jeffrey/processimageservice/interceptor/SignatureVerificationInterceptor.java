@@ -53,13 +53,13 @@ public class SignatureVerificationInterceptor implements HandlerInterceptor {
 
         MultipartFile uploadFile = multipartRequest.getFile("uploadFile");
 
-        String publicKey = request.getParameter("publicKey");
+        String appId = request.getParameter("appId");
         String salt = request.getParameter("salt");
 
         if (!StringUtils.isBlank(sign) && uploadFile != null && !StringUtils.isBlank(salt) && StringUtils.isNumeric(salt)) {
             InputStream inputStream = uploadFile.getInputStream();
             byte[] bytes = FileCopyUtils.copyToByteArray(inputStream);
-            SignatureParams signatureParams = new SignatureParams(publicKey, Integer.parseInt(salt), bytes);
+            SignatureParams signatureParams = new SignatureParams(appId, Integer.parseInt(salt), bytes);
 
             EncryptedInfo encryptedInfo = signatureVerificationInterceptorService.signature(signatureParams);
 

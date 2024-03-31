@@ -16,8 +16,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class EncryptedInfo implements Serializable {
     private Integer id;
-    private String publicKey;
-    private String privateSecret;
+    private String appId;
+    private String appSecret;
     private String sign;
     private String imageUniqueIdentification;
 }

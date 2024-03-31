@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountUserSessionInfo {
-    private String publicKey;
-    private String privateKey;
+    private String appId;
+    private String appSecret;
     private String username;
     private Integer apiCanUseCount;
     private Integer apiUsedCount;

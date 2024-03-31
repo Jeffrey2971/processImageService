@@ -32,7 +32,7 @@
 
     <select id="queryAuthorizationInformationDataByUserName"
             resultType="com.jeffrey.processimageservice.entities.sign.EncryptedInfo">
-        select `id`, `public_key` as publicKey, `private_secret` as privateSecret
+        select `id`, `app_id` as appId, `app_secret` as appSecret
         from authorized_accounts_list as t1
         WHERE t1.id = (SELECT t2.id FROM `account` as t2 WHERE t2.username = #{username})
     </select>

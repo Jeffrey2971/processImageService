@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SignatureVerificationInterceptorMapper {
-    EncryptedInfo getPrivateSecret(String publicKey);
+    EncryptedInfo getAppSecret(String appId);
 }
